@@ -1,0 +1,146 @@
+
+        //////  //////    /////   //   //  /////   ///////
+      //        //  //  //   //  //   //  //   // //
+     //  ///  /////    //   //  //   //  //////   //////
+    //   //  //  //   //   //  //   //  //            //
+   //////   //   //   /////    /////   //       //////
+
+by Sven Nilsen 2012.
+
+Groups is a library written in C for group-oriented programming.
+
+To learn more aboug group-oriented programming, skip to "What is group-oriented programming".
+
+CONTENT
+
+This library contains:
+- Bitstreams for group searching using Boolean algebra (ÊOR,ÊAND,ÊEXCEPT ).
+- Garbage collector stack for containing items making calculation and organizing data easier ( double-linked list ).
+- QuickSort for items supporting garbage collected items ( to sort the order at the stack automatically ).
+- BinarySearch for looking up items.
+
+Because bitstreams gets messy with pointers, I created a garbage collector stack that cleans up all objects created after a certain level, unless they have been popped from the stack. You can extract pointers from the stack and sort it with the QuickSort method. The sorting uses a special Swap method that swaps the items first byte for byte and then swaps them on the stack. This means you can use a gcstack for general data management that are fast, cleans itself and can be sorted in any order.
+
+WHAT IS GROUP-ORIENTED PROGRAMMING?
+
+Group oriented programming is different from object-oriented programming because you use techniques to optimize search for data in groups instead of looking for a specific object. The best tool for group searching is something called "bitstreams", which allows you to look up a group of objects faster than checking each of them. Bitstreams can be used, theoretically, to solve any problem.
+
+In object-orientation, you start with a class and then fill in the properties you associate with the object. The problem is that if you need to add a property which the rest of objects of same type doesn't have, then you need to inherit the object and then add it. This is to keep algorithms from sucking in data that will crash the program. Before each task, you have to browse the application structure and operate on a specific part. When the application grows, there is an increasing amount of exceptions to the initial design.
+
+Group-orientation is like object-orientation except for the classes, pluss that each property with a default value is tracked with a bitstream. If you need a new type objects, you just add the property. When the algorithms want data, they combine properties together represented as bitstreams. When we think of a 'chair', we can identify it with a physical shape, but when we think of 'furniture' this is something we tag to the 'chair' instead of having a rule of how to identify it. Because properties can both be recognized and created out of thin air, we can say that any way to combine a collection itself is a property, because it can be tagged as a flag on each member.
+
+If you have a class in object-oriented programming, you can write an equivalent in group-oriented programming. For example:
+
+Person = FirstName + LastName
+
+Try to think of 'Person' as a property and not an object. We have not given 'Person' identities. A group is a collection of object that share same properties, but the variable element in the group is the identity. If we have no way to distinguish the members of a group from each other, then the members have no identity. Classes is a way to create groups, but objects is way to give identity. In group-oriented programming you treat classes as variables of bitstreams. You have the same separation of data from types, only that you can do Boolean operations on the types. One thing you can't do in object-oriented programming is to create a class that does not contain a property, like 'I create a party for everybody, but you are not invited'. This operation is called EXCEPT.
+
+In group-oriented programming, you can create much more complex rules of what an object is because you have the concept of EXCEPT built into it:
+
+Bird = Feather * ( CanFly + Penguin + Kiwi ) - ( CanDive - Penguin )
+
+Notice that exceptions are written as minus, but to the right of the other terms. This is important, because minus in this algebra got lower precedence than addition, it can be converted to A-B = A*!B and moved outside paranthesis. Minus means it operates on all other terms on the same level, not only the one to the left. The scholars doesn't believe minus exists in Boolean algebra, but it is an important part of the human common sense and to operate bitstreams safely on "infinite" datasets, like whole computer memory. With OR,ÊANDÊand EXCEPTÊyou can perform all operations except those who results in inverted collections.
+
+In group-orientation, you start with a blank page for all data where properties can be tied together, but not under strict rules. This sounds like chaos, but in practice it gives you much more control. For hard-core object-oriented programmers this can sound crazy.
+
+Just think of it for a moment: If you write an algorithm that only work if the object got X and Y and these two can be set to NULL, then if you feed the algorithm with a class of objects that might have NULL in X and Y, the algorithm will fail. Therefore, you add a sentence in the beginning of the algorithm "if (X == NULL || Y == NULL) return;" to filter out problematic objects.
+
+Why not do it different? If you write an algorithm to work in a specific case, why not let the programmer decide what kind of object it can operate on? If he needs only X, then he can take X. If he need X and Y, he can require both. If you can control the data available for searching, then the algorithm can not eat data it is not supposed to eat. Most algorithms take either few variables or operate on data generally. To calculate the length of a vector takes few arguments, while exporting a comma separated file is a general task. This means that if you find a way to compute subgroups of the entire dataset fast, then you can compose a virtual list of objects or array of primitive types for the algorithm on the fly. This is what bitstream does.
+
+"What a minute, this sounds like SQL!" Yes, it does because SQL uses the same algebra on data, only it separates tables just like object-oriented programming does. With bitstreams you can preprocess specific parts of the query without moving the data. A bitstream is hundreds of times faster. The usage of SQL is to get data to the application, while bitstreams is to get data to the algorithms.
+
+You can also have a static structure and a bitstream for each property. Often this is very useful when you have a general type of data for your application. You want to track the objects that meet an arbitrary requirement to give them a specific treatment. Multi-selection, multi-threads, you name it. To write an algorithm for a collection of objects makes it more reusable. If you have tools to extract specific tables of data for a property, then you can copy code from project to project without big modifications. This is also great for translating between different programming languages.
+
+BITSTREAM
+
+A bitstream is a list of numbers or comparable objects that form a continious value between the positions instead of at the positions.
+
+
+          on              off   on    off            on   off
+=========>----------------<====>------<=============>-----<==
+
+We say that a new value marks the change. If you write a bitstream in numerical form, you can see it as a list of ever increasing numbers:
+
+0->10 12->14 17->21 30->
+
+If a bitstream ends with odd number of terms, it means the size of it is infinite. This is perfectly valid as long as you use 'bitstream_Abs' where you pass a maximum size. If you never use 'bitstream_Invert' you will never get infinite size and you can use 'bitstream_Size' instead.
+
+STEPÊ1
+
+#include "memgroups.h"
+
+Because C is not garbage collected, something that makes complicated expressions difficult to program, I have created a stack that does this for you. First you declare the bitstreams you want to use. How you get them depends on on your application design, but basically it is just like a table of numbers that describe where in a collection of data there is a 'property Feather' or 'property CanFly' and so on.
+
+bitstream* Feather, CanFly, Penguin, Kiwi, CanDive; // input
+bitstream* Bird; // output
+
+STEPÊ2
+
+You create the garbage collector. You can do this at start of application if you like, because you can roll back to a specified size of the stack. Get the level of the stack before you start doing the calculations. Later you will need it to free the unused objects. It is important you call it 'gc' or else you will not be able to use the macroes to simplify the expression.
+
+gcstack* gc = gcstack_Init(gcstack_Alloc());
+
+int level = gcstack_Start(gc).
+
+STEPÊ3
+
+Now we do the calculations, it is a good idea to write what you wanted in a comment, in case you need to debug it.
+
+// Bird = Feather * ( CanFly + Penguin + Kiwi ) - ( CanDive - Penguin )
+bitstream* tmp = bitstream_Or( gc, CanFly, Penguin );
+tmp = bitstream_Or( gc, tmp, Kiwi );
+tmp = bitstream_And( gc, tmp, Feather );
+bitstream* tmp2 = bitstream_Except( gc, CanDive, Penguin );
+Bird = bitstream_Except( tmp, tmp2 );
+
+// This is important to avoid releasing the memory of your result.
+// Always do this right after your function call.
+gcstack_Pop(gc, Bird);
+
+STEPÊ4
+
+We tell the stack to release all objects at this level and above. If you don't need the stack anymore, call first 'gcstack_Delete' and then free the pointer. If you have forgotten to call 'gcstack_End' it will release it for you.
+
+// Release objects at this level and above.
+gcstack_End(gc, level);
+
+// Releases the remaining data on the stack.
+gcstack_Delete(gc);
+free(gc);	// Remember to release the pointer too!
+
+4 TYPICALÊERRORS:
+
+1.	Add 'gcstack_item gc;' at start of struct to make it
+	collectable for a garbage collector (gcstack).
+	===> NOT 'gcstack_item* gc;' <=== (don't add as pointer)
+	If you get a bug which you have no idea is coming from,
+	then check for this mistake FIRST.
+
+2.	When using gcstack to collect items inside functions,
+	pop the ones you need IMMEDIATELY after calling the function.
+	If you call a new gcstack_Start before popping,
+	the gcstack will release one item too much at the stack
+	and create untracable bugs. If you got unexplainable errors,
+	check this SECOND.
+
+3.	If you are dealing with inverted bitstreams, you should
+	use EXCEPT instead if the set is unlimited.
+	If you have odd length of the bitstream, it means it is infinite.
+	If you have even length of the bitstream, then it is finite.
+	EXCEPT is faster than taking NOT and then AND.
+
+4.	bitstream_Delete and gcstack_Delete does not free the pointers,
+	only the pointers in the structure. Bitstream frees the
+	array that contain the data. GCStack frees the members
+	on the stack.
+
+PERFORMANCE
+
+To compare performance, you can make a for-loop and execute the code 2^X times until it does about 10 seconds. If it is below 7.5, you add one to X and if it is above 15 you subtract one. The X you end up with can be written down and used to compare different techniques or examples.
+
+CREDITS
+
+Based on research my own research and written by myself.
+
+Thanks to seeeoneself for support.
+
