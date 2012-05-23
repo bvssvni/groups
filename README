@@ -1,4 +1,3 @@
-
         //////  //////    /////   //   //  /////   ///////
       //        //  //  //   //  //   //  //   // //
      //  ///  /////    //   //  //   //  //////   //////
@@ -14,7 +13,7 @@ To learn more aboug group-oriented programming, skip to "What is group-oriented 
 CONTENT
 
 This library contains:
-- Bitstreams for group searching using Boolean algebra (ÊOR,ÊAND,ÊEXCEPT ).
+- Bitstreams for group searching using Boolean algebra ( OR, AND, EXCEPT ).
 - Garbage collector stack for containing items making calculation and organizing data easier ( double-linked list ).
 - QuickSort for items supporting garbage collected items ( to sort the order at the stack automatically ).
 - BinarySearch for looking up items.
@@ -39,7 +38,7 @@ In group-oriented programming, you can create much more complex rules of what an
 
 Bird = Feather * ( CanFly + Penguin + Kiwi ) - ( CanDive - Penguin )
 
-Notice that exceptions are written as minus, but to the right of the other terms. This is important, because minus in this algebra got lower precedence than addition, it can be converted to A-B = A*!B and moved outside paranthesis. Minus means it operates on all other terms on the same level, not only the one to the left. The scholars doesn't believe minus exists in Boolean algebra, but it is an important part of the human common sense and to operate bitstreams safely on "infinite" datasets, like whole computer memory. With OR,ÊANDÊand EXCEPTÊyou can perform all operations except those who results in inverted collections.
+Notice that exceptions are written as minus, but to the right of the other terms. This is important, because minus in this algebra got lower precedence than addition, it can be converted to A-B = A*!B and moved outside paranthesis. Minus means it operates on all other terms on the same level, not only the one to the left. The scholars doesn't believe minus exists in Boolean algebra, but it is an important part of the human common sense and to operate bitstreams safely on "infinite" datasets, like whole computer memory. With OR,ï¿½ANDï¿½and EXCEPTï¿½you can perform all operations except those who results in inverted collections.
 
 In group-orientation, you start with a blank page for all data where properties can be tied together, but not under strict rules. This sounds like chaos, but in practice it gives you much more control. For hard-core object-oriented programmers this can sound crazy.
 
@@ -65,7 +64,7 @@ We say that a new value marks the change. If you write a bitstream in numerical 
 
 If a bitstream ends with odd number of terms, it means the size of it is infinite. This is perfectly valid as long as you use 'bitstream_Abs' where you pass a maximum size. If you never use 'bitstream_Invert' you will never get infinite size and you can use 'bitstream_Size' instead.
 
-STEPÊ1
+STEP 1
 
 #include "memgroups.h"
 
@@ -74,7 +73,7 @@ Because C is not garbage collected, something that makes complicated expressions
 bitstream* Feather, CanFly, Penguin, Kiwi, CanDive; // input
 bitstream* Bird; // output
 
-STEPÊ2
+STEP 2
 
 You create the garbage collector. You can do this at start of application if you like, because you can roll back to a specified size of the stack. Get the level of the stack before you start doing the calculations. Later you will need it to free the unused objects. It is important you call it 'gc' or else you will not be able to use the macroes to simplify the expression.
 
@@ -82,7 +81,7 @@ gcstack* gc = gcstack_Init(gcstack_Alloc());
 
 int level = gcstack_Start(gc).
 
-STEPÊ3
+STEP 3
 
 Now we do the calculations, it is a good idea to write what you wanted in a comment, in case you need to debug it.
 
@@ -97,7 +96,7 @@ Bird = bitstream_Except( tmp, tmp2 );
 // Always do this right after your function call.
 gcstack_Pop(gc, Bird);
 
-STEPÊ4
+STEP 4
 
 We tell the stack to release all objects at this level and above. If you don't need the stack anymore, call first 'gcstack_Delete' and then free the pointer. If you have forgotten to call 'gcstack_End' it will release it for you.
 
@@ -108,7 +107,7 @@ gcstack_End(gc, level);
 gcstack_Delete(gc);
 free(gc);	// Remember to release the pointer too!
 
-4 TYPICALÊERRORS:
+4 TYPICAL ERRORS:
 
 1.	Add 'gcstack_item gc;' at start of struct to make it
 	collectable for a garbage collector (gcstack).
@@ -140,7 +139,7 @@ To compare performance, you can make a for-loop and execute the code 2^X times u
 
 CREDITS
 
-Based on research my own research and written by myself.
+Based on research my own research and written by myself (Sven Nilsen).
 
 Thanks to seeeoneself for support.
 
