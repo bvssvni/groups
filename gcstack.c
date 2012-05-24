@@ -123,7 +123,9 @@ void gcstack_End(gcstack* gc, int level)
 
 void gcstack_free(gcstack* gc, void* p)
 {
-	gcstack_Pop(gc, p);
+	if (gc != NULL) {
+		gcstack_Pop(gc, p);
+	}
 	gcstack_item* item = (gcstack_item*)p;
 	item->free(item);
 	free(item);
