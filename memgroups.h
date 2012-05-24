@@ -32,6 +32,10 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
+ 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,3 +49,7 @@
 #include "bitstream.h"
 #include "sorting.h"
 #include "readability.h"
+
+#ifdef __cplusplus
+}
+#endif

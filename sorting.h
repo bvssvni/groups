@@ -32,6 +32,10 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
+ 
+#ifdef __cplusplus
+extern "C" {
+#endif 
 
 #ifndef memgroups_sorting
 #define memgroups_sorting
@@ -100,4 +104,8 @@ int			sorting_SearchBinary
 );
 
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

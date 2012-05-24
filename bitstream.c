@@ -40,6 +40,27 @@
 #include "bitstream.h"
 #include "readability.h"
 
+#define foreach_reverse(a) \
+int __start##a, __end##a, __i##a, __j##a; \
+for (__i##a = a->length-2; __i##a >= 0; __i##a -= 2) { \
+__start##a = a->pointer[__i##a]; \
+__end##a = a->pointer[__i##a+1]; \
+for (__j##a = __end##prop-1; __j##a >= __start##a; __j##a--) {
+
+#define foreach(a) \
+int __len##a = a->length-1; \
+int __start##a, __end##a, __i##a, __j##a; \
+for (__i##a = 0; __i##a < __len##a; __i##a += 2) { \
+__start##a = a->pointer[__i##a]; \
+__end##a = a->pointer[__i##a+1]; \
+for (__j##a = __start##prop; __j##a < __end##a; __j##a++) {
+
+#define end_foreach }}__BREAK_BITSTREAM_prop:;
+
+#define _break(a)     goto __BREAK_BITSTREAM_##a
+
+#define _pos(a)    __j##a
+
 int bitstream_references = 0;
 
 void bitstream_Delete(void* p) {
@@ -572,6 +593,12 @@ int bitstream_Abs(bitstream const* list, int maximum)
 	return abs;
 }
 
+int* bitstream_ArrayPointer(bitstream const* a)
+{
+	return a->pointer;
+}
 
-
-
+int bitstream_NumberOfBlocks(bitstream const* a)
+{
+	return a->length/2;
+}

@@ -32,6 +32,10 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
+ 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef memgroups_gcstack
 #define memgroups_gcstack
@@ -101,4 +105,8 @@ gcstack_item** gcstack_CreateItemsArray
 void gcstack_Print
 (gcstack const* gc, void(*print)(void*a));
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

@@ -32,6 +32,10 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
+ 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef memgroups_bitstream
 #define memgroups_bitstream
@@ -167,5 +171,18 @@ int			bitstream_Size
 int			bitstream_Abs
 (bitstream const* list, int maximum);
 
+//
+//			Returns the pointer at beginning of bitstream.
+//
+int* 		bitstream_ArrayPointer(bitstream const* a);
 
+//
+//			Returns the amoutn of blocks in the bitstream.
+//
+int			bitstream_NumberOfBlocks(bitstream const* a);
+
+#endif
+
+#ifdef __cplusplus
+}
 #endif
