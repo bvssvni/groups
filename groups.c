@@ -315,6 +315,11 @@ bool groups_IsDefaultVariable(variable* var)
 		int* val = (int*)var->data;
 		if (*val == -1) return true;
 	}
+	else if (type == TYPE_BOOL)
+	{
+		bool* val = (bool*)var->data;
+		if (*val == 0) return true;
+	}
 	else if (type == TYPE_STRING)
 	{
 		char* val = (char*)var->data;
@@ -503,6 +508,136 @@ void groups_SetString(groups* g, bitstream* a, int propId, const char* val)
 	free(b);
 }
 
+void groups_SetInt(groups* g, bitstream* a, int propId, int val)
+{
+	// Create member array so we can access members directly.
+	createMemberArray(g);
+	
+	bool isDefault = -1 == val;
+	int i;
+	int index;
+	member* obj;
+	variable* var;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		
+		index = member_IndexOf(obj, propId);
+		if (index < 0) {
+			// If the string is NULL and the member does not contain it,
+			// then we don't have to do anything.
+			if (!isDefault)
+				// The property does not exist, so we need to add it the default way.
+				member_AddInt(obj, propId, val);
+			continue;
+		}
+		if (index >= 0)
+		{
+			// Since 'member_IndexOf' creates variableArray if not created,
+			// we don't have to make an extra call to do this.
+			var = obj->m_variableArray[index];
+			
+			if (isDefault)
+			{
+				// Remove the item and free the pointer.
+				// Since we are not iterating through the member properties,
+				// but along the members in a group, it is safe.
+				gcstack_free(obj->variables, var);
+				
+				// Tell the member to update the m_variableArray.
+				obj->m_ready = false;
+				continue;
+			}
+			
+			// We can just switch the value.
+			int* data = var->data;
+			*data = val;
+		}
+	} end_foreach
+	
+	createBitstreamArray(g);
+	
+	// Update the bitstream, cleaning up manually for saving one malloc call.
+	// It takes only one operation to update all.
+	int propIndex = propId%TYPE_STRIDE;
+	bitstream* b = g->m_bitstreamsArray[propIndex];
+	
+	// If the string is NULL, then it is a default value
+	// and we subtract from the bitstream instead of adding.
+	bitstream* c = isDefault ?
+	bitstream_Except(NULL, b, a) :
+	bitstream_Or(NULL, b, a);
+	
+	gcstack_Swap(c, b);
+	bitstream_Delete(b);
+	free(b);
+}
+
+void groups_SetBool(groups* g, bitstream* a, int propId, bool val)
+{
+	// Create member array so we can access members directly.
+	createMemberArray(g);
+	
+	bool isDefault = 0 == val;
+	int i;
+	int index;
+	member* obj;
+	variable* var;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		
+		index = member_IndexOf(obj, propId);
+		if (index < 0) {
+			// If the string is NULL and the member does not contain it,
+			// then we don't have to do anything.
+			if (!isDefault)
+				// The property does not exist, so we need to add it the default way.
+				member_AddInt(obj, propId, val);
+			continue;
+		}
+		if (index >= 0)
+		{
+			// Since 'member_IndexOf' creates variableArray if not created,
+			// we don't have to make an extra call to do this.
+			var = obj->m_variableArray[index];
+			
+			if (isDefault)
+			{
+				// Remove the item and free the pointer.
+				// Since we are not iterating through the member properties,
+				// but along the members in a group, it is safe.
+				gcstack_free(obj->variables, var);
+				
+				// Tell the member to update the m_variableArray.
+				obj->m_ready = false;
+				continue;
+			}
+			
+			// We can just switch the value.
+			bool* data = var->data;
+			*data = val;
+		}
+	} end_foreach
+	
+	createBitstreamArray(g);
+	
+	// Update the bitstream, cleaning up manually for saving one malloc call.
+	// It takes only one operation to update all.
+	int propIndex = propId%TYPE_STRIDE;
+	bitstream* b = g->m_bitstreamsArray[propIndex];
+	
+	// If the string is NULL, then it is a default value
+	// and we subtract from the bitstream instead of adding.
+	bitstream* c = isDefault ?
+	bitstream_Except(NULL, b, a) :
+	bitstream_Or(NULL, b, a);
+	
+	gcstack_Swap(c, b);
+	bitstream_Delete(b);
+	free(b);
+}
+
 //
 // This method sets variables to an array of double values.
 // It is assumed that members are in the order you got them through the bitstream.
@@ -664,4 +799,8 @@ bool groups_IsString(int propId)
 	return propId/TYPE_STRIDE == TYPE_STRING;
 }
 
+bool groups_IsBool(int propId)
+{
+	return propId/TYPE_STRIDE == TYPE_BOOL;
+}
 

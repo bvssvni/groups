@@ -72,6 +72,12 @@ extern "C" {
 	void groups_SetString
 	(groups* g, bitstream* a, int propId, const char* val);
 	
+	void groups_SetInt
+	(groups* g, bitstream* a, int propId, int val);
+	
+	void groups_SetBool
+	(groups* g, bitstream* a, int propId, bool val);
+	
 	void groups_SetDoubleArray
 	(groups* g, bitstream* a, int propId, int n, const double* values);
 	
@@ -88,6 +94,9 @@ extern "C" {
 	(int propId);
 	
 	bool groups_IsString
+	(int propId);
+	
+	bool groups_IsBool
 	(int propId);
 	
 #endif
