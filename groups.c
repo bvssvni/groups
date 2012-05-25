@@ -593,7 +593,7 @@ void groups_SetBool(groups* g, bitstream* a, int propId, bool val)
 			// then we don't have to do anything.
 			if (!isDefault)
 				// The property does not exist, so we need to add it the default way.
-				member_AddInt(obj, propId, val);
+				member_AddBool(obj, propId, val);
 			continue;
 		}
 		if (index >= 0)
@@ -783,6 +783,196 @@ void groups_SetStringArray
 	// Free the buffer that stored the indices that was not default.
 	free(notDefaultIndices);
 }
+
+void groups_SetIntArray
+(groups* g, bitstream* a, int propId, int n, int* values)
+{
+	// Create member array so we can access members directly.
+	createMemberArray(g);
+	
+	bool isDefault;
+	int i;
+	int index;
+	member* obj;
+	variable* var;
+	int val;
+	
+	// String has a default value in a bitstream,
+	// so we must create a buffer that takes only those who are not default.
+	// Later we convert it to a bitstream and use it for updating.
+	// The maximum size equals the array of values.
+	int* notDefaultIndices = malloc(n*sizeof(int));
+	int notDefaultIndicesSize = 0;
+	
+	// We need an index to read properly from the values.
+	int k = 0;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		
+		val = values[k++];
+		isDefault = -1 == val;
+		
+		// Remember the indices who are not default.
+		if (!isDefault)
+			notDefaultIndices[notDefaultIndicesSize++] = i;
+		
+		index = member_IndexOf(obj, propId);
+		if (index < 0) {
+			// If the string is NULL and the member does not contain it,
+			// then we don't have to do anything.
+			if (!isDefault)
+				// The property does not exist, so we need to add it the default way.
+				member_AddInt(obj, propId, val);
+			continue;
+		}
+		if (index >= 0)
+		{
+			// Since 'member_IndexOf' creates variableArray if not created,
+			// we don't have to make an extra call to do this.
+			var = obj->m_variableArray[index];
+			
+			if (isDefault)
+			{
+				// Remove the item and free the pointer.
+				// Since we are not iterating through the member properties,
+				// but along the members in a group, it is safe.
+				gcstack_free(obj->variables, var);
+				
+				// Tell the member to update the m_variableArray.
+				obj->m_ready = false;
+				continue;
+			}
+			
+			// Free the old string and init with a new one.
+			int* data = var->data;
+			*data = val;
+		}
+	} end_foreach
+	
+	createBitstreamArray(g);
+	
+	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	
+	// Update the bitstream, this time is is a bit messier
+	// so we use the gcstack for safety.
+	// It takes only one operation to update all.
+	int propIndex = propId%TYPE_STRIDE;
+	bitstream* b = g->m_bitstreamsArray[propIndex];
+	
+	bitstream* notDef = bitstream_InitWithIndices
+	(bitstream_AllocWithGC(gc), notDefaultIndicesSize, notDefaultIndices);
+	
+	// These are those who are default.
+	bitstream* isDef = bitstream_Except(gc, a, notDef);
+	
+	// existing + notDef - (input - notDef)
+	bitstream* c = bitstream_Except(gc, bitstream_Or(gc, b, notDef), isDef);
+	
+	gcstack_Swap(c, b);
+	
+	gcstack_Delete(gc);
+	free(gc);
+	
+	// Free the buffer that stored the indices that was not default.
+	free(notDefaultIndices);
+}
+
+void groups_SetBoolArray
+(groups* g, bitstream* a, int propId, int n, bool* values)
+{
+	// Create member array so we can access members directly.
+	createMemberArray(g);
+	
+	bool isDefault;
+	int i;
+	int index;
+	member* obj;
+	variable* var;
+	bool val;
+	
+	// String has a default value in a bitstream,
+	// so we must create a buffer that takes only those who are not default.
+	// Later we convert it to a bitstream and use it for updating.
+	// The maximum size equals the array of values.
+	int* notDefaultIndices = malloc(n*sizeof(int));
+	int notDefaultIndicesSize = 0;
+	
+	// We need an index to read properly from the values.
+	int k = 0;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		
+		val = values[k++];
+		isDefault = 0 == val;
+		
+		// Remember the indices who are not default.
+		if (!isDefault)
+			notDefaultIndices[notDefaultIndicesSize++] = i;
+		
+		index = member_IndexOf(obj, propId);
+		if (index < 0) {
+			// If the string is NULL and the member does not contain it,
+			// then we don't have to do anything.
+			if (!isDefault)
+				// The property does not exist, so we need to add it the default way.
+				member_AddBool(obj, propId, val);
+			continue;
+		}
+		if (index >= 0)
+		{
+			// Since 'member_IndexOf' creates variableArray if not created,
+			// we don't have to make an extra call to do this.
+			var = obj->m_variableArray[index];
+			
+			if (isDefault)
+			{
+				// Remove the item and free the pointer.
+				// Since we are not iterating through the member properties,
+				// but along the members in a group, it is safe.
+				gcstack_free(obj->variables, var);
+				
+				// Tell the member to update the m_variableArray.
+				obj->m_ready = false;
+				continue;
+			}
+			
+			// Free the old string and init with a new one.
+			bool* data = var->data;
+			*data = val;
+		}
+	} end_foreach
+	
+	createBitstreamArray(g);
+	
+	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	
+	// Update the bitstream, this time is is a bit messier
+	// so we use the gcstack for safety.
+	// It takes only one operation to update all.
+	int propIndex = propId%TYPE_STRIDE;
+	bitstream* b = g->m_bitstreamsArray[propIndex];
+	
+	bitstream* notDef = bitstream_InitWithIndices
+	(bitstream_AllocWithGC(gc), notDefaultIndicesSize, notDefaultIndices);
+	
+	// These are those who are default.
+	bitstream* isDef = bitstream_Except(gc, a, notDef);
+	
+	// existing + notDef - (input - notDef)
+	bitstream* c = bitstream_Except(gc, bitstream_Or(gc, b, notDef), isDef);
+	
+	gcstack_Swap(c, b);
+	
+	gcstack_Delete(gc);
+	free(gc);
+	
+	// Free the buffer that stored the indices that was not default.
+	free(notDefaultIndices);
+}
+
+
 
 bool groups_IsDouble(int propId)
 {

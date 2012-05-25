@@ -67,6 +67,12 @@ void member_AddInt(member* obj, int propId, int val)
 	obj->m_ready = false;
 }
 
+void member_AddBool(member* obj, int propId, bool val)
+{
+	variable_InitWithBool(variable_AllocWithGC(obj->variables), propId, val);
+	obj->m_ready = false;
+}
+
 int comparePropertyId(const void* aPtr, const void* bPtr)
 {
 	int* a = (int*)aPtr;

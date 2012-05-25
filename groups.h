@@ -84,6 +84,12 @@ extern "C" {
 	void groups_SetStringArray
 	(groups* g, bitstream* a, int propId, int n, const char** values);
 	
+	void groups_SetIntArray
+	(groups* g, bitstream* a, int propId, int n, int* values);
+	
+	void groups_SetBoolArray
+	(groups* g, bitstream* a, int propId, int n, bool* values);
+	
 	bool groups_IsDefaultVariable
 	(variable* var);
 	

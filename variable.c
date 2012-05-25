@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include "gcstack.h"
+#include "readability.h"
 
 #include "variable.h"
 
@@ -52,6 +53,15 @@ variable* variable_InitWithString(variable* var, int propId, const char* val)
 variable* variable_InitWithInt(variable* var, int propId, int val)
 {
 	int* container = malloc(sizeof(int));
+	*container = val;
+	var->propId = propId;
+	var->data = container;
+	return var;
+}
+
+variable* variable_InitWithBool(variable* var, int propId, bool val)
+{
+	bool* container = malloc(sizeof(bool));
 	*container = val;
 	var->propId = propId;
 	var->data = container;

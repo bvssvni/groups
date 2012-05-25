@@ -15,7 +15,8 @@ extern "C" {
 #define memgroups_variable
 	
 #include "gcstack.h"
-
+#include "readability.h"
+	
 	typedef struct variable {
 		gcstack_item gc;
 		int propId;
@@ -36,6 +37,9 @@ extern "C" {
 	
 	variable* variable_InitWithInt
 	(variable* var, int propId, int val);
+	
+	variable* variable_InitWithBool
+	(variable* var, int propId, bool val);
 	
 #endif
 	

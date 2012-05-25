@@ -43,6 +43,12 @@ typedef struct member {
 	void member_AddInt
 	(member* obj, int propId, int val);
 	
+	void member_AddBool
+	(member* obj, int propId, bool val);
+	
+	//
+	// Uses binary search to find the index of a property id.
+	//
 	int member_IndexOf
 	(member* obj, int propId);
 	
