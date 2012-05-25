@@ -76,7 +76,7 @@ void		sorting_Sort
  int end, 
  int stride, 
  void*t,
- int(*compare)(void*a,void*b)
+ int (*compare) (void const* a,void const* b)
 );
 
 //
@@ -98,8 +98,8 @@ void		sorting_Sort
 int			sorting_SearchBinary
 (
  int n, 
- void const** arr, 
- void const* name,
+ void const* arr[], 
+ void const* data,
  int(*compare)(void const*a,void const*b)
 );
 

@@ -136,8 +136,14 @@ gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*free)(void* p))
 	gcstack_item* item = malloc(size);
 	item->free = free;
 	
-	if (gc == NULL) return item;
-	
+	if (gc == NULL)
+	{
+		// Set next and previous to NULL since it is outside any list.
+		item->next = NULL;
+		item->previous = NULL;
+		return item;
+	}
+		
 	gcstack_item* root = gc->root;
 	gcstack_item* rootNext = root->next;
 	

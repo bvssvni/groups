@@ -48,6 +48,7 @@ extern "C" {
 #include "gcstack.h"
 #include "bitstream.h"
 #include "sorting.h"
+#include "groups.h"
 #include "readability.h"
 
 #ifdef __cplusplus
