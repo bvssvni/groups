@@ -14,8 +14,8 @@
 #include "gcstack.h"
 #include "bitstream.h"
 #include "sorting.h"
-#include "readability.h"
 #include "property.h"
+#include "readability.h"
 
 #include "groups.h"
 
@@ -375,6 +375,8 @@ int groups_AddMember(groups* g, member* obj)
 	
 	gcstack_Delete(gc);
 	free(gc); 
+	
+	g->m_ready = false;
 	
 	return id;
 }
@@ -970,6 +972,138 @@ void groups_SetBoolArray
 	
 	// Free the buffer that stored the indices that was not default.
 	free(notDefaultIndices);
+}
+
+double* groups_GetDoubleArray
+(groups* g, const bitstream* a, int propId)
+{
+	// Make sure we have a table with pointers to members.
+	createMemberArray(g);
+	
+	int size = bitstream_Size(a);
+	double* arr = malloc(sizeof(double)*size);
+	
+	int i;
+	member* obj;
+	int index;
+	
+	int k = 0;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		index = member_IndexOf(obj, propId);
+		arr[k++] = index < 0 ? 0.0 : *((double*)obj->m_variableArray[index]->data);
+	} end_foreach
+	
+	return arr;
+}
+
+int* groups_GetIntArray
+(groups* g, const bitstream* a, int propId)
+{
+	// Make sure we have a table with pointers to members.
+	createMemberArray(g);
+	
+	int size = bitstream_Size(a);
+	int* arr = malloc(sizeof(int)*size);
+	
+	int i;
+	member* obj;
+	int index;
+	
+	int k = 0;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		index = member_IndexOf(obj, propId);
+		arr[k++] = index < 0 ? -1 : *((int*)obj->m_variableArray[index]->data);
+	} end_foreach
+	
+	return arr;
+}
+
+bool* groups_GetBoolArray
+(groups* g, const bitstream* a, int propId)
+{
+	// Make sure we have a table with pointers to members.
+	createMemberArray(g);
+	
+	int size = bitstream_Size(a);
+	bool* arr = malloc(sizeof(bool)*size);
+	
+	int i;
+	member* obj;
+	int index;
+	
+	int k = 0;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		index = member_IndexOf(obj, propId);
+		arr[k++] = index < 0 ? false : *((bool*)obj->m_variableArray[index]->data);
+	} end_foreach
+	
+	return arr;
+}
+
+const char** groups_GetStringArray
+(groups* g, const bitstream* a, int propId)
+{
+	// Make sure we have a table with pointers to members.
+	createMemberArray(g);
+	
+	int size = bitstream_Size(a);
+	const char** arr = malloc(sizeof(string)*size);
+	
+	int i;
+	member* obj;
+	int index;
+	
+	int k = 0;
+	foreach (a) {
+		i = _pos(a);
+		obj = g->m_memberArray[i];
+		index = member_IndexOf(obj, propId);
+		arr[k++] = index < 0 ? NULL : (const char*)obj->m_variableArray[index]->data;
+	} end_foreach
+	
+	return arr;
+}
+
+const char* groups_PropertyNameById(const groups* g, int propId)
+{
+	property* prop;
+	gcstack_item* cursor = g->properties->root->next;
+	for (; cursor != NULL; cursor = cursor->next)
+	{
+		prop = (property*)cursor;
+		if (prop->propId == propId) return prop->name;
+	}
+	return NULL;
+}
+
+void groups_PrintMember(const groups* g, const member* obj)
+{
+	variable* var;
+	gcstack_item* cursor;
+	cursor = obj->variables->root->next;
+	int propId, type;
+	for (; cursor != NULL; cursor = cursor->next)
+	{
+		var = (variable*)cursor;
+		propId = var->propId;
+		type = propId/TYPE_STRIDE;
+		const char* name = groups_PropertyNameById(g, propId);
+		if (type == TYPE_DOUBLE)
+			printf("%s:%f ", name, *(double*)var->data);
+		else if (type == TYPE_INT)
+			printf("%s:%i ", name, *(int*)var->data);
+		else if (type == TYPE_BOOL)
+			printf("%s:%i ", name, *(bool*)var->data);
+		else if (type == TYPE_STRING)
+			printf("%s:%s ", name, (char*)var->data);
+	}
+	printf("\r\n");
 }
 
 bool groups_IsUnknown(int propId)

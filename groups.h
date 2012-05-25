@@ -90,6 +90,24 @@ extern "C" {
 	void groups_SetBoolArray
 	(groups* g, const bitstream* a, int propId, int n, const bool* values);
 	
+	double* groups_GetDoubleArray
+	(groups* g, const bitstream* a, int propId);
+	
+	int* groups_GetIntArray
+	(groups* g, const bitstream* a, int propId);
+	
+	bool* groups_GetBoolArray
+	(groups* g, const bitstream* a, int propId);
+	
+	const char** groups_GetStringArray
+	(groups* g, const bitstream* a, int propId);
+	
+	const char* groups_PropertyNameById
+	(const groups* g, int propId);
+	
+	void groups_PrintMember
+	(const groups* g, const member* obj);
+	
 	bool groups_IsDefaultVariable
 	(const variable* var);
 	
