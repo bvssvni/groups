@@ -33,6 +33,7 @@
  either expressed or implied, of the FreeBSD Project.
  */
 
+#include <string.h>
 #include "gcstack.h"
 #include "sorting.h"
 #include "readability.h"
@@ -72,12 +73,9 @@
 //	it copies the bytes when swapping.
 void swapData(byte*t, byte*a, byte*b, int stride)
 {
-	for (int i = 0; i < stride; i++)
-	{
-		t[i] = a[i];
-		a[i] = b[i];
-		b[i] = t[i];
-	}
+	memcpy(t, a, stride);
+	memcpy(a, b, stride);
+	memcpy(b, t, stride);
 	
 	// Swap the items at the gc stack to avoid damage.
 	// This results that the order which a and b will be

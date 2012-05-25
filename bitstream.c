@@ -35,6 +35,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "gcstack.h"
 #include "bitstream.h"
@@ -101,8 +102,7 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 	
 	a->length = size;
 	a->pointer = malloc(sizeof(int)*size);
-	for (int i = 0; i < size; i++)
-		a->pointer[i] = vals[i];
+	memcpy((void*)vals, (void*)a, size*sizeof(int));
 	return a;
 }
 
@@ -122,10 +122,10 @@ bitstream* bitstream_DirectJoin(gcstack* gc,
 	bitstream* arr = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
 	arr->length = a->length + b->length;
 	arr->pointer = malloc(sizeof(int)*arr->length);
-	for (int i = 0; i < a->length; i++)
-		arr->pointer[i] = a->pointer[i];
-	for (int i = 0; i < b->length; i++)
-		arr->pointer[i+a->length] = b->pointer[i];
+	
+	memcpy((void*)arr->pointer, (void*)a->pointer, a->length*sizeof(int));
+	memcpy((void*)(arr->pointer+a->length), (void*)b->pointer, b->length*sizeof(int));
+	
 	return arr;
 }
 
@@ -133,8 +133,9 @@ bitstream* bitstream_Clone(gcstack* gc, bitstream const* a) {
 	bitstream* b = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
 	b->length = a->length;
 	b->pointer = malloc(sizeof(int)*b->length);
-	for (int i = 0; i < a->length; i++)
-		b->pointer[i] = a->pointer[i];
+	
+	memcpy((void*)b->pointer, (void*)a->pointer, a->length*sizeof(int));
+	
 	return b;
 }
 
