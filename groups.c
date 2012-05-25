@@ -266,7 +266,53 @@ int groups_AddMember(groups* g, member* obj)
 	int id = g->members->length;
 	gcstack_Push(g->members, obj);
 	
-	// TODO: Update bitstreams.
+	// If the member contains no variables, skip the advanced stuff.
+	if (obj->variables->length == 0)
+		return id;
+	
+	// Prepare bitstreams to be searched.
+	createBitstreamArray(g);
+	
+	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	
+	// Update bitstreams.
+	gcstack_item* cursor = obj->variables->root->next;
+	bitstream* a;
+	bitstream* b;
+	bitstream* c;
+	b = bitstream_InitWithValues
+	(bitstream_AllocWithGC(gc), 2, (const int[]){id, id+1});
+	int propId = 0;
+	int index = 0;
+	
+	// Go through the bitstreams and update those who is contained
+	while (cursor != NULL)
+	{
+		variable* var = (variable*)cursor;
+		propId = var->propId;
+		
+		index = propId%TYPE_STRIDE;
+		a = g->m_bitstreamsArray[index];
+		
+		c = bitstream_Or(gc, a, b);
+		
+		// Switch stacks so the new one is kept.
+		gcstack_Swap(c, a);
+		
+		cursor = cursor->next;
+	}
+	
+	gcstack_Delete(gc);
+	free(gc);
+	
+	/*
+	// TEST
+	if (c->gc.free != NULL)
+	{
+		printf("c->gc.free != NULL\r\n");
+		exit(1);
+	}
+	 */
 	
 	return id;
 }

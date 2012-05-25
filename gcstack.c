@@ -165,12 +165,22 @@ void gcstack_Swap(void* aPtr, void* bPtr)
 {
 	gcstack_item* a = (gcstack_item*)aPtr;
 	gcstack_item* b = (gcstack_item*)bPtr;
-	gcstack_item* prev = a->previous;
-	gcstack_item* next = a->next;
-	a->previous = b->previous;
-	a->next = b->next;
-	b->previous = prev;
-	b->next = next;
+	gcstack_item* prevA = a->previous;
+	gcstack_item* nextA = a->next;
+	gcstack_item* prevB = b->previous;
+	gcstack_item* nextB = b->next;
+	
+	a->previous = prevB;
+	a->next = nextB;
+	
+	b->previous = prevA;
+	b->next = nextA;
+	
+	if (prevA != NULL) prevA->next = b;
+	if (nextA != NULL) nextA->previous = b;
+	
+	if (prevB != NULL) prevB->next = a;
+	if (nextB != NULL) nextB->previous = a;
 }
 
 void gcstack_Pop(gcstack* gc, void* p)

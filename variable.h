@@ -29,7 +29,7 @@ extern "C" {
 	(gcstack* gc);
 	
 	variable* variable_InitWithDouble
-	(variable* var, double val);
+	(variable* var, int propId, double val);
 	
 #endif
 	

@@ -51,7 +51,7 @@ member* member_Init(member* obj)
 
 void member_AddDouble(member* obj, int propId, double val)
 {
-	variable_InitWithDouble(variable_AllocWithGC(obj->variables), val);
+	variable_InitWithDouble(variable_AllocWithGC(obj->variables), propId, val);
 	obj->m_ready = false;
 }
 

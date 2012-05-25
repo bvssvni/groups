@@ -22,6 +22,7 @@ void variable_Delete(void* p)
 		free(var->data);
 		var->data = NULL;
 	}
+	var->propId = -1;
 }
 
 variable* variable_AllocWithGC(gcstack* gc)
@@ -29,10 +30,11 @@ variable* variable_AllocWithGC(gcstack* gc)
 	return (variable*)gcstack_malloc(gc, sizeof(variable), variable_Delete);
 }
 
-variable* variable_InitWithDouble(variable* var, double val)
+variable* variable_InitWithDouble(variable* var, int propId, double val)
 {
 	double* container = malloc(sizeof(double));
 	*container = val;
+	var->propId = propId;
 	var->data = container;
 	return var;
 }
