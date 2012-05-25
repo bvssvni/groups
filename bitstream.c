@@ -102,7 +102,7 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 	
 	a->length = size;
 	a->pointer = malloc(sizeof(int)*size);
-	memcpy((void*)vals, (void*)a, size*sizeof(int));
+	memcpy((void*)a->pointer, (void*)vals, size*sizeof(int));
 	return a;
 }
 
