@@ -71,6 +71,14 @@ bitstream*	bitstream_InitWithSize
 //
 bitstream*	bitstream_InitWithValues
 (bitstream* a, int size, int const vals[]);
+	
+//
+//			Sometimes you have an array of indices and you want to create
+//			a bitstream from it. The indices that increment with 1 will
+//			be merged into same block in the bitstream.
+//
+bitstream* bitstream_InitWithIndices
+(bitstream* a, int size, int const vals[]);
 
 //
 //			Cleans up the structure within a bistream.

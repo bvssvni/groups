@@ -93,14 +93,12 @@ void sortVariables(member* obj)
 	obj->m_ready = true;
 }
 
-bool member_Contains(member* obj, int propId)
+int member_IndexOf(member* obj, int propId)
 {
 	sortVariables(obj);
 	
 	int length = obj->variables->length;
 	variable** vars = obj->m_variableArray;
-	int index = sorting_SearchBinary(length, (void*)vars, &propId, comparePropertyId);
-	return index < 0 ? false : true;
+	return sorting_SearchBinary(length, (void*)vars, &propId, comparePropertyId);
 }
-
 

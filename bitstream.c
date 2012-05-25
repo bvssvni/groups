@@ -70,7 +70,7 @@ void bitstream_Delete(void* p) {
 	
 	bitstream* a = (bitstream*)p;
 	
-	if (a->length > 0 && a->pointer != NULL)
+	if (a->pointer != NULL)
 		free(a->pointer);
 	a->pointer = NULL;
 	
@@ -105,6 +105,73 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 	a->length = size;
 	a->pointer = malloc(sizeof(int)*size);
 	memcpy((void*)a->pointer, (void*)vals, size*sizeof(int));
+	return a;
+}
+
+int countWithIndices(int size, int const vals[])
+{
+	// Property list = new Property(x.Length*2);
+	int count = 0;
+	int expected = 0;
+	for (int i = 0; i < size; i++)
+	{
+		if (i > 0 && vals[i] != expected)
+			// list.Add(expected);
+			count++;
+		else if (i > 0)
+		{
+			expected = vals[i]+1;
+			continue;
+		}
+		
+		// list.Add(x[i]);
+		count++;
+		
+		expected = vals[i]+1;
+	}
+	if ((count%2) != 0)
+	{
+		// Add last.
+		// list.Add(x[x.Length-1]+1);
+		count++;
+	}
+	// return list;
+	return count;
+}
+
+int* createArrayFromIndices(int count, int size, int const vals[])
+{
+	int* list = malloc(sizeof(int*)*count);
+	int expected = 0;
+	int k = 0;
+	for (int i = 0; i < size; i++)
+	{
+		if (i > 0 && vals[i] != expected)
+			list[k++] = expected;
+		else if (i > 0)
+		{
+			expected = vals[i]+1;
+			continue;
+		}
+		
+		list[k++] = vals[i];
+		
+		expected = vals[i]+1;
+	}
+	if ((k%2) != 0)
+	{
+		// Add last.
+		list[k++] = vals[size-1]+1;
+	}
+	return list;
+}
+
+bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
+{
+	bitstream_references++;
+	
+	a->length = countWithIndices(size, vals);
+	a->pointer = createArrayFromIndices(a->length, size, vals);
 	return a;
 }
 

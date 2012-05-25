@@ -35,7 +35,7 @@ extern "C" {
 		// Member data.
 		gcstack* members;
 		bool m_membersReady;
-		gcstack** m_memberArray;
+		member** m_memberArray;
 		bitstream* m_deletedMembers;
 	} groups;
 	
@@ -65,6 +65,18 @@ extern "C" {
 	
 	int groups_AddMember
 	(groups* g, member* obj);
+	
+	void groups_SetDouble
+	(groups* g, bitstream* a, int propId, double val);
+	
+	void groups_SetString
+	(groups* g, bitstream* a, int propId, const char* val);
+	
+	void groups_SetDoubleArray
+	(groups* g, bitstream* a, int propId, int n, const double* values);
+	
+	void groups_SetStringArray
+	(groups* g, bitstream* a, int propId, int n, const char** values);
 	
 	bool groups_IsDefaultVariable
 	(variable* var);

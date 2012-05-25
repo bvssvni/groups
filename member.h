@@ -43,7 +43,7 @@ typedef struct member {
 	void member_AddInt
 	(member* obj, int propId, int val);
 	
-	bool member_Contains
+	int member_IndexOf
 	(member* obj, int propId);
 	
 #endif
