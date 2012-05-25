@@ -73,6 +73,8 @@ void bitstream_Delete(void* p) {
 	if (a->length > 0 && a->pointer != NULL)
 		free(a->pointer);
 	a->pointer = NULL;
+	
+	a->length = 0;
 }
 
 bitstream* bitstream_AllocWithGC(gcstack* gc) {

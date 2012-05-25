@@ -14,30 +14,32 @@ extern "C" {
 #ifndef memgroups_groups
 #define memgroups_groups
 	
-	typedef struct groups groups;
-	struct groups {
+#include "gcstack.h"
+#include "bitstream.h"
+#include "readability.h"
+	
+	typedef struct groups {
 		gcstack_item gc;
+		
+		// Bitstream data.
 		gcstack* bitstreams;
+		bool m_ready;
+		bitstream** m_bitstreamsArray;
+		
+		// Property data.
 		gcstack* properties;
 		bool m_sorted;
 		gcstack_item** m_sortedPropertyItems;
-	};
+		
+		// Member data.
+		gcstack* members;
+		bool m_membersReady;
+		gcstack** m_memberArray;
+		bitstream* m_deletedMembers;
+	} groups;
 	
-	typedef struct property property;
-	struct property {
-		gcstack_item gc;
-		char* name;
-		int propId;
-	};
-	
-	void property_Delete
-	(void* p);
-	
-	property* property_AllocWithGC
-	(gcstack* gc);
-	
-	property* property_InitWithNameAndId
-	(property* prop, char const* name, int propId);
+	int groups_AddProperty
+	(groups* g, const void* name, const void* propType);
 	
 	void groups_Delete
 	(void* p);
@@ -48,11 +50,16 @@ extern "C" {
 	groups* groups_Init
 	(groups* g);
 	
-	int groups_AddProperty
-	(groups* g, char const* name);
-	
 	int groups_GetProperty
 	(groups* g, char const* name);
+	
+	bitstream* groups_GetBitstream
+	(groups* g, int propId);
+	
+	void groups_RemoveProperty
+	(groups* g, int propId);
+	
+	int compareStringVSProperty(const void* a, const void* b);
 	
 #endif
 	
