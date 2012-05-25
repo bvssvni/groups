@@ -86,6 +86,8 @@ void		bitstream_Delete
 
 //
 //			Prints out the bitstream to the console.
+//			A bitstream is logically divided into blocks
+//			a=>b means the block starts at a and ends right before b.
 //
 void		bitstream_Print
 (bitstream const* a);

@@ -109,11 +109,10 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 void bitstream_Print(bitstream const*a)
 {
 	int length = a->length-1;
-	int start = a->pointer[0];
 	for (int i = 0; i < length; i += 2) {
-		int p1 = a->pointer[i]-start;
-		int p2 = a->pointer[i+1]-start;
-		printf("%i+%i", p1, p2-p1);
+		int p1 = a->pointer[i];
+		int p2 = a->pointer[i+1];
+		printf("%i=>%i ", p1, p2);
 	}
 	printf("\r\n");
 }
