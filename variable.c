@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gcstack.h"
 
@@ -33,6 +34,24 @@ variable* variable_AllocWithGC(gcstack* gc)
 variable* variable_InitWithDouble(variable* var, int propId, double val)
 {
 	double* container = malloc(sizeof(double));
+	*container = val;
+	var->propId = propId;
+	var->data = container;
+	return var;
+}
+
+variable* variable_InitWithString(variable* var, int propId, const char* val)
+{
+	char* str = malloc(sizeof(char)*strlen(val));
+	strcpy(str, val);
+	var->propId = propId;
+	var->data = str;
+	return var;
+}
+
+variable* variable_InitWithInt(variable* var, int propId, int val)
+{
+	int* container = malloc(sizeof(int));
 	*container = val;
 	var->propId = propId;
 	var->data = container;

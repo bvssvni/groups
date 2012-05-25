@@ -66,6 +66,9 @@ extern "C" {
 	int groups_AddMember
 	(groups* g, member* obj);
 	
+	bool groups_IsDefaultVariable
+	(variable* var);
+	
 	bool groups_IsDouble
 	(int propId);
 	

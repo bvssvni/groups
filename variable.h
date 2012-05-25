@@ -31,6 +31,12 @@ extern "C" {
 	variable* variable_InitWithDouble
 	(variable* var, int propId, double val);
 	
+	variable* variable_InitWithString
+	(variable* var, int propId, const char* val);
+	
+	variable* variable_InitWithInt
+	(variable* var, int propId, int val);
+	
 #endif
 	
 #ifdef __cplusplus

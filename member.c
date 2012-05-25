@@ -55,6 +55,18 @@ void member_AddDouble(member* obj, int propId, double val)
 	obj->m_ready = false;
 }
 
+void member_AddString(member* obj, int propId, char const* val)
+{
+	variable_InitWithString(variable_AllocWithGC(obj->variables), propId, val);
+	obj->m_ready = false;
+}
+
+void member_AddInt(member* obj, int propId, int val)
+{
+	variable_InitWithInt(variable_AllocWithGC(obj->variables), propId, val);
+	obj->m_ready = false;
+}
+
 int comparePropertyId(const void* aPtr, const void* bPtr)
 {
 	int* a = (int*)aPtr;

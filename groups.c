@@ -261,6 +261,25 @@ void groups_RemoveProperty(groups* g, int propId)
 	gcstack_free(g->properties, prop);
 }
 
+bool groups_IsDefaultVariable(variable* var)
+{
+	int type = var->propId/TYPE_STRIDE;
+	if (type == TYPE_DOUBLE) return false;
+	else if (type == TYPE_INT)
+	{
+		int* val = (int*)var->data;
+		if (*val == -1) return true;
+	}
+	else if (type == TYPE_STRING)
+	{
+		char* val = (char*)var->data;
+		if (val == NULL) return true;
+	}
+	
+	if (var->data == NULL) return true;
+	return false;
+}
+
 int groups_AddMember(groups* g, member* obj)
 {
 	int id = g->members->length;
@@ -286,9 +305,13 @@ int groups_AddMember(groups* g, member* obj)
 	int index = 0;
 	
 	// Go through the bitstreams and update those who is contained
-	while (cursor != NULL)
+	for (; cursor != NULL; cursor = cursor->next)
 	{
 		variable* var = (variable*)cursor;
+		
+		// If the variable is default value, we don't add it to the bitstream.
+		if (groups_IsDefaultVariable(var)) continue;
+		
 		propId = var->propId;
 		
 		index = propId%TYPE_STRIDE;
@@ -298,21 +321,10 @@ int groups_AddMember(groups* g, member* obj)
 		
 		// Switch stacks so the new one is kept.
 		gcstack_Swap(c, a);
-		
-		cursor = cursor->next;
 	}
 	
 	gcstack_Delete(gc);
-	free(gc);
-	
-	/*
-	// TEST
-	if (c->gc.free != NULL)
-	{
-		printf("c->gc.free != NULL\r\n");
-		exit(1);
-	}
-	 */
+	free(gc); 
 	
 	return id;
 }

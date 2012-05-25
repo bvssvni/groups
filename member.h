@@ -37,6 +37,12 @@ typedef struct member {
 	void member_AddDouble
 	(member* obj, int propId, double val);
 	
+	void member_AddString
+	(member* obj, int propId, char const* val);
+	
+	void member_AddInt
+	(member* obj, int propId, int val);
+	
 	bool member_Contains
 	(member* obj, int propId);
 	
