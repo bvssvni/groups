@@ -306,7 +306,7 @@ void groups_RemoveProperty(groups* g, int propId)
 	gcstack_free(g->properties, prop);
 }
 
-bool groups_IsDefaultVariable(variable* var)
+bool groups_IsDefaultVariable(const variable* var)
 {
 	int type = var->propId/TYPE_STRIDE;
 	if (type == TYPE_DOUBLE) return false;
@@ -394,7 +394,7 @@ void createMemberArray(groups* g)
 //
 // This method sets all variables within a bitstream to a value.
 //
-void groups_SetDouble(groups* g, bitstream* a, int propId, double val)
+void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -443,7 +443,7 @@ void groups_SetDouble(groups* g, bitstream* a, int propId, double val)
 //
 // This method sets all variables within a bitstream to a value.
 //
-void groups_SetString(groups* g, bitstream* a, int propId, const char* val)
+void groups_SetString(groups* g, const bitstream* a, int propId, const char* val)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -508,7 +508,7 @@ void groups_SetString(groups* g, bitstream* a, int propId, const char* val)
 	free(b);
 }
 
-void groups_SetInt(groups* g, bitstream* a, int propId, int val)
+void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -573,7 +573,7 @@ void groups_SetInt(groups* g, bitstream* a, int propId, int val)
 	free(b);
 }
 
-void groups_SetBool(groups* g, bitstream* a, int propId, bool val)
+void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -642,7 +642,7 @@ void groups_SetBool(groups* g, bitstream* a, int propId, bool val)
 // This method sets variables to an array of double values.
 // It is assumed that members are in the order you got them through the bitstream.
 //
-void groups_SetDoubleArray(groups* g, bitstream* a, int propId, int n, const double* values)
+void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, const double* values)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -691,7 +691,7 @@ void groups_SetDoubleArray(groups* g, bitstream* a, int propId, int n, const dou
 }
 
 void groups_SetStringArray
-(groups* g, bitstream* a, int propId, int n, const char** values)
+(groups* g, const bitstream* a, int propId, int n, const char** values)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -785,7 +785,7 @@ void groups_SetStringArray
 }
 
 void groups_SetIntArray
-(groups* g, bitstream* a, int propId, int n, int* values)
+(groups* g, const bitstream* a, int propId, int n, const int* values)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -879,7 +879,7 @@ void groups_SetIntArray
 }
 
 void groups_SetBoolArray
-(groups* g, bitstream* a, int propId, int n, bool* values)
+(groups* g, const bitstream* a, int propId, int n, const bool* values)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -972,7 +972,10 @@ void groups_SetBoolArray
 	free(notDefaultIndices);
 }
 
-
+bool groups_IsUnknown(int propId)
+{
+	return propId/TYPE_STRIDE == TYPE_UNKNOWN;
+}
 
 bool groups_IsDouble(int propId)
 {

@@ -67,31 +67,37 @@ extern "C" {
 	(groups* g, member* obj);
 	
 	void groups_SetDouble
-	(groups* g, bitstream* a, int propId, double val);
+	(groups* g, const bitstream* a, int propId, double val);
 	
 	void groups_SetString
-	(groups* g, bitstream* a, int propId, const char* val);
+	(groups* g, const bitstream* a, int propId, const char* val);
 	
 	void groups_SetInt
-	(groups* g, bitstream* a, int propId, int val);
+	(groups* g, const bitstream* a, int propId, int val);
 	
 	void groups_SetBool
-	(groups* g, bitstream* a, int propId, bool val);
+	(groups* g, const bitstream* a, int propId, bool val);
 	
 	void groups_SetDoubleArray
-	(groups* g, bitstream* a, int propId, int n, const double* values);
+	(groups* g, const bitstream* a, int propId, int n, const double* values);
 	
 	void groups_SetStringArray
-	(groups* g, bitstream* a, int propId, int n, const char** values);
+	(groups* g, const bitstream* a, int propId, int n, const char** values);
 	
 	void groups_SetIntArray
-	(groups* g, bitstream* a, int propId, int n, int* values);
+	(groups* g, const bitstream* a, int propId, int n, const int* values);
 	
 	void groups_SetBoolArray
-	(groups* g, bitstream* a, int propId, int n, bool* values);
+	(groups* g, const bitstream* a, int propId, int n, const bool* values);
 	
 	bool groups_IsDefaultVariable
-	(variable* var);
+	(const variable* var);
+	
+	//
+	// Returns true if the property is of an unknown data type.
+	//
+	bool groups_IsUnknown
+	(int propId);
 	
 	bool groups_IsDouble
 	(int propId);
