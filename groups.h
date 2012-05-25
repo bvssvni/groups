@@ -16,6 +16,7 @@ extern "C" {
 	
 #include "gcstack.h"
 #include "bitstream.h"
+#include "member.h"
 #include "readability.h"
 	
 	typedef struct groups {
@@ -59,7 +60,20 @@ extern "C" {
 	void groups_RemoveProperty
 	(groups* g, int propId);
 	
-	int compareStringVSProperty(const void* a, const void* b);
+	int compareStringVSProperty
+	(const void* a, const void* b);
+	
+	int groups_AddMember
+	(groups* g, member* obj);
+	
+	bool groups_IsDouble
+	(int propId);
+	
+	bool groups_IsInt
+	(int propId);
+	
+	bool groups_IsString
+	(int propId);
 	
 #endif
 	

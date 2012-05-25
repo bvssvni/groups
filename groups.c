@@ -260,3 +260,28 @@ void groups_RemoveProperty(groups* g, int propId)
 	// Delete it, including freeing the pointer.
 	gcstack_free(g->properties, prop);
 }
+
+int groups_AddMember(groups* g, member* obj)
+{
+	int id = g->members->length;
+	gcstack_Push(g->members, obj);
+	
+	// TODO: Update bitstreams.
+	
+	return id;
+}
+
+bool groups_IsDouble(int propId)
+{
+	return propId/TYPE_STRIDE == TYPE_DOUBLE;
+}
+
+bool groups_IsInt(int propId)
+{
+	return propId/TYPE_STRIDE == TYPE_INT;
+}
+
+bool groups_IsString(int propId)
+{
+	return propId/TYPE_STRIDE == TYPE_STRING;
+}
