@@ -8,6 +8,29 @@ by Sven Nilsen 2012.
 
 Groups is a library written in C for group-oriented programming.
 
+Example:
+We want to display a list of active players with scores during Pause menu on a game. All the game data is stored in one place called 'Groups' which we can query using a 'bitstream'. A bitstream represents any group of objects and can be combined with other bitstreams. There is no classes, but a bitstream for each property. In OO programming, we would need to combine classes, type check, null check, for-loops, if-blocks and call to different objects. Group-oriented programming allows all this to be replaced with a single line ( pseudo code ):
+
+ActivePlayer = ( Connected * Ready + AIBot - Inactive ) * Name * Score
+
+Then we extract an array for Name and Score using property ids and we can do the drawing to the screen. Done!
+
+Operators you use in group-oriented programming:
+Pseudo	Boolean		memgroups.h
+
++	OR		bitstream_Or
+-	EXCEPT		bitstream_Except
+*	AND		bitstream_And
+
+The benefits of Groups in C is:
+-	Excellent for development on mobile platforms
+-	All application data accessible in one place
+-	Faster-than-for-loop way of accessesing data
+-	Boolean operators (OR, EXCEPT, AND)
+-	Add properties at runtime to objects
+-	Bitstream (for Boolean operations on indices)
+-	GCStack (stack based garbage collector)
+
 To learn more aboug group-oriented programming, skip to "What is group-oriented programming".
 
 CONTENT
@@ -19,13 +42,13 @@ This library contains:
 - BinarySearch for looking up items.
 - Groups for storing and retrieving data. (See GROUPS STORAGE)
 
-Because bitstreams gets messy with pointers, I created a garbage collector stack that cleans up all objects created after a certain level, unless they have been popped from the stack. You can extract pointers from the stack and sort it with the QuickSort method. The sorting uses a special Swap method that swaps the items first byte for byte and then swaps them on the stack. This means you can use a gcstack for general data management that are fast, cleans itself and can be sorted in any order.
+Because bitstreams gets messy with pointers for complex formulas, this library contains a garbage collector stack that cleans up all objects created after a certain level, unless they have been popped from the stack. You can extract pointers from the stack and sort it with the QuickSort method. The sorting uses a special Swap method that swaps the items first byte for byte and then swaps them on the stack. This means you can use a gcstack for general data management that are fast, cleans itself and can be sorted in any order.
 
 WHAT IS GROUP-ORIENTED PROGRAMMING?
 
 Group oriented programming is different from object-oriented programming because you use techniques to optimize search for data in groups instead of looking for a specific object. The best tool for group searching is something called "bitstreams", which allows you to look up a group of objects faster than checking each of them. Bitstreams can be used, theoretically, to solve any problem.
 
-In object-orientation, you start with a class and then fill in the properties you associate with the object. The problem is that if you need to add a property which the rest of objects of same type doesn't have, then you need to inherit the object and then add it. This is to keep algorithms from sucking in data that will crash the program. Before each task, you have to browse the application structure and operate on a specific part. When the application grows, there is an increasing amount of exceptions to the initial design.
+In object-orientation it is very hard to know what kind of data structure you need at the start of the project. A lot of time in the development process is used to figure out the architecture. If you have a lot of data and change the model, then you can destroy access to that data. If you open up a new document in an old version, you might destroy the data. Object-oriented programming has usually a lot of type safety, but not much data safety for the whole business process. That is why databases are often separated from the software. Databases are slow, dependent on platform and not suitable for small applications. If you write small applications for mobile platform where battery and speed is significant, then you should consider using group-oriented programming.
 
 Group-orientation is like object-orientation except for the classes, pluss that each property is tracked with a bitstream. If you need a new type of objects, you just add the property you need to make them special. When the algorithms want data, they combine properties together represented as bitstreams. When we think of a 'chair', we can identify it with a physical shape, but when we think of 'furniture' this is something we tag to the 'chair' instead of having a rule of how to identify it. Because properties can both be recognized and created out of thin air, we can say that any way to combine a collection itself is a property, because it can be tagged as a flag on each member.
 
