@@ -50,7 +50,7 @@ extern "C" {
 		
 		// Bitstream data.
 		gcstack* bitstreams;
-		bool m_ready;
+		bool m_bitstreamsReady;
 		bitstream** m_bitstreamsArray;
 		
 		// Property data.
@@ -65,9 +65,6 @@ extern "C" {
 		bitstream* m_deletedMembers;
 	} groups;
 	
-	int groups_AddProperty
-	(groups* g, const void* name, const void* propType);
-	
 	void groups_Delete
 	(void* p);
 	
@@ -77,6 +74,9 @@ extern "C" {
 	groups* groups_Init
 	(groups* g);
 	
+	int groups_AddProperty
+	(groups* g, const void* name, const void* propType);
+	
 	int groups_GetProperty
 	(groups* g, char const* name);
 	
@@ -85,6 +85,9 @@ extern "C" {
 	
 	void groups_RemoveProperty
 	(groups* g, int propId);
+	
+	void groups_RemoveMember
+	(groups* g, int index);
 	
 	int compareStringVSProperty
 	(const void* a, const void* b);

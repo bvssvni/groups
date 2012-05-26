@@ -84,22 +84,30 @@ gcstack_item* gcstack_malloc
 gcstack* gcstack_Init
 (gcstack* gc);
 
-int	gcstack_Start
+gcstack_item* gcstack_Start
 (gcstack const* gc);
 
 void gcstack_End
-(gcstack* gc, int level);
+(gcstack* gc, gcstack_item* start);
 
 void gcstack_Pop
 (gcstack* gc, void* p);
 
+// Pushes an item on the stack.
 void gcstack_Push
 (gcstack* gc, void* p);
 
 // Create an array of items that are on the stack.
+// In a stack the first item has usually the last index.
+// If you need the array to be in the same order as incremental index,
+// Use the 'gcstack_CreateItemsArrayBackward' function instead.
 // This array can be sorted with sorting_Sort.
 gcstack_item** gcstack_CreateItemsArray
 (gcstack const* gc);
+
+// Create an array of items that are on the stack backward.
+// This array can be sorted with sorting_Sort.
+gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
 
 // Print out a list of items on the stack to command window.
 void gcstack_Print

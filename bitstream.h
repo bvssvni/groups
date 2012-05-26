@@ -191,6 +191,21 @@ int* 		bitstream_ArrayPointer(bitstream const* a);
 //
 int			bitstream_NumberOfBlocks(bitstream const* a);
 
+//
+//			Removes and returns an index from the beginning of the bitstream.
+//			It is fast within a single block, but require extra operations
+//			at the end of each block.
+//			Don't use it on inverted bitstreams.
+//
+int			bitstream_PopStart(bitstream* a);
+
+//
+//			Removes and returns an index from the end of the bitstream.
+//			This is faster than PopStart, because no need to move data.
+//			Don't use it on inverted bitstreams.
+//
+int			bitstream_PopEnd(bitstream* a);
+	
 #endif
 
 #ifdef __cplusplus

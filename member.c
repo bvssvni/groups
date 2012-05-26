@@ -59,6 +59,8 @@ void member_Delete(void* p)
 		free(obj->m_variableArray);
 		obj->m_variableArray = NULL;
 	}
+	
+	obj->m_ready = false;
 }
 
 member* member_AllocWithGC(gcstack* gc)
@@ -74,6 +76,18 @@ member* member_Init(member* obj)
 	return obj;
 }
 
+member* member_InitWithMember(member* obj, member* b)
+{
+	obj->variables = b->variables;
+	obj->m_ready = b->m_ready;
+	obj->m_variableArray = b->m_variableArray;
+	
+	b->variables = NULL;
+	b->m_ready = false;
+	b->m_variableArray = NULL;
+	
+	return obj;
+}
 
 void member_AddDouble(member* obj, int propId, double val)
 {

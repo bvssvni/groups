@@ -60,6 +60,9 @@ typedef struct member {
 	member* member_Init
 	(member* obj);
 	
+	member* member_InitWithMember
+	(member* obj, member* b);
+	
 	void member_AddDouble
 	(member* obj, int propId, double val);
 	

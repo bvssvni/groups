@@ -115,8 +115,14 @@ void groups_Delete(void* p)
 		free(g->m_memberArray);
 		g->m_memberArray = NULL;
 	}
-	bitstream_Delete(g->m_deletedMembers);
-	free(g->m_deletedMembers);
+	
+	// Free the bitstream that contains deleted member indices.
+	if (g->m_deletedMembers != NULL)
+	{
+		bitstream_Delete(g->m_deletedMembers);
+		
+		free(g->m_deletedMembers);
+	}
 }
 
 groups* groups_AllocWithGC(gcstack* gc)
@@ -130,7 +136,7 @@ groups* groups_Init(groups* g)
 	g->properties = gcstack_Init(gcstack_Alloc());
 	g->m_sorted = false;
 	g->m_sortedPropertyItems = NULL;
-	g->m_ready = false;
+	g->m_bitstreamsReady = false;
 	g->m_bitstreamsArray = NULL;
 	g->members = gcstack_Init(gcstack_Alloc());
 	g->m_membersReady = false;
@@ -167,7 +173,7 @@ void sortProperties(groups* g)
 	
 	int length = g->properties->length;
 	gcstack_item** items;
-	items = gcstack_CreateItemsArray(g->properties);
+	items = gcstack_CreateItemsArrayBackward(g->properties);
 	property* t = malloc(sizeof(property));
 	
 	// Use QuickSort to sort the properties in right order.
@@ -254,7 +260,7 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 	bitstream_InitWithSize(bitstream_AllocWithGC(g->bitstreams), 0);
 	
 	g->m_sorted = false;
-	g->m_ready = false;
+	g->m_bitstreamsReady = false;
 	
 	return propId;
 }
@@ -278,13 +284,13 @@ int groups_GetProperty(groups* g, char const* name)
 
 void createBitstreamArray(groups* g)
 {
-	if (g->m_ready) return;
+	if (g->m_bitstreamsReady) return;
 	
 	// Create array of pointers to each bitstream to match the stack.
 	if (g->m_bitstreamsArray != NULL)
 		free(g->m_bitstreamsArray);
-	g->m_bitstreamsArray = (bitstream**)gcstack_CreateItemsArray(g->bitstreams);
-	g->m_ready = true;
+	g->m_bitstreamsArray = (bitstream**)gcstack_CreateItemsArrayBackward(g->bitstreams);
+	g->m_bitstreamsReady = true;
 }
 
 bitstream* groups_GetBitstream(groups* g, int propId)
@@ -349,13 +355,48 @@ bool groups_IsDefaultVariable(const variable* var)
 	return false;
 }
 
+void createMemberArray(groups* g)
+{
+	/*/
+	 if (g->m_membersReady) {
+	 printf("createMemberArray: g->m_membersReady");
+	 exit(1);
+	 }
+	 //*/
+	
+	if (g->m_membersReady) return;
+	
+	member** items = (member**)gcstack_CreateItemsArrayBackward(g->members);
+	if (g->m_memberArray != NULL)
+		free(g->m_memberArray);
+	g->m_memberArray = items;
+	
+	g->m_membersReady = true;
+}
+
 int groups_AddMember(groups* g, member* obj)
 {
 	int id = g->members->length;
-	gcstack_Push(g->members, obj);
+	member* new;
+	
+	// Reuse an existing position.
+	if (g->m_deletedMembers->length > 0)
+	{
+		createMemberArray(g);
+		id = bitstream_PopEnd(g->m_deletedMembers);
+		new = member_InitWithMember(g->m_memberArray[id], obj);
+	}
+	else
+	{
+		// There is no free positions, so we allocate new.
+		new = member_InitWithMember(member_AllocWithGC(g->members), obj);
+	}
+	
+	// Reinitialize the input so one can continue using same object to insert data.
+	obj = member_Init(obj);
 	
 	// If the member contains no variables, skip the advanced stuff.
-	if (obj->variables->length == 0)
+	if (new->variables->length == 0)
 		return id;
 	
 	// Prepare bitstreams to be searched.
@@ -364,7 +405,7 @@ int groups_AddMember(groups* g, member* obj)
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
 	// Update bitstreams.
-	gcstack_item* cursor = obj->variables->root->next;
+	gcstack_item* cursor = new->variables->root->next;
 	bitstream* a;
 	bitstream* b;
 	bitstream* c;
@@ -395,21 +436,10 @@ int groups_AddMember(groups* g, member* obj)
 	gcstack_Delete(gc);
 	free(gc); 
 	
-	g->m_ready = false;
+	g->m_bitstreamsReady = false;
+	g->m_membersReady = false;
 	
 	return id;
-}
-
-void createMemberArray(groups* g)
-{
-	if (g->m_membersReady) return;
-	
-	member** items = (member**)gcstack_CreateItemsArray(g->members);
-	if (g->m_memberArray != NULL)
-		free(g->m_memberArray);
-	g->m_memberArray = items;
-	
-	g->m_membersReady = true;
 }
 
 //
@@ -1123,6 +1153,46 @@ void groups_PrintMember(const groups* g, const member* obj)
 			printf("%s:%s ", name, (char*)var->data);
 	}
 	printf("\r\n");
+}
+
+void groups_RemoveMember(groups* g, int index)
+{
+	createMemberArray(g);
+	
+	member* obj = g->m_memberArray[index];
+	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	
+	// Loop through properties and remove from bitstreams.
+	gcstack_item* cursor = obj->variables->root->next;
+	int propId;
+	variable* var;
+	bitstream* a;
+	bitstream* b = bitstream_InitWithValues
+	(bitstream_AllocWithGC(gc), 2, (int[]){index,index+1});
+	bitstream* c;
+	for (; cursor != NULL; cursor = cursor->next) {
+		var = (variable*)cursor;
+		propId = var->propId;
+		a = groups_GetBitstream(g, propId);
+		c = bitstream_Except(gc, a, b);
+		gcstack_Swap(c, a);
+	}
+
+	g->m_bitstreamsReady = false;
+	g->m_membersReady = false;
+	
+	// Free the member but don't delete it, in order to maintain index.
+	member_Delete(obj);
+	
+	// Add the member to bitstream of deleted members for reuse of index.
+	bitstream* d = g->m_deletedMembers;
+	bitstream* e = bitstream_Or(gc, d, b);
+	gcstack_Swap(d, e);
+	g->m_deletedMembers = e;
+	
+	gcstack_Delete(gc);
+	
+	free(gc);
 }
 
 bool groups_IsUnknown(int propId)

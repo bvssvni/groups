@@ -75,9 +75,11 @@ void bitstream_Delete(void* p) {
 	bitstream* a = (bitstream*)p;
 	
 	if (a->pointer != NULL)
+	{
 		free(a->pointer);
-	a->pointer = NULL;
-	
+		a->pointer = NULL;
+	}
+		
 	a->length = 0;
 }
 
@@ -674,4 +676,39 @@ int* bitstream_ArrayPointer(bitstream const* a)
 int bitstream_NumberOfBlocks(bitstream const* a)
 {
 	return a->length/2;
+}
+
+int bitstream_PopStart(bitstream* a)
+{
+	int length = a->length;
+	if (length < 2) return -1;
+	
+	// Move the start of the first block.
+	int id = ++a->pointer[0];
+	
+	// If the start crosses the end, then remove the block.
+	if (a->pointer[0] >= a->pointer[1])
+	{
+		// Instead of allocating we move the bytes 2 places toward beginning.
+		for (int i = 2; i < length; i++)
+			a->pointer[i-2] = a->pointer[i];
+		a->length -= 2;
+	}
+	
+	return id;
+}
+
+int bitstream_PopEnd(bitstream* a)
+{
+	int length = a->length;
+	if (length < 2) return -1;
+	
+	// Move the end.
+	int id = --a->pointer[length-1];
+	
+	// If the start crosses the end, then remove the block.
+	if (a->pointer[length-1] <= a->pointer[length-2])
+		a->length -= 2;
+	
+	return id;
 }

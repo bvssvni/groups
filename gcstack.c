@@ -34,6 +34,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "gcstack.h"
 
@@ -54,7 +55,7 @@ gcstack* gcstack_Init(gcstack* gc)
 
 void gcstack_Delete(gcstack* gc)
 {
-	gcstack_End(gc, 0);
+	gcstack_End(gc, NULL);
 	if (gc->root != NULL) {
 		free(gc->root);
 		gc->root = NULL;
@@ -75,6 +76,19 @@ gcstack_item** gcstack_CreateItemsArray(gcstack const* gc)
 	return arr;
 }
 
+gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	gcstack_item** arr = malloc(gc->length*sizeof(void*));
+	for (int i = 0; i < length; i++)
+	{
+		arr[length-i-1] = (void*)cursor;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
 
 void gcstack_Print(gcstack const* gc, void(*print)(void*a))
 {
@@ -90,18 +104,31 @@ void gcstack_Print(gcstack const* gc, void(*print)(void*a))
 	}
 }
 
-int gcstack_Start(gcstack const* gc)
+gcstack_item* gcstack_Start(gcstack const* gc)
 {
-	return gc->length;
+	return gc->root->next;
 }
 
-void gcstack_End(gcstack* gc, int level)
+void gcstack_End(gcstack* gc, gcstack_item* end)
 {
-	// Free data by deleting stack down to specified level.
-	int remove = gc->length - level;
+	//
+	if (gc->root == NULL)
+	{
+		printf("gc->root == NULL");
+		exit(1);
+	}
+	//*/
+	
+	/*/
+	if (remove < 0) {
+		printf("gcstack_End: remove < 0");
+		exit(1);
+	}
+	//*/
+	
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item* next;
-	while (cursor != NULL && remove > 0) {
+	while (cursor != end) {
 		next = cursor->next;
 		
 		// Ignore if previous is set to null.
@@ -111,14 +138,14 @@ void gcstack_End(gcstack* gc, int level)
 			{
 				cursor->free(cursor);
 			}
+			
 			free(cursor);
 		}
 		cursor = next;
 
-		remove--;
+		gc->length--;
 	}
 	gc->root->next = cursor;
-	gc->length = level;
 }
 
 void gcstack_free(gcstack* gc, void* p)
@@ -205,6 +232,7 @@ void gcstack_Pop(gcstack* gc, void* p)
 void gcstack_Push(gcstack* gc, void* p)
 {
 	gcstack_item* item = (gcstack_item*)p;
+	
 	// Detach from old stack.
 	if (item->previous != NULL)
 	{
@@ -221,7 +249,6 @@ void gcstack_Push(gcstack* gc, void* p)
 	item->next = gc->root->next;
 	
 	gc->root->next = item;
-	
 	gc->length++;
 }
 
