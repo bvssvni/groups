@@ -17,7 +17,7 @@ This library contains:
 - Garbage collector stack for containing items making calculation and organizing data easier ( double-linked list ).
 - QuickSort for items supporting garbage collected items ( to sort the order at the stack automatically ).
 - BinarySearch for looking up items.
-- Groups for storing and retrieving data. (See GROUPSÊSTORAGE)
+- Groups for storing and retrieving data. (See GROUPS STORAGE)
 
 Because bitstreams gets messy with pointers, I created a garbage collector stack that cleans up all objects created after a certain level, unless they have been popped from the stack. You can extract pointers from the stack and sort it with the QuickSort method. The sorting uses a special Swap method that swaps the items first byte for byte and then swaps them on the stack. This means you can use a gcstack for general data management that are fast, cleans itself and can be sorted in any order.
 
@@ -132,9 +132,9 @@ free(gc);	// Remember to release the pointer too!
 	array that contain the data. GCStack frees the members
 	on the stack.
 
-ITERATINGÊTHROUGHÊAÊBITSTREAM
+ITERATING THROUGH A BITSTREAM
 
-A bitstream is naturally divided into blocks, so you need to jump twice. It is normal to suptract 1 from the length to avoid reading outside memory for inverted bitstreams. If you always use AND,ÊOR,ÊEXCEPTÊand never INVERT, then you don't have to worry about this. Inside the loop for the blocks you need another loop to step 1 from the start of the block to the end. This becomes very messy if you write nested iterations through a bitstream. Therefore you can copy a snippet in 'readability.h' that let's you write like this:
+A bitstream is naturally divided into blocks, so you need to jump twice. It is normal to suptract 1 from the length to avoid reading outside memory for inverted bitstreams. If you always use AND,ï¿½OR,ï¿½EXCEPTï¿½and never INVERT, then you don't have to worry about this. Inside the loop for the blocks you need another loop to step 1 from the start of the block to the end. This becomes very messy if you write nested iterations through a bitstream. Therefore you can copy a snippet in 'readability.h' that let's you write like this:
 
 foreach (X) {
 	if (_pos(X) > 1000)
@@ -155,7 +155,7 @@ bitstream* X2 = X;
 foreach (X2)
 	...
 
-GROUPSÊSTORAGE
+GROUPS STORAGE
 
 The preferred way to get and store data is through an structure called "Groups" which can store data of any kind. It is recommended to keep data that is readable in text format in Groups and for example using 'int' to refer to data stored outside, for example images. It is not recommended to use pointers to other members, because then you have to check every single object. Use an 'int' instead to the index of that member.
 
@@ -171,7 +171,7 @@ A default value is a value a property can have but still not be counted as 'in' 
 
 'int' and 'bool' are both int in C, but they have different default value. 'bool' is compatible with how C uses true and false conditions. 'int' is compatible with search for position in text or tables.
 
-INSERTINGÊNEWÊMEMBERS
+INSERTING NEW MEMBERS
 
 member* me = member_Init(member_AllocWithGC(NULL));
 member_AddString(me, propId, "Hello World!");
@@ -179,7 +179,7 @@ groups_AddMember(g, me);
 
 The reason you pass NULL to 'member_AllocWithGC' is that when we add it to Groups it will be pushed on a gcstack containing all members. On insert it will loop through the properties and update the bitstreams. Inserting many new members is a heavier task than updating many members with new values.
 
-EXTRACTÊDATA
+EXTRACTï¿½DATA
 
 The way you work with data in Groups is 'vertically' compared to object-oriented code. The advantage of this is that you can copy & paste snippets of code between complete different application or port easily from another language.
 
@@ -191,7 +191,7 @@ for (int i = 0; i < length; i++)
 free(xs);
 free(ys);
 
-UPDATINGÊMEMBERS
+UPDATING MEMBERS
 
 There is two types of updates you can make. The first one is to update many members with one value.
 
@@ -203,7 +203,7 @@ groups_SetDoubleArray(g, X, propX, xn, xValues);
 
 When updating with arrays, you need to be careful. The best way is to use the same array and same bitstream as you extracted before the update.
 
-PROPERTYÊIDÊANDÊTYPE
+PROPERTY ID AND TYPE
 
 All other types will be of 'unknown'. Those types can not be used as easily as the native. When you add a new property, the native types returns the property id of an existing if it has same name and type. This can not be done with 'unknown' types because there is way to check if it is the same type. Therefore, use native types when possible.
 
