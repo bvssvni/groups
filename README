@@ -74,11 +74,11 @@ bitstream* Bird; // output
 
 STEP 2
 
-You create the garbage collector. You can do this at start of application if you like, because you can roll back to a specified size of the stack. Get the level of the stack before you start doing the calculations. Later you will need it to free the unused objects.
+You create the garbage collector. You can do this at start of application if you like, because you can roll back to a specified state of the stack. Get the level of the stack before you start doing the calculations. Later you will need it to free the unused objects.
 
 gcstack* gc = gcstack_Init(gcstack_Alloc());
 
-int level = gcstack_Start(gc);
+void* level = gcstack_Start(gc);
 
 STEP 3
 
