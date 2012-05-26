@@ -45,37 +45,30 @@
 
 #include "groups.h"
 
-#define TYPE_STRIDE 1000000
-#define TYPE_UNKNOWN 0
-#define TYPE_DOUBLE 1
-#define TYPE_STRING 2
-#define TYPE_INT 3
-#define TYPE_BOOL 4
-
-////////////////// Macro to iterate through bitstream //////////////
-
-#define foreach_reverse(a) \
-int __start##a, __end##a, __i##a, __j##a; \
-for (__i##a = a->length-2; __i##a >= 0; __i##a -= 2) { \
-__start##a = a->pointer[__i##a]; \
-__end##a = a->pointer[__i##a+1]; \
-for (__j##a = __end##a-1; __j##a >= __start##a; __j##a--) {
-
-#define foreach(a) \
-int __len##a = a->length-1; \
-int __start##a, __end##a, __i##a, __j##a; \
-for (__i##a = 0; __i##a < __len##a; __i##a += 2) { \
-__start##a = a->pointer[__i##a]; \
-__end##a = a->pointer[__i##a+1]; \
-for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
-
-#define end_foreach }}__BREAK_BITSTREAM_prop:;
-
-#define _break(a)     goto __BREAK_BITSTREAM_##a
-
-#define _pos(a)    __j##a
-
-//////////////////////////////////////////////////////////////////
+/***************COPY AND PUT ON SLASHES TO THIS LINE...********there ->***/
+ 
+ #define foreach_reverse(a) \
+ int __start##a, __end##a, __i##a, __j##a; \
+ for (__i##a = a->length-2; __i##a >= 0; __i##a -= 2) { \
+ __start##a = a->pointer[__i##a]; \
+ __end##a = a->pointer[__i##a+1]; \
+ for (__j##a = __end##a-1; __j##a >= __start##a; __j##a--) {
+ 
+ #define foreach(a) \
+ int __len##a = a->length-1; \
+ int __start##a, __end##a, __i##a, __j##a; \
+ for (__i##a = 0; __i##a < __len##a; __i##a += 2) { \
+ __start##a = a->pointer[__i##a]; \
+ __end##a = a->pointer[__i##a+1]; \
+ for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
+ 
+ #define end_foreach(a) }}__BREAK_BITSTREAM_##a:;
+ 
+ #define _break(a)     goto __BREAK_BITSTREAM_##a
+ 
+ #define _pos(a)    __j##a
+ 
+/****<- and there*****...TO KNOW START AND END. GOOD BOY!*****************/
 
 void groups_Delete(void* p)
 {
@@ -453,7 +446,7 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 			p = var->data;
 			*p = val;
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	// Double does not have a default value, so we need no condition here.
 	createBitstreamArray(g);
@@ -516,7 +509,7 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 			variable_Delete(var);
 			var = variable_InitWithString(var, propId, val);
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -581,7 +574,7 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 			int* data = var->data;
 			*data = val;
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -646,7 +639,7 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 			bool* data = var->data;
 			*data = val;
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -704,7 +697,7 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 			p = var->data;
 			*p = values[k++];
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -782,7 +775,7 @@ void groups_SetStringArray
 			variable_Delete(var);
 			var = variable_InitWithString(var, propId, val);
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -876,7 +869,7 @@ void groups_SetIntArray
 			int* data = var->data;
 			*data = val;
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -970,7 +963,7 @@ void groups_SetBoolArray
 			bool* data = var->data;
 			*data = val;
 		}
-	} end_foreach
+	} end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -1019,7 +1012,7 @@ double* groups_GetDoubleArray
 		obj = g->m_memberArray[i];
 		index = member_IndexOf(obj, propId);
 		arr[k++] = index < 0 ? 0.0 : *((double*)obj->m_variableArray[index]->data);
-	} end_foreach
+	} end_foreach(a)
 	
 	return arr;
 }
@@ -1043,7 +1036,7 @@ int* groups_GetIntArray
 		obj = g->m_memberArray[i];
 		index = member_IndexOf(obj, propId);
 		arr[k++] = index < 0 ? -1 : *((int*)obj->m_variableArray[index]->data);
-	} end_foreach
+	} end_foreach(a)
 	
 	return arr;
 }
@@ -1067,7 +1060,7 @@ bool* groups_GetBoolArray
 		obj = g->m_memberArray[i];
 		index = member_IndexOf(obj, propId);
 		arr[k++] = index < 0 ? false : *((bool*)obj->m_variableArray[index]->data);
-	} end_foreach
+	} end_foreach(a)
 	
 	return arr;
 }
@@ -1091,7 +1084,7 @@ const char** groups_GetStringArray
 		obj = g->m_memberArray[i];
 		index = member_IndexOf(obj, propId);
 		arr[k++] = index < 0 ? NULL : (const char*)obj->m_variableArray[index]->data;
-	} end_foreach
+	} end_foreach(a)
 	
 	return arr;
 }

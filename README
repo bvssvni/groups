@@ -17,6 +17,7 @@ This library contains:
 - Garbage collector stack for containing items making calculation and organizing data easier ( double-linked list ).
 - QuickSort for items supporting garbage collected items ( to sort the order at the stack automatically ).
 - BinarySearch for looking up items.
+- Groups for storing and retrieving data. (See GROUPSÊSTORAGE)
 
 Because bitstreams gets messy with pointers, I created a garbage collector stack that cleans up all objects created after a certain level, unless they have been popped from the stack. You can extract pointers from the stack and sort it with the QuickSort method. The sorting uses a special Swap method that swaps the items first byte for byte and then swaps them on the stack. This means you can use a gcstack for general data management that are fast, cleans itself and can be sorted in any order.
 
@@ -26,7 +27,7 @@ Group oriented programming is different from object-oriented programming because
 
 In object-orientation, you start with a class and then fill in the properties you associate with the object. The problem is that if you need to add a property which the rest of objects of same type doesn't have, then you need to inherit the object and then add it. This is to keep algorithms from sucking in data that will crash the program. Before each task, you have to browse the application structure and operate on a specific part. When the application grows, there is an increasing amount of exceptions to the initial design.
 
-Group-orientation is like object-orientation except for the classes, pluss that each property with a default value is tracked with a bitstream. If you need a new type objects, you just add the property. When the algorithms want data, they combine properties together represented as bitstreams. When we think of a 'chair', we can identify it with a physical shape, but when we think of 'furniture' this is something we tag to the 'chair' instead of having a rule of how to identify it. Because properties can both be recognized and created out of thin air, we can say that any way to combine a collection itself is a property, because it can be tagged as a flag on each member.
+Group-orientation is like object-orientation except for the classes, pluss that each property is tracked with a bitstream. If you need a new type of objects, you just add the property you need to make them special. When the algorithms want data, they combine properties together represented as bitstreams. When we think of a 'chair', we can identify it with a physical shape, but when we think of 'furniture' this is something we tag to the 'chair' instead of having a rule of how to identify it. Because properties can both be recognized and created out of thin air, we can say that any way to combine a collection itself is a property, because it can be tagged as a flag on each member.
 
 If you have a class in object-oriented programming, you can write an equivalent in group-oriented programming. For example:
 
@@ -40,15 +41,13 @@ Bird = Feather * ( CanFly + Penguin + Kiwi ) - ( CanDive - Penguin )
 
 Notice that exceptions are written as minus, but to the right of the other terms. This is important, because minus in this algebra got lower precedence than addition, it can be converted to A-B = A*!B and moved outside paranthesis. Minus means it operates on all other terms on the same level, not only the one to the left. The scholars doesn't believe minus exists in Boolean algebra, but it is an important part of the human common sense and to operate bitstreams safely on "infinite" datasets, like whole computer memory. With OR, AND and EXCEPT you can perform all operations except those who results in inverted collections.
 
-In group-orientation, you start with a blank page for all data where properties can be tied together, but not under strict rules. This sounds like chaos, but in practice it gives you much more control. For hard-core object-oriented programmers this might sound crazy, but wait until you have tested it.
+In group-orientation, you start with a blank page for all data where properties can be tied together, but not under strict rules. This sounds like chaos, but in practice it gives you much more control. For hard-core object-oriented programmers this might sound crazy, but learning new things makes you a better programmer.
 
 Just think of it for a moment: If you write an algorithm that only work if the object got X and Y and these two can be set to NULL, then if you feed the algorithm with a class of objects that might have NULL in X and Y, the algorithm will fail. Therefore, you add a sentence in the beginning of the algorithm "if (X == NULL || Y == NULL) return;" to filter out problematic objects.
 
-Why not do it differently? If you write an algorithm to work in a specific case, why not let the programmer decide what kind of object it can operate on? If he needs only X, then he can take X. If he need X and Y, he can require both. If you can control the data available for searching, then the algorithm can not eat data it is not supposed to eat. Most algorithms take either few variables or operate on data generally. To calculate the length of a vector takes few arguments, while exporting a comma separated file is a general task. This means that if you find a way to compute subgroups of the entire dataset fast, then you can compose a virtual list of objects or array of primitive types for the algorithm on the fly. This is what bitstream does.
+Why not do it differently? If you want an algorithm to work in a specific case, why not let the programmer decide what kind of objects it can operate on? If he needs only X, then he can take X. If he need X and Y, he can require both. If you can control the data available for searching, then the algorithm can not eat data it is not supposed to eat. Most algorithms take either few variables or operate on general data structures. To calculate the length of a vector takes few arguments, while exporting a comma separated file is a general task. This means that if you find a way to compute subgroups of the entire dataset fast, then you can compose a virtual list of objects or array of primitive types for the algorithm on the fly. This is what bitstream does.
 
 "What a minute, this sounds like SQL!" Yes, it does because SQL uses the same algebra on data, only it separates tables just like object-oriented programming does. With bitstreams you can preprocess specific parts of the query without moving the data. A bitstream is hundreds of times faster than SQL. The usage of SQL is to get data to the application, while bitstreams is to get data to the algorithms.
-
-There is countless other applications of bitstream outside data design. Bitstreams was originally invented to compute and store groups of solutions of hard problems in easy-to-access format that was computable. It can be used in every type of problem containing groups. Multi-selection, multi-threads, you name it. To write an algorithm for a collection of objects makes it more reusable. If you extract tables of data for a property using a bitstream, you will have a general way of converting from environment dependent code to portable code. You can then copy code from one project to another without modifications. This is also great for translating between different programming languages.
 
 BITSTREAM
 
@@ -132,6 +131,83 @@ free(gc);	// Remember to release the pointer too!
 	only the pointers in the structure. Bitstream frees the
 	array that contain the data. GCStack frees the members
 	on the stack.
+
+ITERATINGÊTHROUGHÊAÊBITSTREAM
+
+A bitstream is naturally divided into blocks, so you need to jump twice. It is normal to suptract 1 from the length to avoid reading outside memory for inverted bitstreams. If you always use AND,ÊOR,ÊEXCEPTÊand never INVERT, then you don't have to worry about this. Inside the loop for the blocks you need another loop to step 1 from the start of the block to the end. This becomes very messy if you write nested iterations through a bitstream. Therefore you can copy a snippet in 'readability.h' that let's you write like this:
+
+foreach (X) {
+	if (_pos(X) > 1000)
+		_break(X);
+} end_foreach (X)
+
+Remember 'end_foreach' after the last bracket.
+
+You can also loop backward with foreach_backward. The parameter to the macro is to make sure the command does the right thing in nested iterations. All variables generated with the macro starts with '__' to not interfer with other code.
+
+'continue' works just as it would in a single for-loop, but '_break' is special because it jumps after the end of the foreach loop. You can jump directly out of nested loops to the top.
+
+You can also write '_pos(X)++' to increment or '_pos(X)--' to decrement. It will be aligned when it reaches the next block.
+
+You can not use two foreach on the same variable name in the same method. The reason is that the 'end_foreach' contains a label that is generated by the variable name. Declare a new 'bitstream' pointer and use it for the new loop. This allows nested loop with itself.
+
+bitstream* X2 = X;
+foreach (X2)
+	...
+
+GROUPSÊSTORAGE
+
+The preferred way to get and store data is through an structure called "Groups" which can store data of any kind. It is recommended to keep data that is readable in text format in Groups and for example using 'int' to refer to data stored outside, for example images. It is not recommended to use pointers to other members, because then you have to check every single object. Use an 'int' instead to the index of that member.
+
+At the moment, there are 4 'native' types in Groups:
+- int, default value -1, used for relations and table indices.
+- bool, default value 0, used for tagging objects.
+- double, no default value, used for numbers.
+- string (const char*), default value NULL, used for text info.
+
+If you deal with numbers use double, even if you only need integer values. It is faster than int on update with array because it does not have to check for default value.
+
+A default value is a value a property can have but still not be counted as 'in' the group. This is very useful, for example in relations using 'int' you can get the members that has an active relation. If you want all objects of a type, then you can use a 'bool' property.
+
+'int' and 'bool' are both int in C, but they have different default value. 'bool' is compatible with how C uses true and false conditions. 'int' is compatible with search for position in text or tables.
+
+INSERTINGÊNEWÊMEMBERS
+
+member* me = member_Init(member_AllocWithGC(NULL));
+member_AddString(me, propId, "Hello World!");
+groups_AddMember(g, me);
+
+The reason you pass NULL to 'member_AllocWithGC' is that when we add it to Groups it will be pushed on a gcstack containing all members. On insert it will loop through the properties and update the bitstreams. Inserting many new members is a heavier task than updating many members with new values.
+
+EXTRACTÊDATA
+
+The way you work with data in Groups is 'vertically' compared to object-oriented code. The advantage of this is that you can copy & paste snippets of code between complete different application or port easily from another language.
+
+int length = bitstream_Size(X);
+double* xs = groups_GetDoubleArray(g, X, propX);
+double* ys = groups_GetDoubleArray(g, Y, propY);
+for (int i = 0; i < length; i++)
+	// Do something.
+free(xs);
+free(ys);
+
+UPDATINGÊMEMBERS
+
+There is two types of updates you can make. The first one is to update many members with one value.
+
+groups_SetDouble(g, X, propX, 0.0);
+
+The second is to update with an array.
+
+groups_SetDoubleArray(g, X, propX, xn, xValues);
+
+When updating with arrays, you need to be careful. The best way is to use the same array and same bitstream as you extracted before the update.
+
+PROPERTYÊIDÊANDÊTYPE
+
+All other types will be of 'unknown'. Those types can not be used as easily as the native. When you add a new property, the native types returns the property id of an existing if it has same name and type. This can not be done with 'unknown' types because there is way to check if it is the same type. Therefore, use native types when possible.
+
+The type of a property is stored within the id itself. It uses same system as in image processing algorithms where you have x + y*stride. This format is easy to use. It requires only propId to extract both values. The type is found by 'propId / TYPE_STRIDE' and the property index by 'propId % TIME_STRIDE'. You can get these by including 'memgroups.h' or 'readability.h'.
 
 PERFORMANCE
 

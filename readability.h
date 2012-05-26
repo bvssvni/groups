@@ -44,6 +44,13 @@ extern "C" {
 #define string char const*
 #define byte unsigned char
 
+#define TYPE_STRIDE 1000000
+#define TYPE_UNKNOWN 0
+#define TYPE_DOUBLE 1
+#define TYPE_STRING 2
+#define TYPE_INT 3
+#define TYPE_BOOL 4
+	
 //
 //		FOREACH MACROES
 //
@@ -74,7 +81,7 @@ extern "C" {
 //		Tip: Declaring variables before the loop will increase performance.
 //
 
-/*******************************COPY********************************
+/***************COPY AND PUT ON SLASHES TO THIS LINE...********there ->***
  
 #define foreach_reverse(a) \
 int __start##a, __end##a, __i##a, __j##a; \
@@ -91,13 +98,13 @@ __start##a = a->pointer[__i##a]; \
 __end##a = a->pointer[__i##a+1]; \
 for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
 
-#define end_foreach }}__BREAK_BITSTREAM_prop:;
+#define end_foreach(a) }}__BREAK_BITSTREAM_##a:;
 
 #define _break(a)     goto __BREAK_BITSTREAM_##a
 
 #define _pos(a)    __j##a
 
-*******************************************************************/
+****<- and there*****...TO KNOW START AND END. GOOD BOY!*****************/
 
 #ifdef __cplusplus
 }
