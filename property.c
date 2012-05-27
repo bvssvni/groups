@@ -45,7 +45,10 @@ void property_Delete(void* p)
 {
 	property* prop = (property*)p;
 	if (prop->name != NULL)
+	{
 		free(prop->name);
+		prop->name = NULL;
+	}
 }
 
 property* property_AllocWithGC(gcstack* gc)

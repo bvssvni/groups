@@ -87,6 +87,11 @@ void groups_Delete(void* p)
 		free(g->m_bitstreamsArray);
 		g->m_bitstreamsArray = NULL;
 	}
+	if (g->m_deletedBitstreams != NULL)
+	{
+		free(g->m_deletedBitstreams);
+		g->m_deletedBitstreams = NULL;
+	}
 	
 	// Free property stuff.
 	gcstack* properties = g->properties;
@@ -133,11 +138,14 @@ groups* groups_AllocWithGC(gcstack* gc)
 groups* groups_Init(groups* g)
 {
 	g->bitstreams = gcstack_Init(gcstack_Alloc());
-	g->properties = gcstack_Init(gcstack_Alloc());
-	g->m_sorted = false;
-	g->m_sortedPropertyItems = NULL;
 	g->m_bitstreamsReady = false;
 	g->m_bitstreamsArray = NULL;
+	g->m_deletedBitstreams = bitstream_InitWithSize(bitstream_AllocWithGC(NULL), 0);
+	
+	g->properties = gcstack_Init(gcstack_Alloc());
+	g->m_propertiesReady = false;
+	g->m_sortedPropertyItems = NULL;
+	
 	g->members = gcstack_Init(gcstack_Alloc());
 	g->m_membersReady = false;
 	g->m_memberArray = NULL;
@@ -163,15 +171,29 @@ int compareProperties(void const* a, void const* b)
 	property const* bProp = (property const*)b;
 	char const* aName = aProp->name;
 	char const* bName = bProp->name;
+	if (aName == NULL && bName == NULL) return 0;
+	else if (aName == NULL) return -1;
+	else if (bName == NULL) return 1;
 	return strcmp(aName, bName);
 }
 
 
 void sortProperties(groups* g)
 {
-	if (g->m_sorted) return;
+	if (g->m_propertiesReady) return;
 	
 	int length = g->properties->length;
+	
+	if (length == 0)
+	{
+		if (g->m_sortedPropertyItems != NULL)
+		{
+			free(g->m_sortedPropertyItems);
+			g->m_sortedPropertyItems = NULL;
+		}
+		return;
+	}
+	
 	gcstack_item** items;
 	items = gcstack_CreateItemsArrayBackward(g->properties);
 	property* t = malloc(sizeof(property));
@@ -184,102 +206,7 @@ void sortProperties(groups* g)
 		free(g->m_sortedPropertyItems);
 	g->m_sortedPropertyItems = items;
 	
-	g->m_sorted = true;
-}
-
-int groups_AddProperty(groups* g, const void* name, const void* propType)
-{
-	// We use the length of the bitstream stack to generate ids,
-	// because those bitstreams are set to empty instead of deleted.
-	int propId = g->bitstreams->length;
-	
-	// Here we do a binary search trick to avoid some calls to strcmp.
-	// You just build the code like a search tree and it will run faster.
-	//
-	// bool (node
-	// double (node)
-	// int <- root
-	// string (node)
-	//
-	int intCheck = strcmp(propType, "int");
-	if (intCheck == 0) {
-		propId += TYPE_INT*TYPE_STRIDE;
-	}
-	if (intCheck < 0) {
-		if (strcmp(propType, "bool") == 0)
-			propId += TYPE_BOOL*TYPE_STRIDE;
-		else if (strcmp(propType, "double") == 0)
-			propId += TYPE_DOUBLE*TYPE_STRIDE;
-		else {
-			propId += TYPE_UNKNOWN*TYPE_STRIDE;
-		}
-	}
-	else {
-		if (strcmp(propType, "string") == 0)
-			propId += TYPE_STRING*TYPE_STRIDE;
-		else {
-			propId += TYPE_UNKNOWN*TYPE_STRIDE;
-		}
-	}
-	
-	// It might seem like a waste to sort before inserting,
-	// but we need to check if the property already exists.
-	sortProperties(g);
-	int length = g->bitstreams->length;
-	gcstack_item** items = g->m_sortedPropertyItems;
-	int index = sorting_SearchBinary
-	(length, (void*)items, name, compareStringVSProperty);
-	
-	if (index >= 0)
-	{
-		property* prop = (property*)items[index];
-		int existingPropId = prop->propId;
-		
-		int oldType = existingPropId/TYPE_STRIDE;
-		
-		// We can not be sure how to check for compatibility with
-		// unknown data types, so we have to tell it's type collision.
-		if (oldType == TYPE_UNKNOWN) return -1;
-		
-		int newType = propId/TYPE_STRIDE;
-		if (oldType == newType)
-			// The same name and same type already exists.
-			// Since it is compatible, we can return the existing id.
-			return existingPropId;
-		
-		// The types are different, so we need to tell it is type collision here.
-		return -1;
-	}
-	
-	
-	// Create new property that links name to id.
-	property_InitWithNameAndId
-	(property_AllocWithGC(g->properties), name, propId);
-	
-	// Create a new empty bitstream for that property.
-	bitstream_InitWithSize(bitstream_AllocWithGC(g->bitstreams), 0);
-	
-	g->m_sorted = false;
-	g->m_bitstreamsReady = false;
-	
-	return propId;
-}
-
-
-int groups_GetProperty(groups* g, char const* name)
-{
-	sortProperties(g);
-	
-	int length = g->properties->length;
-	gcstack_item** items = g->m_sortedPropertyItems;
-	
-	int index = sorting_SearchBinary(length, (void*)items, name, compareStringVSProperty);
-	
-	if (index < 0) return -1;
-	
-	// Return the property id.
-	property* prop = (property*)items[index];
-	return prop->propId;
+	g->m_propertiesReady = true;
 }
 
 void createBitstreamArray(groups* g)
@@ -291,6 +218,106 @@ void createBitstreamArray(groups* g)
 		free(g->m_bitstreamsArray);
 	g->m_bitstreamsArray = (bitstream**)gcstack_CreateItemsArrayBackward(g->bitstreams);
 	g->m_bitstreamsReady = true;
+}
+
+int groups_AddProperty(groups* g, const void* name, const void* propType)
+{
+	// We use the length of the bitstream stack to generate ids,
+	// because those bitstreams are set to empty instead of deleted.
+	int propIndex = g->bitstreams->length;
+	
+	// Here we do a binary search trick to avoid some calls to strcmp.
+	// You just build the code like a search tree and it will run faster.
+	//
+	// bool (node
+	// double (node)
+	// int <- root
+	// string (node)
+	//
+	int propId = propIndex;
+	if (strcmp(propType, "int"))
+		propId += TYPE_INT*TYPE_STRIDE;
+	else if (strcmp(propType, "bool") == 0)
+		propId += TYPE_BOOL*TYPE_STRIDE;
+	else if (strcmp(propType, "double") == 0)
+		propId += TYPE_DOUBLE*TYPE_STRIDE;
+	else if (strcmp(propType, "string") == 0)
+		propId += TYPE_STRING*TYPE_STRIDE;
+	else
+		propId += TYPE_UNKNOWN*TYPE_STRIDE;
+	
+	// It might seem like a waste to sort before inserting,
+	// but we need to check if the property already exists.
+	if (g->properties->length > 0)
+	{
+		sortProperties(g);
+		int length = g->bitstreams->length;
+		gcstack_item** items = g->m_sortedPropertyItems;
+		int index = sorting_SearchBinary
+		(length, (void*)items, name, compareStringVSProperty);
+		
+		if (index >= 0)
+		{
+			property* prop = (property*)items[index];
+			int existingPropId = prop->propId;
+			
+			int oldType = existingPropId/TYPE_STRIDE;
+			
+			// We can not be sure how to check for compatibility with
+			// unknown data types, so we have to tell it's type collision.
+			if (oldType == TYPE_UNKNOWN) return -1;
+			
+			int newType = propId/TYPE_STRIDE;
+			if (oldType == newType)
+				// The same name and same type already exists.
+				// Since it is compatible, we can return the existing id.
+				return existingPropId;
+			
+			// The types are different, so we need to tell it is type collision here.
+			return -1;
+		}
+	}
+	
+	
+	if (g->m_deletedBitstreams->length > 0)
+	{
+		// Reuse deleted bitstream.
+		createBitstreamArray(g);
+		propIndex = bitstream_PopEnd(g->m_deletedBitstreams);
+		propId = (propId-propId%TYPE_STRIDE) + propIndex;
+		bitstream_InitWithSize(g->m_bitstreamsArray[propIndex], 0);
+	}
+	else
+		// Create a new empty bitstream for that property.
+		bitstream_InitWithSize(bitstream_AllocWithGC(g->bitstreams), 0);
+	
+	// Create new property that links name to id.
+	property_InitWithNameAndId
+	(property_AllocWithGC(g->properties), name, propId);
+	
+	
+	g->m_propertiesReady = false;
+	g->m_bitstreamsReady = false;
+	
+	return propId;
+}
+
+
+int groups_GetProperty(groups* g, char const* name)
+{
+	int length = g->properties->length;
+	if (length == 0) return -1;
+	
+	sortProperties(g);
+	gcstack_item** items = g->m_sortedPropertyItems;
+	
+	int index = sorting_SearchBinary(length, (void*)items, name, compareStringVSProperty);
+	
+	if (index < 0) return -1;
+	
+	// Return the property id.
+	property* prop = (property*)items[index];
+	return prop->propId;
 }
 
 bitstream* groups_GetBitstream(groups* g, int propId)
@@ -310,25 +337,38 @@ void groups_RemoveProperty(groups* g, int propId)
 {
 	int index = propId % TYPE_STRIDE;
 	
+	// Delete content, but do not move from stack of bitstreams.
 	createBitstreamArray(g);
-	
 	bitstream* a = g->m_bitstreamsArray[index];
 	bitstream_Delete(a);
+	
+	// Add the property id to deleted bitstream for reuse.
+	bitstream* b = bitstream_InitWithValues
+	(bitstream_AllocWithGC(NULL), 2, (int[]){index, index+1});
+	bitstream* c = g->m_deletedBitstreams;
+	bitstream* d = bitstream_Or(NULL, c, b);
+	gcstack_Swap(d, c);
+	g->m_deletedBitstreams = d;
+	bitstream_Delete(c);
+	free(c);
+	bitstream_Delete(b);
+	free(b);
 	
 	// Loop through the stack to find the property to delete.
 	gcstack_item* cursor = g->properties->root->next;
 	property* prop = NULL;
-	while (cursor != NULL)
+	for (; cursor != NULL; cursor = cursor->next)
 	{
 		prop = (property*)cursor;
 		if (prop->propId == propId) break;
-		cursor = cursor->next;
 	}
 	
 	if (prop == NULL) return;
 	
 	// Delete it, including freeing the pointer.
 	gcstack_free(g->properties, prop);
+	
+	g->m_propertiesReady = false;
 }
 
 bool groups_IsDefaultVariable(const variable* var)

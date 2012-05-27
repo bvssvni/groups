@@ -52,10 +52,11 @@ extern "C" {
 		gcstack* bitstreams;
 		bool m_bitstreamsReady;
 		bitstream** m_bitstreamsArray;
+		bitstream* m_deletedBitstreams;
 		
 		// Property data.
 		gcstack* properties;
-		bool m_sorted;
+		bool m_propertiesReady;
 		gcstack_item** m_sortedPropertyItems;
 		
 		// Member data.
