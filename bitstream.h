@@ -39,6 +39,40 @@ extern "C" {
 
 #ifndef memgroups_bitstream
 #define memgroups_bitstream
+	
+	//
+	//		Bitstream is a mathematical object that contains one
+	//		block for each section in a collection that satisfy a condition.
+	//		Bitstreams are useful to calculate intersections (AND)
+	//		unions (OR) or subtraction (EXCEPT).
+	//
+	//		While these operations are similar to those used in if-blocks
+	//		and loops in programming, the difference is that Boolean algebra
+	//		for one bit has no practical consequences for NOT operations.
+	//		In the real world, a single NOT operation without another
+	//		following operation gives no meaning.
+	//		For example "I live in not-Switzerland."
+	//		Instead, we use A*!B which correspond to EXCEPT.
+	//		"I want to travel everywhere, except Switzerland".
+	//		EXCEPT is always in context to something, therefore
+	//		it is written as '-' in pseudo code.
+	//		Bitstreams can be inverted, but it is not recommended
+	//		as it is not safe. For example, if you have a bitstream that
+	//		pointer to memory, and you try to access items in the inverted
+	//		memory, you might overwrite data other places.
+	//
+	//		Here are the operators:
+	//
+	//		Pseudo-code		Boolean		Precedence		Notes
+	//		+				OR			0
+	//		-				EXCEPT		-1				A - B = A*!B
+	//		*				AND			2
+	//		!				NOT			3				Try use except when possible
+	//
+	//		EXCEPT is execute on every term at same level,
+	//	
+	//		A + B - C = A*!C + B*!C
+	//
 
 typedef		struct bitstream	bitstream;
 

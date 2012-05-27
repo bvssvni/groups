@@ -84,6 +84,11 @@ extern "C" {
 	bitstream* groups_GetBitstream
 	(groups* g, int propId);
 	
+	//
+	// Removes the bitstream, but not the data itself from the members.
+	// After removing a property, changes to the data will no longer be
+	// monitored and kept as bitstream.
+	//
 	void groups_RemoveProperty
 	(groups* g, int propId);
 	
@@ -92,9 +97,6 @@ extern "C" {
 	
 	void groups_RemoveMembers
 	(groups* g, bitstream const* a);
-	
-	int compareStringVSProperty
-	(const void* a, const void* b);
 	
 	int groups_AddMember
 	(groups* g, member* obj);
