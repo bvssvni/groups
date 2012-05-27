@@ -357,13 +357,6 @@ bool groups_IsDefaultVariable(const variable* var)
 
 void createMemberArray(groups* g)
 {
-	/*/
-	 if (g->m_membersReady) {
-	 printf("createMemberArray: g->m_membersReady");
-	 exit(1);
-	 }
-	 //*/
-	
 	if (g->m_membersReady) return;
 	
 	member** items = (member**)gcstack_CreateItemsArrayBackward(g->members);
@@ -1187,6 +1180,45 @@ void groups_RemoveMember(groups* g, int index)
 	// Add the member to bitstream of deleted members for reuse of index.
 	bitstream* d = g->m_deletedMembers;
 	bitstream* e = bitstream_Or(gc, d, b);
+	gcstack_Swap(d, e);
+	g->m_deletedMembers = e;
+	
+	gcstack_Delete(gc);
+	
+	free(gc);
+}
+
+void groups_RemoveMembers(groups* g, bitstream const* prop)
+{
+	createMemberArray(g);
+	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	
+	// Remove the group from all bitstream properties.
+	gcstack_item* cursor = g->bitstreams->root->next;
+	bitstream* exProp;
+	bitstream* tmpProp;
+	for (; cursor != NULL; cursor = cursor->next)
+	{
+		exProp = (bitstream*)cursor;
+		tmpProp = bitstream_Except(gc, exProp, prop);
+		gcstack_Swap(tmpProp, exProp);
+	}
+	
+	int index;
+	member* obj;
+	foreach (prop) {
+		// Free the member but don't delete it, in order to maintain index.
+		index = _pos(prop);
+		obj = g->m_memberArray[index];
+		member_Delete(obj);
+	} end_foreach (prop)
+	
+	g->m_bitstreamsReady = false;
+	g->m_membersReady = false;
+	
+	// Add the member to bitstream of deleted members for reuse of index.
+	bitstream* d = g->m_deletedMembers;
+	bitstream* e = bitstream_Or(gc, d, prop);
 	gcstack_Swap(d, e);
 	g->m_deletedMembers = e;
 	

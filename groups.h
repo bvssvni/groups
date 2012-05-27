@@ -89,6 +89,9 @@ extern "C" {
 	void groups_RemoveMember
 	(groups* g, int index);
 	
+	void groups_RemoveMembers
+	(groups* g, bitstream const* a);
+	
 	int compareStringVSProperty
 	(const void* a, const void* b);
 	
