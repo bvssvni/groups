@@ -46,6 +46,7 @@ extern "C" {
 #include "readability.h"
 	
 	typedef struct groups {
+		// Allow struct to be garbage collected by gcstack.
 		gcstack_item gc;
 		
 		// Bitstream data.
@@ -66,21 +67,61 @@ extern "C" {
 		bitstream* m_deletedMembers;
 	} groups;
 	
+	//
+	//		Deletes the data in Groups, but not the pointer to it.
+	//
 	void groups_Delete
 	(void* p);
 	
+	//
+	//		Groups supports stack-based garbage collection.
+	//
 	groups* groups_AllocWithGC
 	(gcstack* gc);
 	
+	//
+	//		Initialized Groups with empty dataset.
+	//
 	groups* groups_Init
 	(groups* g);
 	
+	//
+	//		Use this method to add properties to Groups.
+	//		This is usually done at the startup of the program.
+	//		All objects that has a property found in the collection
+	//		will be monitored when you change the value.
+	//		All objects that has a property can be fast accessed with bitstreams.
+	//
+	//		You need to specify name and type.
+	//		Supported types:
+	//
+	//			TYPE		DEFAULT (FALSE)		NOTES
+	//			bool		0					int as native type
+	//			int			-1					Used for relations
+	//			double		has no default		Used for numbers
+	//			string		NULL				const char*
+	//
 	int groups_AddProperty
 	(groups* g, const void* name, const void* propType);
 	
+	//
+	//		Returns a property id by name.
+	//		This algorithm has O(log N) worst case.
+	//
 	int groups_GetProperty
 	(groups* g, char const* name);
 	
+	//
+	//		Bitstream is the object you use to group objects fast.
+	//		Each property has it's own bitstream, but it changes
+	//		each time you change a variable or remove members.
+	//		The bitstream you get is guaranteed not to change,
+	//		but you need to make sure that when you update
+	//		that Groups is in a state compatible with your update.
+	//
+	//		For example, if you delete an object and then try to update it,
+	//		that is no good.
+	//
 	bitstream* groups_GetBitstream
 	(groups* g, int propId);
 	
@@ -92,14 +133,37 @@ extern "C" {
 	void groups_RemoveProperty
 	(groups* g, int propId);
 	
+	//
+	// Finds property name by id.
+	// This has O(N) worst case, if you need all names, then read from
+	// the struct instead.
+	//
+	const char* groups_PropertyNameById
+	(const groups* g, int propId);
+	
+	//
+	// IMPORTANT!
+	// This method erases the information from the obj parameter after inserting.
+	// Groups reuses member objects for stability and minimal memory.
+	// You are not supposed to set variables on the member locally after adding.
+	// You need only to allocate one member to read from a file or table,
+	// because when Groups resets the data, you need no worries about memory leaks.
+	//
+	int groups_AddMember
+	(groups* g, member* obj);
+	
+	//
+	// Removes a member from Groups and recycles it for reuse.
+	//
 	void groups_RemoveMember
 	(groups* g, int index);
 	
+	//
+	// Removes members by a bitstream. This is way faster than removing each one.
+	// Try using bitstreams whenever you can, it makes your code easier to reuse.
+	//
 	void groups_RemoveMembers
 	(groups* g, bitstream const* a);
-	
-	int groups_AddMember
-	(groups* g, member* obj);
 	
 	void groups_SetDouble
 	(groups* g, const bitstream* a, int propId, double val);
@@ -113,15 +177,36 @@ extern "C" {
 	void groups_SetBool
 	(groups* g, const bitstream* a, int propId, bool val);
 	
+	//
+	// Sets an array of doubles.
+	// The values need to be in the same order as when extracted.
+	// Double has no default value, so it is faster than int because
+	// it doesn't need to check.
+	//
 	void groups_SetDoubleArray
 	(groups* g, const bitstream* a, int propId, int n, const double* values);
 	
+	//
+	// The values need to be in the same order as when extracted.
+	// If the value is default (NULL), then it will delete the property from member.
+	// This is to reduce usage of memory.
+	//
 	void groups_SetStringArray
 	(groups* g, const bitstream* a, int propId, int n, const char** values);
 	
+	//
+	// The values need to be in the same order as when extracted.
+	// If the value is default (-1), then it will delete the property from member.
+	// This is to reduce usage of memory.
+	//
 	void groups_SetIntArray
 	(groups* g, const bitstream* a, int propId, int n, const int* values);
 	
+	//
+	// The values need to be in the same order as when extracted.
+	// If the value is default (0), then it will delete the property from member.
+	// This is to reduce usage of memory.
+	//
 	void groups_SetBoolArray
 	(groups* g, const bitstream* a, int propId, int n, const bool* values);
 	
@@ -137,12 +222,17 @@ extern "C" {
 	const char** groups_GetStringArray
 	(groups* g, const bitstream* a, int propId);
 	
-	const char* groups_PropertyNameById
-	(const groups* g, int propId);
-	
+	//
+	// Prints a member to the console window with property names and values.
+	// A member has no clue what the property names are, therefore it
+	// has to be a Groups present to print it.
+	//
 	void groups_PrintMember
 	(const groups* g, const member* obj);
 	
+	//
+	// Returns true if the variable got default value.
+	//
 	bool groups_IsDefaultVariable
 	(const variable* var);
 	
