@@ -40,6 +40,13 @@ extern "C" {
 #ifndef memgroups_bitstream
 #define memgroups_bitstream
 	
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+	
+#include "gcstack.h"
+#include "readability.h"
+	
 	//
 	//		Bitstream is a mathematical object that contains one
 	//		block for each section in a collection that satisfy a condition.
@@ -113,7 +120,23 @@ bitstream*	bitstream_InitWithValues
 //
 bitstream* bitstream_InitWithIndices
 (bitstream* a, int size, int const vals[]);
+	
+//
+//			This looks for difference between a set of old values
+//			and new values of type double.
+//
+bitstream* bitstream_InitWithDeltaDouble
+(bitstream* a, int n, const double* oldValues, const double* newValues);
 
+bitstream* bitstream_InitWithDeltaInt
+(bitstream* a, int n, const int* oldValues, const int* newValues);
+	
+bitstream* bitstream_InitWithDeltaBool
+(bitstream* a, int n, const bool* oldValues, const bool* newValues);
+	
+bitstream* bitstream_InitWithDeltaString
+(bitstream* a, int n, const string* oldValues, const string* newValues);
+	
 //
 //			Cleans up the structure within a bistream.
 //			Frees up the pointer that is pointing to the data.

@@ -33,13 +33,7 @@
  either expressed or implied, of the FreeBSD Project.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "gcstack.h"
 #include "bitstream.h"
-#include "readability.h"
 
 /***************COPY AND PUT ON SLASHES TO THIS LINE...********there ->***/
  
@@ -178,6 +172,159 @@ bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
 	
 	a->length = countWithIndices(size, vals);
 	a->pointer = createArrayFromIndices(a->length, size, vals);
+	return a;
+}
+
+int countDeltaDouble(int n, const double* old, const double* new)
+{
+	int count = 0;
+	bool was = false;
+	bool is;
+	for (int i = 0; i < n; i++) {
+		is = new[i] != old[i];
+		if (was != is)
+			count++;
+		was = is;
+	}
+	if (was) {
+		count++;
+	}
+	return count;
+}
+
+int countDeltaInt(int n, const int* old, const int* new)
+{
+	int count = 0;
+	bool was = false;
+	bool is;
+	for (int i = 0; i < n; i++) {
+		is = new[i] != old[i];
+		if (was != is)
+			count++;
+		was = is;
+	}
+	if (was) {
+		count++;
+	}
+	return count;
+}
+
+
+int countDeltaBool(int n, const bool* old, const bool* new)
+{
+	int count = 0;
+	bool was = false;
+	bool is;
+	for (int i = 0; i < n; i++) {
+		is = new[i] != old[i];
+		if (was != is)
+			count++;
+		was = is;
+	}
+	if (was) {
+		count++;
+	}
+	return count;
+}
+
+int countDeltaString(int n, const string* old, const string* new)
+{
+	int count = 0;
+	bool was = false;
+	bool is;
+	for (int i = 0; i < n; i++) {
+		is = strcmp(new[i], old[i]) != 0;
+		if (was != is)
+			count++;
+		was = is;
+	}
+	if (was) {
+		count++;
+	}
+	return count;
+}
+
+bitstream* bitstream_InitWithDeltaDouble
+(bitstream* a, int n, const double* oldValues, const double* newValues)
+{
+	int count = countDeltaDouble(n, oldValues, newValues);
+	a->length = count;
+	a->pointer = malloc(sizeof(count));
+	bool was = false;
+	bool is;
+	int k = 0;
+	for (int i = 0; i < n; i++) {
+		is = newValues[i] != oldValues[i];
+		if (was != is)
+			a->pointer[k++] = i;
+		was = is;
+	}
+	if (was) {
+		a->pointer[k++] = n;
+	}
+	return a;
+}
+
+bitstream* bitstream_InitWithDeltaInt
+(bitstream* a, int n, const int* oldValues, const int* newValues)
+{
+	int count = countDeltaInt(n, oldValues, newValues);
+	a->length = count;
+	a->pointer = malloc(sizeof(count));
+	bool was = false;
+	bool is;
+	int k = 0;
+	for (int i = 0; i < n; i++) {
+		is = newValues[i] != oldValues[i];
+		if (was != is)
+			a->pointer[k++] = i;
+		was = is;
+	}
+	if (was) {
+		a->pointer[k++] = n;
+	}
+	return a;
+}
+
+bitstream* bitstream_InitWithDeltaBool
+(bitstream* a, int n, const bool* oldValues, const bool* newValues)
+{
+	int count = countDeltaBool(n, oldValues, newValues);
+	a->length = count;
+	a->pointer = malloc(sizeof(count));
+	bool was = false;
+	bool is;
+	int k = 0;
+	for (int i = 0; i < n; i++) {
+		is = newValues[i] != oldValues[i];
+		if (was != is)
+			a->pointer[k++] = i;
+		was = is;
+	}
+	if (was) {
+		a->pointer[k++] = n;
+	}
+	return a;
+}
+
+bitstream* bitstream_InitWithDeltaString
+(bitstream* a, int n, const string* oldValues, const string* newValues)
+{
+	int count = countDeltaString(n, oldValues, newValues);
+	a->length = count;
+	a->pointer = malloc(sizeof(count));
+	bool was = false;
+	bool is;
+	int k = 0;
+	for (int i = 0; i < n; i++) {
+		is = strcmp(newValues[i], oldValues[i]) != 0;
+		if (was != is)
+			a->pointer[k++] = i;
+		was = is;
+	}
+	if (was) {
+		a->pointer[k++] = n;
+	}
 	return a;
 }
 
