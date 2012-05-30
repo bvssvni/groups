@@ -334,7 +334,7 @@ void bitstream_Print(bitstream const*a)
 	for (int i = 0; i < length; i += 2) {
 		int p1 = a->pointer[i];
 		int p2 = a->pointer[i+1];
-		printf("%i=>%i ", p1, p2);
+		printf("%i,%i ", p1, p2);
 	}
 	printf("\r\n");
 }

@@ -67,6 +67,26 @@
  #define _break(a)     goto __BREAK_BITSTREAM_##a
  
  #define _pos(a)    __j##a
+
+
+#define hashTable_foreach(a) gcstack_item* __cursor##a = a->layers->root->next; \
+hash_layer* __layer##a; \
+int* __indices##a; \
+int __n##a, __i##a; \
+for (; __cursor##a != NULL; __cursor##a = __cursor##a->next) { \
+__layer##a = (hash_layer*)__cursor##a; \
+__indices##a = __layer##a->indices; \
+__n##a = __layer##a->n; \
+for (__i##a = 0; __i##a < __n##a; __i##a++) { \
+if (__indices##a[__i##a] == -1) continue;
+
+#define _hashTable_id(a) __indices##a[__i##a]
+#define _hashTable_value(a) __layer##a->data[__i##a]
+#define _hashTable_double(a) *(double*)__layer##a->data[__i##a]
+#define _hashTable_int(a) *(int*)__layer##a->data[__i##a]
+#define _hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
+#define _hashTable_string(a) (char*)__layer##a->data[__i##a]
+
  
 /****<- and there*****...TO KNOW START AND END. GOOD BOY!*****************/
 
@@ -399,7 +419,7 @@ void createMemberArray(groups* g)
 {
 	if (g->m_membersReady) return;
 	
-	member** items = (member**)gcstack_CreateItemsArrayBackward(g->members);
+	hash_table** items = (hash_table**)gcstack_CreateItemsArrayBackward(g->members);
 	if (g->m_memberArray != NULL)
 		free(g->m_memberArray);
 	g->m_memberArray = items;
@@ -407,64 +427,58 @@ void createMemberArray(groups* g)
 	g->m_membersReady = true;
 }
 
-int groups_AddMember(groups* g, member* obj)
+int groups_AddMember(groups* g, hash_table* obj)
 {
 	int id = g->members->length;
-	member* new;
+	hash_table* new;
 	
 	// Reuse an existing position.
 	if (g->m_deletedMembers->length > 0)
 	{
 		createMemberArray(g);
 		id = bitstream_PopEnd(g->m_deletedMembers);
-		new = member_InitWithMember(g->m_memberArray[id], obj);
+		new = hashTable_InitWithMember(g->m_memberArray[id], obj);
 	}
 	else
 	{
 		// There is no free positions, so we allocate new.
-		new = member_InitWithMember(member_AllocWithGC(g->members), obj);
+		new = hashTable_InitWithMember(hashTable_AllocWithGC(g->members), obj);
 	}
 	
 	// Reinitialize the input so one can continue using same object to insert data.
-	obj = member_Init(obj);
+	// hashTable_Init(obj);
 	
+    /*/
 	// If the member contains no variables, skip the advanced stuff.
 	if (new->variables->length == 0)
 		return id;
-	
+	//*/
+    
 	// Prepare bitstreams to be searched.
 	createBitstreamArray(g);
 	
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
-	// Update bitstreams.
-	gcstack_item* cursor = new->variables->root->next;
-	bitstream* a;
+    int propId;
+    int index;
+    
+    bitstream* a;
 	bitstream* b;
 	bitstream* c;
 	b = bitstream_InitWithValues
 	(bitstream_AllocWithGC(gc), 2, (const int[]){id, id+1});
-	int propId = 0;
-	int index = 0;
-	
-	// Go through the bitstreams and update those who is contained
-	for (; cursor != NULL; cursor = cursor->next)
-	{
-		variable* var = (variable*)cursor;
-		
-		// If the variable is default value, we don't add it to the bitstream.
-		if (groups_IsDefaultVariable(var)) continue;
-		
-		propId = var->propId;
-		
-		index = propId%TYPE_STRIDE;
-		a = g->m_bitstreamsArray[index];
-		
+    
+    hashTable_foreach(new) {
+        propId = _hashTable_id(new);
+        index = propId%TYPE_STRIDE;
+        
+        a = g->m_bitstreamsArray[index];
+        if (a == NULL) continue;
+        
 		c = bitstream_Or(gc, a, b);
-		
 		// Switch stacks so the new one is kept.
 		gcstack_Swap(c, a);
-	}
+    } end_foreach(new)
 	
 	gcstack_Delete(gc);
 	free(gc); 
@@ -484,31 +498,11 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 	createMemberArray(g);
 	
 	int i;
-	int index;
-	member* obj;
-	variable* var;
-	double* p;
+	hash_table* obj;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// The property does not exist, so we need to add it the default way.
-			member_AddDouble(obj, propId, val);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			// We don't have to allocate new memory for double,
-			// because it fits perfectly inside the existing allocated memory.
-			p = var->data;
-			*p = val;
-		}
+        hashTable_AddDouble(obj, propId, val);
 	} end_foreach(a)
 	
 	// Double does not have a default value, so we need no condition here.
@@ -532,46 +526,12 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
-	bool isDefault = NULL == val;
 	int i;
-	int index;
-	member* obj;
-	variable* var;
+	hash_table* obj;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// If the string is NULL and the member does not contain it,
-			// then we don't have to do anything.
-			if (!isDefault)
-				// The property does not exist, so we need to add it the default way.
-				member_AddString(obj, propId, val);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			if (isDefault)
-			{
-				// Remove the item and free the pointer.
-				// Since we are not iterating through the member properties,
-				// but along the members in a group, it is safe.
-				gcstack_free(obj->variables, var);
-				
-				// Tell the member to update the m_variableArray.
-				obj->m_ready = false;
-				continue;
-			}
-				
-			// Free the old string and init with a new one.
-			variable_Delete(var);
-			var = variable_InitWithString(var, propId, val);
-		}
+        hashTable_AddString(obj, propId, val);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -599,44 +559,11 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 	
 	bool isDefault = -1 == val;
 	int i;
-	int index;
-	member* obj;
-	variable* var;
+	hash_table* obj;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// If the string is NULL and the member does not contain it,
-			// then we don't have to do anything.
-			if (!isDefault)
-				// The property does not exist, so we need to add it the default way.
-				member_AddInt(obj, propId, val);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			if (isDefault)
-			{
-				// Remove the item and free the pointer.
-				// Since we are not iterating through the member properties,
-				// but along the members in a group, it is safe.
-				gcstack_free(obj->variables, var);
-				
-				// Tell the member to update the m_variableArray.
-				obj->m_ready = false;
-				continue;
-			}
-			
-			// We can just switch the value.
-			int* data = var->data;
-			*data = val;
-		}
+		hashTable_AddInt(obj, propId, val);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -664,44 +591,11 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 	
 	bool isDefault = 0 == val;
 	int i;
-	int index;
-	member* obj;
-	variable* var;
+    hash_table* obj;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// If the string is NULL and the member does not contain it,
-			// then we don't have to do anything.
-			if (!isDefault)
-				// The property does not exist, so we need to add it the default way.
-				member_AddBool(obj, propId, val);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			if (isDefault)
-			{
-				// Remove the item and free the pointer.
-				// Since we are not iterating through the member properties,
-				// but along the members in a group, it is safe.
-				gcstack_free(obj->variables, var);
-				
-				// Tell the member to update the m_variableArray.
-				obj->m_ready = false;
-				continue;
-			}
-			
-			// We can just switch the value.
-			bool* data = var->data;
-			*data = val;
-		}
+		hashTable_AddBool(obj, propId, val);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -722,6 +616,7 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 	free(b);
 }
 
+
 //
 // This method sets variables to an array of double values.
 // It is assumed that members are in the order you got them through the bitstream.
@@ -732,34 +627,14 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 	createMemberArray(g);
 	
 	int i;
-	int index;
-	member* obj;
-	variable* var;
-	double* p;
+	hash_table* obj;
 	
 	// We need a counter to read the right value from the array.
 	int k = 0;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// The property does not exist, so we need to add it the default way.
-			member_AddDouble(obj, propId, values[k++]);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			// We don't have to allocate new memory for double,
-			// because it fits perfectly inside the existing allocated memory.
-			p = var->data;
-			*p = values[k++];
-		}
+		hashTable_AddDouble(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -780,12 +655,8 @@ void groups_SetStringArray
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
-	bool isDefault;
 	int i;
-	int index;
-	member* obj;
-	variable* var;
-	const char* val;
+	hash_table* obj;
 	
 	// String has a default value in a bitstream,
 	// so we must create a buffer that takes only those who are not default.
@@ -799,45 +670,7 @@ void groups_SetStringArray
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		val = values[k++];
-		isDefault = NULL == val;
-		
-		// Remember the indices who are not default.
-		if (!isDefault)
-			notDefaultIndices[notDefaultIndicesSize++] = i;
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// If the string is NULL and the member does not contain it,
-			// then we don't have to do anything.
-			if (!isDefault)
-				// The property does not exist, so we need to add it the default way.
-				member_AddString(obj, propId, val);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			if (isDefault)
-			{
-				// Remove the item and free the pointer.
-				// Since we are not iterating through the member properties,
-				// but along the members in a group, it is safe.
-				gcstack_free(obj->variables, var);
-				
-				// Tell the member to update the m_variableArray.
-				obj->m_ready = false;
-				continue;
-			}
-			
-			// Free the old string and init with a new one.
-			variable_Delete(var);
-			var = variable_InitWithString(var, propId, val);
-		}
+		hashTable_AddString(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -868,18 +701,16 @@ void groups_SetStringArray
 	free(notDefaultIndices);
 }
 
+
+
 void groups_SetIntArray
 (groups* g, const bitstream* a, int propId, int n, const int* values)
 {
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
-	bool isDefault;
 	int i;
-	int index;
-	member* obj;
-	variable* var;
-	int val;
+	hash_table* obj;
 	
 	// String has a default value in a bitstream,
 	// so we must create a buffer that takes only those who are not default.
@@ -893,45 +724,7 @@ void groups_SetIntArray
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		val = values[k++];
-		isDefault = -1 == val;
-		
-		// Remember the indices who are not default.
-		if (!isDefault)
-			notDefaultIndices[notDefaultIndicesSize++] = i;
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// If the string is NULL and the member does not contain it,
-			// then we don't have to do anything.
-			if (!isDefault)
-				// The property does not exist, so we need to add it the default way.
-				member_AddInt(obj, propId, val);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			if (isDefault)
-			{
-				// Remove the item and free the pointer.
-				// Since we are not iterating through the member properties,
-				// but along the members in a group, it is safe.
-				gcstack_free(obj->variables, var);
-				
-				// Tell the member to update the m_variableArray.
-				obj->m_ready = false;
-				continue;
-			}
-			
-			// Free the old string and init with a new one.
-			int* data = var->data;
-			*data = val;
-		}
+		hashTable_AddInt(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -968,12 +761,8 @@ void groups_SetBoolArray
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
-	bool isDefault;
 	int i;
-	int index;
-	member* obj;
-	variable* var;
-	bool val;
+	hash_table* obj;
 	
 	// String has a default value in a bitstream,
 	// so we must create a buffer that takes only those who are not default.
@@ -987,45 +776,7 @@ void groups_SetBoolArray
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		
-		val = values[k++];
-		isDefault = 0 == val;
-		
-		// Remember the indices who are not default.
-		if (!isDefault)
-			notDefaultIndices[notDefaultIndicesSize++] = i;
-		
-		index = member_IndexOf(obj, propId);
-		if (index < 0) {
-			// If the string is NULL and the member does not contain it,
-			// then we don't have to do anything.
-			if (!isDefault)
-				// The property does not exist, so we need to add it the default way.
-				member_AddBool(obj, propId, val);
-			continue;
-		}
-		if (index >= 0)
-		{
-			// Since 'member_IndexOf' creates variableArray if not created,
-			// we don't have to make an extra call to do this.
-			var = obj->m_variableArray[index];
-			
-			if (isDefault)
-			{
-				// Remove the item and free the pointer.
-				// Since we are not iterating through the member properties,
-				// but along the members in a group, it is safe.
-				gcstack_free(obj->variables, var);
-				
-				// Tell the member to update the m_variableArray.
-				obj->m_ready = false;
-				continue;
-			}
-			
-			// Free the old string and init with a new one.
-			bool* data = var->data;
-			*data = val;
-		}
+		hashTable_AddBool(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -1056,6 +807,7 @@ void groups_SetBoolArray
 	free(notDefaultIndices);
 }
 
+
 double* groups_GetDoubleArray
 (groups* g, const bitstream* a, int propId)
 {
@@ -1066,19 +818,18 @@ double* groups_GetDoubleArray
 	double* arr = malloc(sizeof(double)*size);
 	
 	int i;
-	member* obj;
-	int index;
+	hash_table* obj;
 	
 	int k = 0;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		index = member_IndexOf(obj, propId);
-		arr[k++] = index < 0 ? 0.0 : *((double*)obj->m_variableArray[index]->data);
+        arr[k++] = *((double*)hashTable_Get(obj, propId));
 	} end_foreach(a)
 	
 	return arr;
 }
+
 
 int* groups_GetIntArray
 (groups* g, const bitstream* a, int propId)
@@ -1090,15 +841,13 @@ int* groups_GetIntArray
 	int* arr = malloc(sizeof(int)*size);
 	
 	int i;
-	member* obj;
-	int index;
+	hash_table* obj;
 	
 	int k = 0;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		index = member_IndexOf(obj, propId);
-		arr[k++] = index < 0 ? -1 : *((int*)obj->m_variableArray[index]->data);
+        arr[k++] = *((int*)hashTable_Get(obj, propId));
 	} end_foreach(a)
 	
 	return arr;
@@ -1114,15 +863,13 @@ bool* groups_GetBoolArray
 	bool* arr = malloc(sizeof(bool)*size);
 	
 	int i;
-	member* obj;
-	int index;
+	hash_table* obj;
 	
 	int k = 0;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		index = member_IndexOf(obj, propId);
-		arr[k++] = index < 0 ? false : *((bool*)obj->m_variableArray[index]->data);
+        arr[k++] = *((bool*)hashTable_Get(obj, propId));
 	} end_foreach(a)
 	
 	return arr;
@@ -1138,15 +885,13 @@ const char** groups_GetStringArray
 	const char** arr = malloc(sizeof(string)*size);
 	
 	int i;
-	member* obj;
-	int index;
+	hash_table* obj;
 	
 	int k = 0;
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		index = member_IndexOf(obj, propId);
-		arr[k++] = index < 0 ? NULL : (const char*)obj->m_variableArray[index]->data;
+        arr[k++] = (const char*)hashTable_Get(obj, propId);
 	} end_foreach(a)
 	
 	return arr;
@@ -1164,53 +909,46 @@ const char* groups_PropertyNameById(const groups* g, int propId)
 	return NULL;
 }
 
-void groups_PrintMember(const groups* g, const member* obj)
+void groups_PrintMember(const groups* g, const hash_table* obj)
 {
-	variable* var;
-	gcstack_item* cursor;
-	cursor = obj->variables->root->next;
-	int propId, type;
-	for (; cursor != NULL; cursor = cursor->next)
-	{
-		var = (variable*)cursor;
-		propId = var->propId;
-		type = propId/TYPE_STRIDE;
-		const char* name = groups_PropertyNameById(g, propId);
-		if (type == TYPE_DOUBLE)
-			printf("%s:%f ", name, *(double*)var->data);
-		else if (type == TYPE_INT)
-			printf("%s:%i ", name, *(int*)var->data);
-		else if (type == TYPE_BOOL)
-			printf("%s:%i ", name, *(bool*)var->data);
-		else if (type == TYPE_STRING)
-			printf("%s:%s ", name, (char*)var->data);
-	}
-	printf("\r\n");
+    int propId, type;
+    
+    hashTable_foreach(obj) {
+    propId = _hashTable_id(obj);
+            type = propId/TYPE_STRIDE;
+            const char* name = groups_PropertyNameById(g, propId);
+            if (type == TYPE_DOUBLE)
+                printf("%s:%f ", name, _hashTable_double(obj));
+            else if (type == TYPE_INT)
+                printf("%s:%i ", name, _hashTable_int(obj));
+            else if (type == TYPE_BOOL)
+                printf("%s:%i ", name, _hashTable_bool(obj));
+            else if (type == TYPE_STRING)
+                printf("%s:%s ", name, _hashTable_string(obj));
+    } end_foreach(obj)
 }
 
 void groups_RemoveMember(groups* g, int index)
 {
 	createMemberArray(g);
 	
-	member* obj = g->m_memberArray[index];
+	hash_table* obj = g->m_memberArray[index];
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
-	// Loop through properties and remove from bitstreams.
-	gcstack_item* cursor = obj->variables->root->next;
 	int propId;
-	variable* var;
 	bitstream* a;
 	bitstream* b = bitstream_InitWithValues
 	(bitstream_AllocWithGC(gc), 2, (int[]){index,index+1});
 	bitstream* c;
-	for (; cursor != NULL; cursor = cursor->next) {
-		var = (variable*)cursor;
-		propId = var->propId;
-		a = groups_GetBitstream(g, propId);
+    hashTable_foreach(obj) {
+        propId = _hashTable_id(obj);
+        a = groups_GetBitstream(g, propId);
+        if (a == NULL) continue;
+        
 		c = bitstream_Except(gc, a, b);
 		gcstack_Swap(c, a);
-	}
-
+    } end_foreach(obj)
+    
 	g->m_bitstreamsReady = false;
 	g->m_membersReady = false;
 	
@@ -1245,7 +983,7 @@ void groups_RemoveMembers(groups* g, bitstream const* prop)
 	}
 	
 	int index;
-	member* obj;
+	hash_table* obj;
 	foreach (prop) {
 		// Free the member but don't delete it, in order to maintain index.
 		index = _pos(prop);

@@ -103,6 +103,25 @@ for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
 #define _break(a)     goto __BREAK_BITSTREAM_##a
 
 #define _pos(a)    __j##a
+ 
+ 
+#define hashTable_foreach(a) gcstack_item* __cursor##a = a->layers->root->next; \
+hash_layer* __layer##a; \
+int* __indices##a; \
+int __n##a, __i##a; \
+for (; __cursor##a != NULL; __cursor##a = __cursor##a->next) { \
+__layer##a = (hash_layer*)__cursor##a; \
+__indices##a = __layer##a->indices; \
+__n##a = __layer##a->n; \
+for (__i##a = 0; __i##a < __n##a; __i##a++) { \
+if (__indices##a[__i##a] == -1) continue;
+
+#define _hashTable_id(a) __indices##a[__i##a]
+#define _hashTable_value(a) __layer##a->data[__i##a]
+#define _hashTable_double(a) *(double*)__layer##a->data[__i##a]
+#define _hashTable_int(a) *(int*)__layer##a->data[__i##a]
+#define _hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
+#define _hashTable_string(a) (char*)__layer##a->data[__i##a]
 
 ****<- and there*****...TO KNOW START AND END. GOOD BOY!*****************/
 

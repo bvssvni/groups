@@ -43,6 +43,7 @@ extern "C" {
 #include "gcstack.h"
 #include "bitstream.h"
 #include "member.h"
+#include "hashtable.h"
 #include "readability.h"
 	
 	typedef struct groups {
@@ -63,7 +64,7 @@ extern "C" {
 		// Member data.
 		gcstack* members;
 		bool m_membersReady;
-		member** m_memberArray;
+		hash_table** m_memberArray;
 		bitstream* m_deletedMembers;
 	} groups;
 	
@@ -150,7 +151,7 @@ extern "C" {
 	// because when Groups resets the data, you need no worries about memory leaks.
 	//
 	int groups_AddMember
-	(groups* g, member* obj);
+	(groups* g, hash_table* obj);
 	
 	//
 	// Removes a member from Groups and recycles it for reuse.
@@ -228,7 +229,7 @@ extern "C" {
 	// has to be a Groups present to print it.
 	//
 	void groups_PrintMember
-	(const groups* g, const member* obj);
+	(const groups* g, const hash_table* obj);
 	
 	//
 	// Returns true if the variable got default value.
