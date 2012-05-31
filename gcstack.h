@@ -96,7 +96,17 @@ void gcstack_Pop
 // Pushes an item on the stack.
 void gcstack_Push
 (gcstack* gc, void* p);
+    
+    // Pushes a double to the stack, using internal type for it.
+    // This makes it easier to use gcstack for numerical calculations.
+    gcstack_item* gcstack_PushDouble(gcstack* gc, double val);
 
+    // Pops double from the stack.
+    double gcstack_PopDouble(gcstack* gc);
+    
+    // Pops double from the stack with a specific item.
+    double gcstack_PopDoubleWithItem(gcstack* gc, gcstack_item* item);
+    
 // Create an array of items that are on the stack.
 // In a stack the first item has usually the last index.
 // If you need the array to be in the same order as incremental index,

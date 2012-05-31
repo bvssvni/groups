@@ -252,6 +252,39 @@ void gcstack_Push(gcstack* gc, void* p)
 	gc->length++;
 }
 
+typedef struct gcdouble
+{
+    gcstack_item gc;
+    double val;
+} gcdouble;
 
+gcstack_item* gcstack_PushDouble(gcstack* gc, double val)
+{
+    gcdouble* d = (gcdouble*)gcstack_malloc(gc, sizeof(gcdouble), NULL);
+    d->val = val;
+    return (gcstack_item*)d;
+}
 
+double gcstack_PopDouble(gcstack* gc)
+{
+    gcstack_item* item = (gcstack_item*)gc->root->next;
+    if (item == NULL) return 0.0;
+    
+    gcstack_Pop(gc, item);
+    gcdouble* d = (gcdouble*)item;
+    double val = d->val;
+    free(d);
+    return val;
+}
+
+double gcstack_PopDoubleWithItem(gcstack* gc, gcstack_item* item)
+{
+    if (item == NULL) return 0.0;
+    
+    gcstack_Pop(gc, item);
+    gcdouble* d = (gcdouble*)item;
+    double val = d->val;
+    free(d);
+    return val;
+}
 
