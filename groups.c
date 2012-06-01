@@ -502,7 +502,7 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-        hashTable_AddDouble(obj, propId, val);
+        hashTable_SetDouble(obj, propId, val);
 	} end_foreach(a)
 	
 	// Double does not have a default value, so we need no condition here.
@@ -531,7 +531,7 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-        hashTable_AddString(obj, propId, val);
+        hashTable_SetString(obj, propId, val);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -563,7 +563,7 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_AddInt(obj, propId, val);
+		hashTable_SetInt(obj, propId, val);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -595,7 +595,7 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_AddBool(obj, propId, val);
+		hashTable_SetBool(obj, propId, val);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -634,7 +634,7 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_AddDouble(obj, propId, values[k++]);
+		hashTable_SetDouble(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -670,7 +670,7 @@ void groups_SetStringArray
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_AddString(obj, propId, values[k++]);
+		hashTable_SetString(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -724,7 +724,7 @@ void groups_SetIntArray
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_AddInt(obj, propId, values[k++]);
+		hashTable_SetInt(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -776,7 +776,7 @@ void groups_SetBoolArray
 	foreach (a) {
 		i = _pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_AddBool(obj, propId, values[k++]);
+		hashTable_SetBool(obj, propId, values[k++]);
 	} end_foreach(a)
 	
 	createBitstreamArray(g);

@@ -78,15 +78,22 @@ extern "C" {
     
 	void hashTable_Set(hash_table* hash, int id, void* value);
 	
-	void* hashTable_Get(hash_table* hash, int id);
+    // Returns a pointer that can not be changed because it can only be freed
+    // by the hash table and if you need to change it you have to copy it.
+	const void*         hashTable_Get       
+    (hash_table* hash, int id);
 	
-    void hashTable_AddDouble(hash_table* obj, int propId, double val);
+    void                hashTable_SetDouble 
+    (hash_table* obj, int propId, double val);
     
-    void hashTable_AddString(hash_table* obj, int propId, char const* val);
+    void                hashTable_SetString 
+    (hash_table* obj, int propId, char const* val);
     
-    void hashTable_AddInt(hash_table* obj, int propId, int val);
+    void hashTable_SetInt
+    (hash_table* obj, int propId, int val);
     
-    void hashTable_AddBool(hash_table* obj, int propId, bool val);
+    void hashTable_SetBool
+    (hash_table* obj, int propId, bool val);
     
 #endif
 	

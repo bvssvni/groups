@@ -188,7 +188,7 @@ void hashTable_Set(hash_table* hash, int id, void* value)
     newLayer->data[pos] = value;
 }
 
-void* hashTable_Get(hash_table* hash, int id)
+const void* hashTable_Get(hash_table* hash, int id)
 {
 	gcstack_item* cursor = hash->layers->root->next;
 	hash_layer* layer;
@@ -208,14 +208,14 @@ void* hashTable_Get(hash_table* hash, int id)
 	return NULL;
 }
 
-void hashTable_AddDouble(hash_table* obj, int propId, double val)
+void hashTable_SetDouble(hash_table* obj, int propId, double val)
 {
     double* p = malloc(sizeof(double));
     *p = val;
     hashTable_Set(obj, propId, p);
 }
 
-void hashTable_AddString(hash_table* obj, int propId, char const* val)
+void hashTable_SetString(hash_table* obj, int propId, char const* val)
 {
     if (val == NULL)
     {
@@ -228,7 +228,7 @@ void hashTable_AddString(hash_table* obj, int propId, char const* val)
     hashTable_Set(obj, propId, copy);
 }
 
-void hashTable_AddInt(hash_table* obj, int propId, int val)
+void hashTable_SetInt(hash_table* obj, int propId, int val)
 {
     if (val == -1)
     {
@@ -241,7 +241,7 @@ void hashTable_AddInt(hash_table* obj, int propId, int val)
     hashTable_Set(obj, propId, p);
 }
 
-void hashTable_AddBool(hash_table* obj, int propId, bool val)
+void hashTable_SetBool(hash_table* obj, int propId, bool val)
 {
     if (val == 0)
     {
