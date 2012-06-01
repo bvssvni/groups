@@ -953,7 +953,7 @@ void groups_RemoveMember(groups* g, int index)
 	g->m_membersReady = false;
 	
 	// Free the member but don't delete it, in order to maintain index.
-	member_Delete(obj);
+	hashTable_Delete(obj);
 	
 	// Add the member to bitstream of deleted members for reuse of index.
 	bitstream* d = g->m_deletedMembers;
@@ -1070,7 +1070,7 @@ void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
         typeName = "bool";
     else if (type == TYPE_STRING)
         typeName = "string";
-    fprintf(f, "%s:\"%s\"", name, "double");
+    fprintf(f, "%s:\"%s\"", name, typeName);
 }
 
 void groups_SaveToFile(const groups* g, string fileName)
@@ -1090,18 +1090,25 @@ void groups_SaveToFile(const groups* g, string fileName)
         if (cursor->next != NULL)
             fprintf(f, ",\r\n");
     }
-    fprintf(f, "}\r\n");
+    fprintf(f, " }\r\n");
     fprintf(f, "\r\n");
     
     // Print members.
     cursor = g->members->root->next;
     hash_table* member;
+    int id = 0;
+    int length = g->members->length;
     for (; cursor != NULL; cursor = cursor->next)
     {
+        ++id;
         member = (hash_table*)cursor;
-        fprintf(f, "member {");
-        groups_PrintMemberToFile(f, g, member);
-        fprintf(f, "}\r\n");
+        if (member->layers != NULL)
+        {
+            fprintf(f, "member {");
+            fprintf(f, "id:%i, ", length-id);
+            groups_PrintMemberToFile(f, g, member);
+            fprintf(f, "}\r\n");
+        }
     }
     
     fclose(f);
