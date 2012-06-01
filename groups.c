@@ -255,7 +255,7 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 	// string (node)
 	//
 	int propId = propIndex;
-	if (strcmp(propType, "int"))
+	if (strcmp(propType, "int") == 0)
 		propId += TYPE_INT*TYPE_STRIDE;
 	else if (strcmp(propType, "bool") == 0)
 		propId += TYPE_BOOL*TYPE_STRIDE;
@@ -446,7 +446,7 @@ int groups_AddMember(groups* g, hash_table* obj)
 	}
 	
 	// Reinitialize the input so one can continue using same object to insert data.
-	// hashTable_Init(obj);
+	hashTable_Init(obj);
 	
     /*/
 	// If the member contains no variables, skip the advanced stuff.
@@ -1029,4 +1029,82 @@ bool groups_IsBool(int propId)
 {
 	return propId/TYPE_STRIDE == TYPE_BOOL;
 }
+
+void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
+{
+    int propId, type;
+    bool first = true;
+    
+    hashTable_foreach(obj) {
+        propId = _hashTable_id(obj);
+        type = propId/TYPE_STRIDE;
+        
+        // Write comma to separate the items in the document.
+        if (!first) fprintf(f, ", ");
+        first = false;
+        
+        const char* name = groups_PropertyNameById(g, propId);
+        if (type == TYPE_DOUBLE)
+            fprintf(f, "%s:%g", name, _hashTable_double(obj));
+        else if (type == TYPE_INT)
+            fprintf(f, "%s:%i", name, _hashTable_int(obj));
+        else if (type == TYPE_BOOL)
+            fprintf(f, "%s:%i", name, _hashTable_bool(obj));
+        else if (type == TYPE_STRING)
+            fprintf(f, "%s:\"%s\"", name, _hashTable_string(obj));
+    } end_foreach(obj)
+}
+
+void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
+{
+    string name = prop->name;
+    int propId = prop->propId;
+    int type = propId/TYPE_STRIDE;
+    char* typeName;
+    
+    if (type == TYPE_DOUBLE)
+        typeName = "double";
+    else if (type == TYPE_INT)
+        typeName = "int";
+    else if (type == TYPE_BOOL)
+        typeName = "bool";
+    else if (type == TYPE_STRING)
+        typeName = "string";
+    fprintf(f, "%s:\"%s\"", name, "double");
+}
+
+void groups_SaveToFile(const groups* g, string fileName)
+{
+    FILE* f = fopen(fileName, "w");
+
+    gcstack_item* cursor;
+    
+    // Print properties.
+    cursor = g->properties->root->next;
+    property* prop;
+    fprintf(f, "properties {\r\n");
+    for (; cursor != NULL; cursor = cursor->next)
+    {
+        prop = (property*)cursor;
+        groups_PrintPropertyToFile(f, g, prop);
+        if (cursor->next != NULL)
+            fprintf(f, ",\r\n");
+    }
+    fprintf(f, "}\r\n");
+    fprintf(f, "\r\n");
+    
+    // Print members.
+    cursor = g->members->root->next;
+    hash_table* member;
+    for (; cursor != NULL; cursor = cursor->next)
+    {
+        member = (hash_table*)cursor;
+        fprintf(f, "member {");
+        groups_PrintMemberToFile(f, g, member);
+        fprintf(f, "}\r\n");
+    }
+    
+    fclose(f);
+}
+
 

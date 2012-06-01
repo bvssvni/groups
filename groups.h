@@ -255,6 +255,8 @@ extern "C" {
 	bool groups_IsBool
 	(int propId);
 	
+    void groups_SaveToFile(const groups* g, string fileName);
+    
 #endif
 	
 #ifdef __cplusplus
