@@ -35,6 +35,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
+#include "readability.h"
 
 #include "gcstack.h"
 
@@ -258,6 +261,24 @@ typedef struct gcdouble
     double val;
 } gcdouble;
 
+typedef struct gcint
+{
+    gcstack_item gc;
+    int val;
+} gcint;
+
+typedef struct gcbool
+{
+    gcstack_item gc;
+    bool val;
+} gcbool;
+
+typedef struct gcstring
+{
+    gcstack_item gc;
+    char* val;
+} gcstring;
+
 gcstack_item* gcstack_PushDouble(gcstack* gc, double val)
 {
     gcdouble* d = (gcdouble*)gcstack_malloc(gc, sizeof(gcdouble), NULL);
@@ -265,14 +286,82 @@ gcstack_item* gcstack_PushDouble(gcstack* gc, double val)
     return (gcstack_item*)d;
 }
 
+gcstack_item* gcstack_PushInt(gcstack* gc, int val)
+{
+    gcint* d = (gcint*)gcstack_malloc(gc, sizeof(gcint), NULL);
+    d->val = val;
+    return (gcstack_item*)d;
+}
+
+gcstack_item* gcstack_PushBool(gcstack* gc, bool val)
+{
+    gcbool* d = (gcbool*)gcstack_malloc(gc, sizeof(gcbool), NULL);
+    d->val = val;
+    return (gcstack_item*)d;
+}
+
+void gcstring_Delete(void* p)
+{
+    gcstring* d = (gcstring*)p;
+    free(d->val);
+    d->val = NULL;
+}
+
+gcstack_item* gcstack_PushString(gcstack* gc, string val)
+{
+    gcstring* d = (gcstring*)gcstack_malloc(gc, sizeof(gcstring), gcstring_Delete);
+    d->val = malloc(strlen(val)*sizeof(char));
+    strcpy(d->val, val);
+    return (gcstack_item*)d;
+}
+
 double gcstack_PopDouble(gcstack* gc)
 {
-    gcstack_item* item = (gcstack_item*)gc->root->next;
+    gcstack_item* item = gc->root->next;
     if (item == NULL) return 0.0;
     
     gcstack_Pop(gc, item);
     gcdouble* d = (gcdouble*)item;
     double val = d->val;
+    free(d);
+    return val;
+}
+
+int gcstack_PopInt(gcstack* gc)
+{
+    gcstack_item* item = gc->root->next;
+    if (item == NULL) return -1;
+    
+    gcstack_Pop(gc, item);
+    gcint* d = (gcint*)item;
+    int val = d->val;
+    free(d);
+    return val;
+}
+
+bool gcstack_PopBool(gcstack* gc)
+{
+    gcstack_item* item = gc->root->next;
+    if (item == NULL) return false;
+    
+    gcstack_Pop(gc, item);
+    gcbool* d = (gcbool*)item;
+    bool val = d->val;
+    free(d);
+    return val;
+}
+
+char* gcstack_PopString(gcstack* gc)
+{
+    gcstack_item* item = gc->root->next;
+    if (item == NULL) return NULL;
+    
+    // Since we will need a pointer to return
+    // we can reuse the string instead of copying it.
+    // Therefore there is no call to 'gcstring_Delete'.
+    gcstack_Pop(gc, item);
+    gcstring* d = (gcstring*)item;
+    char* val = d->val;
     free(d);
     return val;
 }
@@ -284,6 +373,43 @@ double gcstack_PopDoubleWithItem(gcstack* gc, gcstack_item* item)
     gcstack_Pop(gc, item);
     gcdouble* d = (gcdouble*)item;
     double val = d->val;
+    free(d);
+    return val;
+}
+
+int gcstack_PopIntWithItem(gcstack* gc, gcstack_item* item)
+{
+    if (item == NULL) return -1;
+    
+    gcstack_Pop(gc, item);
+    gcint* d = (gcint*)item;
+    int val = d->val;
+    free(d);
+    return val;
+}
+
+
+bool gcstack_PopBoolWithItem(gcstack* gc, gcstack_item* item)
+{
+    if (item == NULL) return false;
+    
+    gcstack_Pop(gc, item);
+    gcbool* d = (gcbool*)item;
+    bool val = d->val;
+    free(d);
+    return val;
+}
+
+char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
+{
+    if (item == NULL) return NULL;
+    
+    // Since we will need a pointer to return
+    // we can reuse the string instead of copying it.
+    // Therefore there is no call to 'gcstring_Delete'.
+    gcstack_Pop(gc, item);
+    gcstring* d = (gcstring*)item;
+    char* val = d->val;
     free(d);
     return val;
 }

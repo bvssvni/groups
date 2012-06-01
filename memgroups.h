@@ -33,10 +33,14 @@
  either expressed or implied, of the FreeBSD Project.
  */
  
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifndef memgroups
+#define memgroups
+    
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -48,11 +52,13 @@ extern "C" {
 #include "gcstack.h"
 #include "bitstream.h"
 #include "sorting.h"
-#include "variable.h"
-#include "member.h"
 #include "groups.h"
+#include "hashtable.h"
 #include "readability.h"
 
+#endif
+    
 #ifdef __cplusplus
 }
+
 #endif

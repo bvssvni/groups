@@ -40,6 +40,8 @@ extern "C" {
 #ifndef memgroups_gcstack
 #define memgroups_gcstack
 
+#include "readability.h"
+    
 // Items for garbage collection.
 typedef struct gcstack_item gcstack_item;
 struct gcstack_item
@@ -99,10 +101,21 @@ void gcstack_Push
     
     // Pushes a double to the stack, using internal type for it.
     // This makes it easier to use gcstack for numerical calculations.
-    gcstack_item* gcstack_PushDouble(gcstack* gc, double val);
+    gcstack_item*       gcstack_PushDouble      (gcstack* gc, double val);
+    gcstack_item*       gcstack_PushInt         (gcstack* gc, int val);
+    gcstack_item*       gcstack_PushBool        (gcstack* gc, bool val);
+    gcstack_item*       gcstack_PushString      (gcstack* gc, string val);
 
     // Pops double from the stack.
-    double gcstack_PopDouble(gcstack* gc);
+    double      gcstack_PopDouble       (gcstack* gc);
+    int         gcstack_PopInt          (gcstack* gc);
+    bool        gcstack_PopBool         (gcstack* gc);
+    char*       gcstack_PopString       (gcstack* gc);
+    
+    double      gcstack_PopDoubleWithItem       (gcstack* gc, gcstack_item* item);
+    int         gcstack_PopIntWithItem          (gcstack* gc, gcstack_item* item);
+    bool        gcstack_PopBoolWithItem         (gcstack* gc, gcstack_item* item);
+    char*       gcstack_PopStringWithItem       (gcstack* gc, gcstack_item* item);
     
     // Pops double from the stack with a specific item.
     double gcstack_PopDoubleWithItem(gcstack* gc, gcstack_item* item);

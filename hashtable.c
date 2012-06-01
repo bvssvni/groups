@@ -94,6 +94,20 @@ int hashLayer_NextPrime(int prime)
 		case 29: return 31;
 		case 31: return 33;
         case 33: return 37;
+        case 37: return 41;
+        case 41: return 43;
+        case 43: return 47;
+        case 47: return 53;
+        case 53: return 59;
+        case 59: return 61;
+        case 61: return 67;
+        case 67: return 71;
+        case 71: return 73;
+        case 73: return 79;
+        case 79: return 83;
+        case 83: return 89;
+        case 89: return 97;
+        case 97: return 101;
 	}
 	return -1;
 }
