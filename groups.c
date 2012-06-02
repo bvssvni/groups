@@ -434,10 +434,39 @@ int groups_AddMember(groups* g, hash_table* obj)
 	int id = g->members->length;
 	hash_table* new;
     
+    // When reading from file and id does not match,
+    // add 'deleted' members to match up with the id.
+    bool hasId = false;
+    int* oldIdPtr = (int*)hashTable_Get(obj, TMP_ID_PROPID);
+    int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
+    int newId = id;
+    while (oldId > newId) {
+        hash_table* hs = hashTable_AllocWithGC(g->members);
+        hs->layers = NULL;
+        hs->m_lastPrime = 0;
+        newId++;
+    }
+    if (newId - id > 0)
+    {
+        // Update the indices of deleted members to include the 'fakes' that has been added.
+        bitstream* addedIds = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 2, (int[]){id, newId});
+        bitstream* newDeleted = bitstream_Or(NULL, g->m_deletedMembers, addedIds);
+        bitstream* oldDeleted = g->m_deletedMembers;
+        g->m_deletedMembers = newDeleted;
+        bitstream_Delete(addedIds);
+        free(addedIds);
+        bitstream_Delete(oldDeleted);
+        free(oldDeleted);
+        hasId = true;
+    }
+    
+    id = newId;
+    
     // Make sure it contains no id.
     hashTable_Set(obj, TMP_ID_PROPID, NULL);
     
-	if (g->m_deletedMembers->length > 0)
+    // If the member came with fixed id, then don't reuse an old one.
+	if (!hasId && g->m_deletedMembers->length > 0)
 	{
         // Reuse an existing position.
 		createMemberArray(g);
@@ -1301,7 +1330,9 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                     continue;
                 }
                 if (isId) {
+                    // Read the id, take a step back to include last read character.
                     int id = 0;
+                    fseek(f, -1, SEEK_CUR);
                     column += fscanf(f, "%i", &id);
                     hashTable_SetInt(hs, TMP_ID_PROPID, id);
                     if (verbose) printf("%i,%i: id %i\r\n", line, column, id);
