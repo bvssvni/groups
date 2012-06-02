@@ -114,21 +114,6 @@ gcstack_item* gcstack_Start(gcstack const* gc)
 
 void gcstack_End(gcstack* gc, gcstack_item* end)
 {
-	//
-	if (gc->root == NULL)
-	{
-		printf("gc->root == NULL");
-		exit(1);
-	}
-	//*/
-	
-	/*/
-	if (remove < 0) {
-		printf("gcstack_End: remove < 0");
-		exit(1);
-	}
-	//*/
-	
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item* next;
 	while (cursor != end) {
@@ -164,6 +149,7 @@ void gcstack_free(gcstack* gc, void* p)
 gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*free)(void* p))
 {
 	gcstack_item* item = malloc(size);
+    
 	item->free = free;
 	
 	if (gc == NULL)

@@ -431,10 +431,13 @@ int groups_AddMember(groups* g, hash_table* obj)
 {
 	int id = g->members->length;
 	hash_table* new;
-	
-	// Reuse an existing position.
+    
+    // Make sure it contains no id.
+    hashTable_Set(obj, 0, NULL);
+    
 	if (g->m_deletedMembers->length > 0)
 	{
+        // Reuse an existing position.
 		createMemberArray(g);
 		id = bitstream_PopEnd(g->m_deletedMembers);
 		new = hashTable_InitWithMember(g->m_memberArray[id], obj);
@@ -447,12 +450,6 @@ int groups_AddMember(groups* g, hash_table* obj)
 	
 	// Reinitialize the input so one can continue using same object to insert data.
 	hashTable_Init(obj);
-	
-    /*/
-	// If the member contains no variables, skip the advanced stuff.
-	if (new->variables->length == 0)
-		return id;
-	//*/
     
 	// Prepare bitstreams to be searched.
 	createBitstreamArray(g);
@@ -914,11 +911,11 @@ void groups_PrintMember(const groups* g, const hash_table* obj)
     int propId, type;
     
     hashTable_foreach(obj) {
-    propId = _hashTable_id(obj);
+            propId = _hashTable_id(obj);
             type = propId/TYPE_STRIDE;
             const char* name = groups_PropertyNameById(g, propId);
             if (type == TYPE_DOUBLE)
-                printf("%s:%f ", name, _hashTable_double(obj));
+                printf("%s:%lg ", name, _hashTable_double(obj));
             else if (type == TYPE_INT)
                 printf("%s:%i ", name, _hashTable_int(obj));
             else if (type == TYPE_BOOL)
@@ -926,6 +923,7 @@ void groups_PrintMember(const groups* g, const hash_table* obj)
             else if (type == TYPE_STRING)
                 printf("%s:%s ", name, _hashTable_string(obj));
     } end_foreach(obj)
+    printf("\r\n");
 }
 
 void groups_RemoveMember(groups* g, int index)
@@ -1045,7 +1043,7 @@ void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
         
         const char* name = groups_PropertyNameById(g, propId);
         if (type == TYPE_DOUBLE)
-            fprintf(f, "%s:%g", name, _hashTable_double(obj));
+            fprintf(f, "%s:%lg", name, _hashTable_double(obj));
         else if (type == TYPE_INT)
             fprintf(f, "%s:%i", name, _hashTable_int(obj));
         else if (type == TYPE_BOOL)
@@ -1073,13 +1071,17 @@ void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
     fprintf(f, "%s:\"%s\"", name, typeName);
 }
 
-void groups_SaveToFile(const groups* g, string fileName)
+bool groups_SaveToFile(groups* g, string fileName)
 {
     FILE* f = fopen(fileName, "w");
-
+    if (f == NULL)
+        return false;
+    
     gcstack_item* cursor;
     
     // Print properties.
+    sortProperties(g);
+    
     cursor = g->properties->root->next;
     property* prop;
     fprintf(f, "properties {\r\n");
@@ -1112,6 +1114,343 @@ void groups_SaveToFile(const groups* g, string fileName)
     }
     
     fclose(f);
+    
+    return true;
 }
 
+bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
+{
+    FILE* f = fopen(fileName, "r");
+    if (f == NULL)
+        return false;
+    
+    const int _skip_white_space = 0;
+    const int _read_properties = 1;
+    const int _read_start_paranthesis = 2;
+    const int _error = 3;
+    const int _read_name = 4;
+    const int _read_colon = 5;
+    const int _read_value = 6;
+    const int _read_string = 7;
+    const int _read_backslash_in_string = 8;
+    const int _add = 9;
+    const int _read_comma_or_end_paranthesis = 10;
+    const int _read_member = 11;
+    
+    gcstack* gc = gcstack_Init(gcstack_Alloc());
+    gcstack_PushInt(gc, _read_member);
+    gcstack_PushInt(gc, _read_properties);
+    gcstack_PushInt(gc, _skip_white_space);
+    
+    string propText = "properties";
+    int propLength = strlen(propText);
+    int propIndex = 0;
+    
+    string memberText = "member";
+    int memberLength = strlen(memberText);
+    int memberIndex = 0;
+    
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+    
+    char* message;
+    char* name = NULL;
+    char* text = NULL;
+    
+    char nameBuffer[255];
+    int nameBufferIndex = 0;
+    
+    gcstack* strStack = gcstack_Init(gcstack_Alloc());
+    
+    char* tag = NULL;
+    bool isProperty, isMember, isId, isString;
+    
+    int ch;
+    int line = 0;
+    int column = 0;
+    int state = gcstack_PopInt(gc);
+    for (ch = fgetc(f); !feof(f); ch = fgetc(f)) {
+        if (ch == '\n') line++;
+        if (ch == '\n') column = 0; else column++;
+    NEW_STATE:
+        switch (state) {
+            case _skip_white_space:
+                if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') continue;
+                if (verbose) printf("%i,%i: _skip_white_space\r\n", line, column);
+                state = gcstack_PopInt(gc);
+                goto NEW_STATE;
+                break;
+            case _error:
+                // Error takes one argument from the stack.
+                if (err != NULL)
+                    err(line, column, message);
+                else {
+                    printf("%i,%i: %s\r\n", line, column, message);
+                }
+                goto CLEAN_UP;
+                break;
+            case _read_properties:
+                // Checks character for character against expected keyword.
+                if (ch == propText[propIndex++]) continue;
+                if (propIndex < propLength) {
+                    message = "Expected 'properties'";
+                    state = _error;
+                    goto NEW_STATE;
+                }
+                if (verbose) printf("%i,%i: _read_properties\r\n", line, column);
+                tag = "properties";
+                gcstack_PushInt(gc, _read_name);
+                gcstack_PushInt(gc, _read_start_paranthesis);
+                state = _skip_white_space;
+                goto NEW_STATE;
+                break;
+            case _read_member:
+                // Checks character for character against expected keyword.
+                if (ch == memberText[memberIndex++]) continue;
+                if (memberIndex < memberLength) {
+                    message = "Expected 'member'";
+                    state = _error;
+                    goto NEW_STATE;
+                }
+                memberIndex = 0;
+                if (verbose) printf("%i,%i: _read_member\r\n", line, column);
+                tag = "member";
+                gcstack_PushInt(gc, _read_name);
+                gcstack_PushInt(gc, _read_start_paranthesis);
+                state = _skip_white_space;
+                goto NEW_STATE;
+                break;
+            case _read_start_paranthesis:
+                // Reads start paranthesis.
+                if (ch == '{') {
+                    // Always skip white space after start paranthesis.
+                    if (verbose) printf("%i,%i: _read_start_paranthesis\r\n", line, column);
+                    state = _skip_white_space;
+                    continue;
+                }
+                else {
+                    message = "Expected '{'";
+                    state = _error;
+                    goto NEW_STATE;
+                }
+                break;
+            case _read_colon:
+                if (ch == ':') {
+                    // Always skip white space after colon.
+                    if (verbose) printf("%i,%i: _read_colon\r\n", line, column);
+                    state = _skip_white_space;
+                    continue;
+                }
+                else {
+                    message = "Expected ':'";
+                    state = _error;
+                    goto NEW_STATE;
+                }
+                break;
+            case _read_name:
+                // Reads a name that contains only letters and alphanumeric characters.
+                if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+                    nameBuffer[nameBufferIndex++] = ch;
+                    continue;
+                }
+                nameBuffer[nameBufferIndex++] = '\0';
+                if (verbose) printf("%i,%i: _read_name %s\r\n", line, column, nameBuffer);
+                if (name != NULL) free(name);
+                name = malloc(nameBufferIndex*sizeof(char));
+                strcpy(name, nameBuffer);
+                nameBufferIndex = 0;
+                gcstack_PushInt(gc, _read_value);
+                gcstack_PushInt(gc, _read_colon);
+                state = _skip_white_space;
+                goto NEW_STATE;
+                break;
+            case _read_value:
+                isString = (ch == '"');
+                isProperty = strcmp(tag, "properties") == 0;
+                isMember = strcmp(tag, "member") == 0;
+                isId = strcmp(name, "id") == 0;
+                
+                if (isProperty && !isString) {
+                    message = "Expected '\"'";
+                    state = _error;
+                    goto NEW_STATE;
+                }
+                
+                if (isId && isProperty) {
+                    message = "The 'id' keyword is reserved";
+                    state = _error;
+                    goto NEW_STATE;
+                }
+                
+                if (verbose) printf("%i,%i: _read_value %s\r\n", line, column, name);
+                
+                if (isString && isProperty) {
+                    state = _read_string;
+                    continue;
+                }
+                if (isId) {
+                    int id = 0;
+                    column += fscanf(f, "%i", &id);
+                    hashTable_SetInt(hs, 0, id);
+                    if (verbose) printf("%i,%i: id %i\r\n", line, column, id);
+                }
+                else if (isMember) {
+                    int propId = groups_GetProperty(g, name);
+                    if (propId < 0) {
+                        message = "Property not found";
+                        state = _error;
+                        goto NEW_STATE;
+                    }
+                    else {
+                        // Read the types supported in this format.
+                        // Steps one character back to read to get the first character when reading.
+                        int type = propId/TYPE_STRIDE;
+                        if (type == TYPE_INT) {
+                            int val = 0;
+                            fseek(f, -1, SEEK_CUR);
+                            column += fscanf(f, "%i", &val);
+                            hashTable_SetInt(hs, propId, val);
+                            if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, val);
+                        }
+                        else if (type == TYPE_DOUBLE) {
+                            double val = 0.0;
+                            fseek(f, -1, SEEK_CUR);
+                            column += fscanf(f, "%lg", &val);
+                            hashTable_SetDouble(hs, propId, val);
+                            if (verbose) printf("%i,%i: %s:%lg\r\n", line, column, name, val);
+                        }
+                        else if (type == TYPE_BOOL) {
+                            bool val = 0;
+                            fseek(f, -1, SEEK_CUR);
+                            column += fscanf(f, "%i", &val);
+                            hashTable_SetBool(hs, propId, val);
+                        }
+                        else if (type == TYPE_STRING) {
+                            state = _read_string;
+                            continue;
+                        }
+                    }
+                }
+                
+                gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
+                state = _skip_white_space;
+                continue;
+            
+            case _read_backslash_in_string:
+                // Read special characters that are escaped by backspace.
+                if (ch == '"')
+                    gcstack_PushInt(strStack, ch);
+                else if (ch == 'r')
+                    gcstack_PushInt(strStack, '\r');
+                else if (ch == 'n')
+                    gcstack_PushInt(strStack, '\n');
+                else if (ch == '\\')
+                    gcstack_PushInt(strStack, '\\');
+                else if (ch == '/')
+                    gcstack_PushInt(strStack, '/');
+                else if (ch == 'b')
+                    gcstack_PushInt(strStack, '\b');
+                else if (ch == 'f')
+                    gcstack_PushInt(strStack, '\f');
+                else if (ch == 't')
+                    gcstack_PushInt(strStack, '\t');
+                else if (ch == 'u') {
+                    // A unicode letter consists of 4 bytes, but
+                    // first we need to convert from hexadecimals to byte form.
+                    // The least significant byte should be placed first,
+                    // because this is the order the unicode letter is detected.
+                    int unicode = 0;
+                    fscanf(f, "%x", &unicode);
+                    gcstack_PushInt(strStack, (unicode >> 24) & 0xFF);
+                    gcstack_PushInt(strStack, (unicode >> 16) & 0xFF);
+                    gcstack_PushInt(strStack, (unicode >> 8) & 0xFF);
+                    gcstack_PushInt(strStack, unicode & 0xFF);
+                    column += 4;
+                }
+                state = _read_string;
+                continue;
+                
+            case _read_string:
+                if (ch == '\\') {
+                    state = _read_backslash_in_string;
+                    continue;
+                }
+                if (ch != '"') {
+                    gcstack_PushInt(strStack, ch);
+                    continue;
+                }
+                if (text != NULL) free(text);
+                text = malloc((strStack->length+1)*sizeof(char));
+                text[strStack->length] = '\0';
+                while (strStack->length > 0)
+                    text[strStack->length] = gcstack_PopInt(strStack);
+                if (verbose) printf("%i, %i: _read_string %s\r\n", line, column, text);
+                state = _add;
+                goto NEW_STATE;
+                break;
+                
+            case _read_comma_or_end_paranthesis:
+                if (ch == ',') {
+                    if (verbose) printf("%i,%i: _read_comma\r\n", line, column);
+                    gcstack_PushInt(gc, _read_name);
+                    state = _skip_white_space;
+                    continue;
+                }
+                else if (ch == '}') {
+                    // Clear the stack and read a new member.
+                    if (verbose) printf("%i,%i: _read_end_paranthesis\r\n", line, column);
+                    
+                    if (strcmp(tag, "member") == 0) {
+                        // Add the member to Groups.
+                        if (verbose) groups_PrintMember(g, hs);
+                        groups_AddMember(g, hs);
+                        if (verbose) printf("%i,%i: added member\r\n", line, column);
+                    }
+                        
+                    while (gc->length > 0) {
+                        gcstack_PopInt(gc);
+                    }
+                    gcstack_PushInt(gc, _read_member);
+                    state = _skip_white_space;
+                    continue;
+                }
+                message = "Expected ','";
+                state = _error;
+                goto NEW_STATE;
+                break;
+                
+            case _add:
+                if (strcmp(tag, "properties") == 0) {
+                    groups_AddProperty(g, name, text);
+                    if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
+                    gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
+                    state = _skip_white_space;
+                    continue;
+                }
+                else if (strcmp(tag, "member") == 0) {
+                    int propId = groups_GetProperty(g, name);
+                    hashTable_SetString(hs, propId, text);
+                    if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
+                    gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
+                    state = _skip_white_space;
+                    continue;
+                }
+                break;
+                
+        }
+        break;
+    }
+    
+CLEAN_UP:
+    hashTable_Delete(hs);
+    free(hs);
+    if (text != NULL) free(text);
+    if (name != NULL) free(name);
+    gcstack_Delete(strStack);
+    free(strStack);
+    gcstack_Delete(gc);
+    free(gc);
+    fclose(f);
+    
+    return true;
+}
 

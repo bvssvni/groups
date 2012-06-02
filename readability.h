@@ -45,11 +45,11 @@ extern "C" {
 #define byte unsigned char
 
 #define TYPE_STRIDE 1000000
-#define TYPE_UNKNOWN 0
 #define TYPE_DOUBLE 1
 #define TYPE_STRING 2
 #define TYPE_INT 3
 #define TYPE_BOOL 4
+#define TYPE_UNKNOWN 5
 	
 //
 //		FOREACH MACROES

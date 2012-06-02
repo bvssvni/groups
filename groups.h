@@ -255,7 +255,11 @@ extern "C" {
 	bool groups_IsBool
 	(int propId);
 	
-    void groups_SaveToFile(const groups* g, string fileName);
+    // Saves data to file in JSON format.
+    bool        groups_SaveToFile
+    (groups* g, string fileName);
+    
+    bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message));
     
 #endif
 	

@@ -156,6 +156,9 @@ void hashTable_Set(hash_table* hash, int id, void* value)
 	int pos;
 	int exId;
 	int* indices;
+    int freePos = -1;
+    hash_layer* freeLayer = NULL;
+    
 	for (; cursor != NULL; cursor = cursor->next) {
 		layer = (hash_layer*)cursor;
 		
@@ -163,21 +166,36 @@ void hashTable_Set(hash_table* hash, int id, void* value)
 		pos = id % n;
 		indices = layer->indices;
 		exId = indices[pos];
-		// Free the last pointer is setting value.
+        
 		if (exId == id && value != layer->data[pos])
         {
+            // Replace the existing value.
             free(layer->data[pos]);
-            exId = -1;
-		}
-        if (exId == -1)
-		{
-            // Don't set index if the value is null.
-			indices[pos] = value == NULL ? -1 : id;
+            indices[pos] = value == NULL ? -1 : id;
             layer->data[pos] = value;
-			return;
+            
+            return;
+		}
+        if (exId == -1 && freePos == -1)
+		{
+            // Remember the first encountered free slot.
+            freePos = pos;
+            freeLayer = layer;
 		}
 	}
+    
+    // Don't put anything in if the value is NULL.
+    // NULL is used to remove values from the hash table.
+    if (value == NULL) return;
 	
+    // Add in free layer.
+    if (freePos != -1)
+    {
+        freeLayer->indices[freePos] = id;
+        freeLayer->data[freePos] = value;
+        return;
+    }
+    
 	// Create new layer.
 	int nextPrime = hashLayer_NextPrime(hash->m_lastPrime);
 	hash_layer* newLayer = hashLayer_InitWithSize
@@ -202,9 +220,11 @@ const void* hashTable_Get(hash_table* hash, int id)
 		pos = id % n;
 		indices = layer->indices;
 		exId = indices[pos];
+        
 		// Return if already set.
 		if (exId == id) return layer->data[pos];
 	}
+    
 	return NULL;
 }
 
