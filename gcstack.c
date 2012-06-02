@@ -141,9 +141,12 @@ void gcstack_free(gcstack* gc, void* p)
 	if (gc != NULL) {
 		gcstack_Pop(gc, p);
 	}
-	gcstack_item* item = (gcstack_item*)p;
-	item->free(item);
-	free(item);
+    gcstack_item* item = (gcstack_item*)p;
+    if (item->free != NULL)
+    {
+        item->free(item);
+	}
+    free(item);
 }
 
 gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*free)(void* p))

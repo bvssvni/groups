@@ -90,6 +90,8 @@ if (__indices##a[__i##a] == -1) continue;
  
 /****<- and there*****...TO KNOW START AND END. GOOD BOY!*****************/
 
+#define TMP_ID_PROPID 123
+
 void groups_Delete(void* p)
 {
 	groups* g = (groups*)p;
@@ -433,7 +435,7 @@ int groups_AddMember(groups* g, hash_table* obj)
 	hash_table* new;
     
     // Make sure it contains no id.
-    hashTable_Set(obj, 0, NULL);
+    hashTable_Set(obj, TMP_ID_PROPID, NULL);
     
 	if (g->m_deletedMembers->length > 0)
 	{
@@ -1058,7 +1060,7 @@ void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
     string name = prop->name;
     int propId = prop->propId;
     int type = propId/TYPE_STRIDE;
-    char* typeName;
+    char* typeName = NULL;
     
     if (type == TYPE_DOUBLE)
         typeName = "double";
@@ -1118,6 +1120,15 @@ bool groups_SaveToFile(groups* g, string fileName)
     return true;
 }
 
+void groups_AppendMembers(groups* g, gcstack* newMembers)
+{
+    gcstack_item* cursor = newMembers->root->next;
+    for (; cursor != NULL; cursor = cursor->next)
+    {
+        groups_AddMember(g, (hash_table*)cursor);
+    }
+}
+
 bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
 {
     FILE* f = fopen(fileName, "r");
@@ -1137,6 +1148,8 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
     const int _read_comma_or_end_paranthesis = 10;
     const int _read_member = 11;
     
+    gcstack* memberStack = gcstack_Init(gcstack_Alloc());
+    
     gcstack* gc = gcstack_Init(gcstack_Alloc());
     gcstack_PushInt(gc, _read_member);
     gcstack_PushInt(gc, _read_properties);
@@ -1152,7 +1165,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
     
     hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
     
-    char* message;
+    char* message = NULL;
     char* name = NULL;
     char* text = NULL;
     
@@ -1290,7 +1303,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                 if (isId) {
                     int id = 0;
                     column += fscanf(f, "%i", &id);
-                    hashTable_SetInt(hs, 0, id);
+                    hashTable_SetInt(hs, TMP_ID_PROPID, id);
                     if (verbose) printf("%i,%i: id %i\r\n", line, column, id);
                 }
                 else if (isMember) {
@@ -1400,9 +1413,10 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                     if (verbose) printf("%i,%i: _read_end_paranthesis\r\n", line, column);
                     
                     if (strcmp(tag, "member") == 0) {
-                        // Add the member to Groups.
+                        // Put the member on the stack, because it is in reverse order.
                         if (verbose) groups_PrintMember(g, hs);
-                        groups_AddMember(g, hs);
+                        hashTable_InitWithMember(hashTable_AllocWithGC(memberStack), hs);
+                        hashTable_Init(hs);
                         if (verbose) printf("%i,%i: added member\r\n", line, column);
                     }
                         
@@ -1440,15 +1454,24 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
         break;
     }
     
+    // Add members to group.
+    groups_AppendMembers(g, memberStack);
+    
 CLEAN_UP:
     hashTable_Delete(hs);
     free(hs);
     if (text != NULL) free(text);
     if (name != NULL) free(name);
+    
     gcstack_Delete(strStack);
     free(strStack);
+    
     gcstack_Delete(gc);
     free(gc);
+    
+    gcstack_Delete(memberStack);
+    free(memberStack);
+    
     fclose(f);
     
     return true;
