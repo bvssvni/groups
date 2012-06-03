@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "gcstack.h"
 #include "bitstream.h"
@@ -1158,11 +1159,74 @@ void groups_AppendMembers(groups* g, gcstack* newMembers)
     }
 }
 
+// The sscanf function does allow tracking of how many characters are read.
+// This function computes the number of characters.
+int sscanfSizeOf(const char* text, int type) {
+    bool acceptNumeric = true;
+    bool acceptDot = type == TYPE_DOUBLE || type == TYPE_STRING;
+    bool acceptDoubleQuote = false;
+    bool acceptWhiteSpace = true;
+    bool acceptComma = false;
+    bool acceptParanthesis = type == TYPE_STRING;
+    
+    bool isNumeric, isDot, isDoubleQuote, isWhiteSpace, isComma, isParanthesis;
+    
+    int i = 0;
+    for (i = 0; text[i] != '\0'; i++) {
+        
+        isNumeric = text[i] >= '0' && text[i] <= '9';
+        isDot = text[i] == '.';
+        isDoubleQuote = text[i] == '"';
+        isWhiteSpace = text[i] == ' ' || text[i] == '\r' || text[i] == '\n' || text[i] == '\t';
+        isComma = text[i] == ',';
+        isParanthesis = text[i] == '}' || text[i] == '{' || text[i] == ']' || text[i] == '[' ||
+            text[i] == ')' || text[i] == '(';
+        
+        if (isNumeric && !acceptNumeric) break;
+        if (isDot && !acceptDot) break;
+        if (isDoubleQuote && !acceptDoubleQuote) break;
+        if (isWhiteSpace && !acceptWhiteSpace) break;
+        if (isComma && !acceptComma) break;
+        if (isParanthesis && !acceptParanthesis) break;
+    }
+    
+    return i;
+}
+
+// Reads a double from text and returns the number of characters read.
+int sscanDouble(const char* text, double* output)
+{
+    int s = sscanfSizeOf(text, TYPE_DOUBLE);
+    if (s == 0) return 0;
+    int n = sscanf(text, "%lg", output);
+    return n*s;
+}
+
+// Reads an int from text and returns the number of characters read.
+int sscanInt(const char* text, int* output)
+{
+    int s = sscanfSizeOf(text, TYPE_INT);
+    if (s == 0) return 0;
+    int n = sscanf(text, "%i", output);
+    return n*s;
+}
+
 bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
 {
+    // Get file size.
+    struct stat s;
+    if (stat(fileName, &s) != 0) {
+        return false;
+    }
+    int size = s.st_size;
+    
     FILE* f = fopen(fileName, "r");
     if (f == NULL)
         return false;
+    
+    char* buff = malloc(sizeof(byte)*size);
+    fread(buff, sizeof(byte), size, f);
+    fclose(f);
     
     const int _skip_white_space = 0;
     const int _read_properties = 1;
@@ -1173,7 +1237,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
     const int _read_value = 6;
     const int _read_string = 7;
     const int _read_backslash_in_string = 8;
-    const int _add = 9;
+    const int _add_after_reading_string = 9;
     const int _read_comma_or_end_paranthesis = 10;
     const int _read_member = 11;
     
@@ -1194,7 +1258,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
     
     hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
     
-    char* message = NULL;
+    const char* message = NULL;
     char* name = NULL;
     char* text = NULL;
     
@@ -1203,14 +1267,22 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
     
     gcstack* strStack = gcstack_Init(gcstack_Alloc());
     
-    char* tag = NULL;
+    const int tag_properties = 1;
+    const int tag_member = 2;
+    int tag = 0;
     bool isProperty, isMember, isId, isString;
     
+    int valInt;
+    double valDouble;
+    int unicode, success;
+    
+    int buffPos = 0;
     int ch;
+    int delta;
     int line = 0;
     int column = 0;
     int state = gcstack_PopInt(gc);
-    for (ch = fgetc(f); !feof(f); ch = fgetc(f)) {
+    for (ch = buff[buffPos++]; buffPos < size; ch = buff[buffPos++]) {
         if (ch == '\n') line++;
         if (ch == '\n') column = 0; else column++;
     NEW_STATE:
@@ -1239,7 +1311,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                     goto NEW_STATE;
                 }
                 if (verbose) printf("%i,%i: _read_properties\r\n", line, column);
-                tag = "properties";
+                tag = tag_properties;
                 gcstack_PushInt(gc, _read_name);
                 gcstack_PushInt(gc, _read_start_paranthesis);
                 state = _skip_white_space;
@@ -1255,7 +1327,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                 }
                 memberIndex = 0;
                 if (verbose) printf("%i,%i: _read_member\r\n", line, column);
-                tag = "member";
+                tag = tag_member;
                 gcstack_PushInt(gc, _read_name);
                 gcstack_PushInt(gc, _read_start_paranthesis);
                 state = _skip_white_space;
@@ -1307,8 +1379,8 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                 break;
             case _read_value:
                 isString = (ch == '"');
-                isProperty = strcmp(tag, "properties") == 0;
-                isMember = strcmp(tag, "member") == 0;
+                isProperty = tag == tag_properties;
+                isMember = tag == tag_member;
                 isId = strcmp(name, "id") == 0;
                 
                 if (isProperty && !isString) {
@@ -1331,11 +1403,12 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                 }
                 if (isId) {
                     // Read the id, take a step back to include last read character.
-                    int id = 0;
-                    fseek(f, -1, SEEK_CUR);
-                    column += fscanf(f, "%i", &id);
-                    hashTable_SetInt(hs, TMP_ID_PROPID, id);
-                    if (verbose) printf("%i,%i: id %i\r\n", line, column, id);
+                    buffPos--; column--;
+                    delta = sscanInt(buff+buffPos, &valInt);
+                    buffPos += delta;
+                    column += delta;
+                    hashTable_SetInt(hs, TMP_ID_PROPID, valInt);
+                    if (verbose) printf("%i,%i: id %i\r\n", line, column, valInt);
                 }
                 else if (isMember) {
                     int propId = groups_GetProperty(g, name);
@@ -1349,24 +1422,29 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                         // Steps one character back to read to get the first character when reading.
                         int type = propId/TYPE_STRIDE;
                         if (type == TYPE_INT) {
-                            int val = 0;
-                            fseek(f, -1, SEEK_CUR);
-                            column += fscanf(f, "%i", &val);
-                            hashTable_SetInt(hs, propId, val);
-                            if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, val);
+                            buffPos--; column--;
+                            delta = sscanInt(buff+buffPos, &valInt);
+                            buffPos += delta;
+                            column += delta;
+                            hashTable_SetInt(hs, propId, valInt);
+                            if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
                         }
                         else if (type == TYPE_DOUBLE) {
-                            double val = 0.0;
-                            fseek(f, -1, SEEK_CUR);
-                            column += fscanf(f, "%lg", &val);
-                            hashTable_SetDouble(hs, propId, val);
-                            if (verbose) printf("%i,%i: %s:%lg\r\n", line, column, name, val);
+                            buffPos--; column--;
+                            delta = sscanDouble(buff+buffPos, &valDouble);
+                            
+                            buffPos += delta;
+                            column += delta;
+                            hashTable_SetDouble(hs, propId, valDouble);
+                            if (verbose) printf("%i,%i: %s:%lg\r\n", line, column, name, valDouble);
                         }
                         else if (type == TYPE_BOOL) {
-                            bool val = 0;
-                            fseek(f, -1, SEEK_CUR);
-                            column += fscanf(f, "%i", &val);
-                            hashTable_SetBool(hs, propId, val);
+                            buffPos--; column--;
+                            delta = sscanInt(buff+buffPos-1, &valInt)-1;
+                            buffPos += delta;
+                            column += delta;
+                            hashTable_SetBool(hs, propId, valInt);
+                            if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
                         }
                         else if (type == TYPE_STRING) {
                             state = _read_string;
@@ -1378,7 +1456,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                 gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
                 state = _skip_white_space;
                 continue;
-            
+                
             case _read_backslash_in_string:
                 // Read special characters that are escaped by backspace.
                 if (ch == '"')
@@ -1402,13 +1480,20 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                     // first we need to convert from hexadecimals to byte form.
                     // The least significant byte should be placed first,
                     // because this is the order the unicode letter is detected.
-                    int unicode = 0;
-                    fscanf(f, "%x", &unicode);
-                    gcstack_PushInt(strStack, (unicode >> 24) & 0xFF);
-                    gcstack_PushInt(strStack, (unicode >> 16) & 0xFF);
-                    gcstack_PushInt(strStack, (unicode >> 8) & 0xFF);
-                    gcstack_PushInt(strStack, unicode & 0xFF);
-                    column += 4;
+                    success = sscanf(buff+buffPos, "%x", &unicode);
+                    if (success) {
+                        gcstack_PushInt(strStack, (unicode >> 24) & 0xFF);
+                        gcstack_PushInt(strStack, (unicode >> 16) & 0xFF);
+                        gcstack_PushInt(strStack, (unicode >> 8) & 0xFF);
+                        gcstack_PushInt(strStack, unicode & 0xFF);
+                        column += 4;
+                        buffPos += 4;
+                    }
+                    else {
+                        message = "Unknown unicode format";
+                        state = _error;
+                        goto NEW_STATE;
+                    }
                 }
                 state = _read_string;
                 continue;
@@ -1428,7 +1513,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                 while (strStack->length > 0)
                     text[strStack->length] = gcstack_PopInt(strStack);
                 if (verbose) printf("%i, %i: _read_string %s\r\n", line, column, text);
-                state = _add;
+                state = _add_after_reading_string;
                 goto NEW_STATE;
                 break;
                 
@@ -1443,14 +1528,14 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                     // Clear the stack and read a new member.
                     if (verbose) printf("%i,%i: _read_end_paranthesis\r\n", line, column);
                     
-                    if (strcmp(tag, "member") == 0) {
+                    if (tag == tag_member) {
                         // Put the member on the stack, because it is in reverse order.
                         if (verbose) groups_PrintMember(g, hs);
                         hashTable_InitWithMember(hashTable_AllocWithGC(memberStack), hs);
                         hashTable_Init(hs);
                         if (verbose) printf("%i,%i: added member\r\n", line, column);
                     }
-                        
+                    
                     while (gc->length > 0) {
                         gcstack_PopInt(gc);
                     }
@@ -1458,20 +1543,20 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                     state = _skip_white_space;
                     continue;
                 }
-                message = "Expected ','";
+                message = "Expected ',' or '}'";
                 state = _error;
                 goto NEW_STATE;
                 break;
                 
-            case _add:
-                if (strcmp(tag, "properties") == 0) {
+            case _add_after_reading_string:
+                if (tag == tag_properties) {
                     groups_AddProperty(g, name, text);
                     if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
                     gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
                     state = _skip_white_space;
                     continue;
                 }
-                else if (strcmp(tag, "member") == 0) {
+                else if (tag == tag_member) {
                     int propId = groups_GetProperty(g, name);
                     hashTable_SetString(hs, propId, text);
                     if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
@@ -1503,7 +1588,7 @@ CLEAN_UP:
     gcstack_Delete(memberStack);
     free(memberStack);
     
-    fclose(f);
+    free(buff);
     
     return true;
 }
