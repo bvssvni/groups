@@ -227,7 +227,7 @@ int countDeltaBool(int n, const bool* old, const bool* new)
 	return count;
 }
 
-int countDeltaString(int n, const string* old, const string* new)
+int countDeltaString(int n, string* old, string* new)
 {
 	int count = 0;
 	bool was = false;
