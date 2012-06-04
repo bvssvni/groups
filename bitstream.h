@@ -135,7 +135,7 @@ bitstream* bitstream_InitWithDeltaBool
 (bitstream* a, int n, const bool* oldValues, const bool* newValues);
 	
 bitstream* bitstream_InitWithDeltaString
-(bitstream* a, int n, const string* oldValues, const string* newValues);
+(bitstream* a, int n, string* oldValues, string* newValues);
 	
 //
 //			Cleans up the structure within a bistream.
