@@ -117,6 +117,7 @@ bitstream*	bitstream_InitWithValues
 //			Sometimes you have an array of indices and you want to create
 //			a bitstream from it. The indices that increment with 1 will
 //			be merged into same block in the bitstream.
+//          The indices have to be sorted (monetonized).
 //
 bitstream* bitstream_InitWithIndices
 (bitstream* a, int size, int const vals[]);
