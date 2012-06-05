@@ -39,6 +39,11 @@
 #include "variable.h"
 #include "sorting.h"
 
+#ifndef MEMGROUPS_READABILITY
+#define MEMGROUPS_READABILITY
+#include "readability.h"
+#endif
+
 #include "member.h"
 
 void member_Delete(void* p)

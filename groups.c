@@ -42,54 +42,13 @@
 #include "bitstream.h"
 #include "sorting.h"
 #include "property.h"
+
+#ifndef MEMGROUPS_READABILITY
+#define MEMGROUPS_READABILITY
 #include "readability.h"
+#endif
 
 #include "groups.h"
-
-/***************COPY AND PUT ON SLASHES TO THIS LINE...********there ->***/
- 
- #define foreach_reverse(a) \
- int __start##a, __end##a, __i##a, __j##a; \
- for (__i##a = a->length-2; __i##a >= 0; __i##a -= 2) { \
- __start##a = a->pointer[__i##a]; \
- __end##a = a->pointer[__i##a+1]; \
- for (__j##a = __end##a-1; __j##a >= __start##a; __j##a--) {
- 
- #define foreach(a) \
- int __len##a = a->length-1; \
- int __start##a, __end##a, __i##a, __j##a; \
- for (__i##a = 0; __i##a < __len##a; __i##a += 2) { \
- __start##a = a->pointer[__i##a]; \
- __end##a = a->pointer[__i##a+1]; \
- for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
- 
- #define end_foreach(a) }}__BREAK_BITSTREAM_##a:;
- 
- #define _break(a)     goto __BREAK_BITSTREAM_##a
- 
- #define _pos(a)    __j##a
-
-
-#define hashTable_foreach(a) gcstack_item* __cursor##a = a->layers->root->next; \
-hash_layer* __layer##a; \
-int* __indices##a; \
-int __n##a, __i##a; \
-for (; __cursor##a != NULL; __cursor##a = __cursor##a->next) { \
-__layer##a = (hash_layer*)__cursor##a; \
-__indices##a = __layer##a->indices; \
-__n##a = __layer##a->n; \
-for (__i##a = 0; __i##a < __n##a; __i##a++) { \
-if (__indices##a[__i##a] == -1) continue;
-
-#define _hashTable_id(a) __indices##a[__i##a]
-#define _hashTable_value(a) __layer##a->data[__i##a]
-#define _hashTable_double(a) *(double*)__layer##a->data[__i##a]
-#define _hashTable_int(a) *(int*)__layer##a->data[__i##a]
-#define _hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
-#define _hashTable_string(a) (char*)__layer##a->data[__i##a]
-
- 
-/****<- and there*****...TO KNOW START AND END. GOOD BOY!*****************/
 
 #define TMP_ID_PROPID 123
 

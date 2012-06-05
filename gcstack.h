@@ -103,18 +103,18 @@ void gcstack_Push
     // This makes it easier to use gcstack for numerical calculations.
     gcstack_item*       gcstack_PushDouble      (gcstack* gc, double val);
     gcstack_item*       gcstack_PushInt         (gcstack* gc, int val);
-    gcstack_item*       gcstack_PushBool        (gcstack* gc, bool val);
-    gcstack_item*       gcstack_PushString      (gcstack* gc, string val);
+    gcstack_item*       gcstack_PushBool        (gcstack* gc, int val);
+    gcstack_item*       gcstack_PushString      (gcstack* gc, const char* val);
 
     // Pops double from the stack.
     double      gcstack_PopDouble       (gcstack* gc);
     int         gcstack_PopInt          (gcstack* gc);
-    bool        gcstack_PopBool         (gcstack* gc);
+    int        gcstack_PopBool         (gcstack* gc);
     char*       gcstack_PopString       (gcstack* gc);
     
     double      gcstack_PopDoubleWithItem       (gcstack* gc, gcstack_item* item);
     int         gcstack_PopIntWithItem          (gcstack* gc, gcstack_item* item);
-    bool        gcstack_PopBoolWithItem         (gcstack* gc, gcstack_item* item);
+    int        gcstack_PopBoolWithItem         (gcstack* gc, gcstack_item* item);
     char*       gcstack_PopStringWithItem       (gcstack* gc, gcstack_item* item);
     
     // Pops double from the stack with a specific item.

@@ -32,11 +32,28 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
+
+/*
+ 
+ INSTRUCTIONS
+ 
+ To use this header, you must "unlock" it by copying the following code into your source.
+ Do not put this in any header, because the macros can redefine existing ones in the project you refer from.
+ 
+ #ifndef MEMGROUPS_READABILITY
+ #define MEMGROUPS_READABILITY
+ #include "readability.h"
+ #endif
+ 
+ */
+
  
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifdef MEMGROUPS_READABILITY
+    
 // This is to make the code easier to read and to import from C#.
 #define bool int
 #define true 1
@@ -81,8 +98,6 @@ extern "C" {
 //		Tip: Declaring variables before the loop will increase performance.
 //
 
-/***************COPY AND PUT ON SLASHES TO THIS LINE...********there ->***
- 
 #define foreach_reverse(a) \
 int __start##a, __end##a, __i##a, __j##a; \
 for (__i##a = a->length-2; __i##a >= 0; __i##a -= 2) { \
@@ -123,8 +138,8 @@ if (__indices##a[__i##a] == -1) continue;
 #define _hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
 #define _hashTable_string(a) (char*)__layer##a->data[__i##a]
 
-****<- and there*****...TO KNOW START AND END. GOOD BOY!*****************/
-
+#endif
+    
 #ifdef __cplusplus
 }
 #endif

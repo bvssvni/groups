@@ -42,12 +42,11 @@ extern "C" {
 	
 #include "gcstack.h"
 #include "variable.h"
-#include "readability.h"
 	
 typedef struct member {
 	gcstack_item gc;
 	gcstack* variables;
-	bool m_ready;
+	int m_ready;
 	variable** m_variableArray;
 } member;
 
@@ -73,7 +72,7 @@ typedef struct member {
 	(member* obj, int propId, int val);
 	
 	void member_AddBool
-	(member* obj, int propId, bool val);
+	(member* obj, int propId, int val);
 	
 	//
 	// Uses binary search to find the index of a property id.

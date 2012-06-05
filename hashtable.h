@@ -93,7 +93,7 @@ extern "C" {
     (hash_table* obj, int propId, int val);
     
     void hashTable_SetBool
-    (hash_table* obj, int propId, bool val);
+    (hash_table* obj, int propId, int val);
     
 #endif
 	

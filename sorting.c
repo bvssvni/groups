@@ -36,7 +36,11 @@
 #include <string.h>
 #include "gcstack.h"
 #include "sorting.h"
+
+#ifndef MEMGROUPS_READABILITY
+#define MEMGROUPS_READABILITY
 #include "readability.h"
+#endif
 
 /*
  

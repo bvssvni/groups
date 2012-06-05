@@ -65,7 +65,7 @@ extern "C" {
 	(variable* var, int propId, int val);
 	
 	variable* variable_InitWithBool
-	(variable* var, int propId, bool val);
+	(variable* var, int propId, int val);
 	
 #endif
 	

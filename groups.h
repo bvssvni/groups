@@ -44,7 +44,6 @@ extern "C" {
 #include "bitstream.h"
 #include "member.h"
 #include "hashtable.h"
-#include "readability.h"
 	
 	typedef struct groups {
 		// Allow struct to be garbage collected by gcstack.
@@ -52,18 +51,18 @@ extern "C" {
 		
 		// Bitstream data.
 		gcstack* bitstreams;
-		bool m_bitstreamsReady;
+		int m_bitstreamsReady;
 		bitstream** m_bitstreamsArray;
 		bitstream* m_deletedBitstreams;
 		
 		// Property data.
 		gcstack* properties;
-		bool m_propertiesReady;
+		int m_propertiesReady;
 		gcstack_item** m_sortedPropertyItems;
 		
 		// Member data.
 		gcstack* members;
-		bool m_membersReady;
+		int m_membersReady;
 		hash_table** m_memberArray;
 		bitstream* m_deletedMembers;
 	} groups;
@@ -176,7 +175,7 @@ extern "C" {
 	(groups* g, const bitstream* a, int propId, int val);
 	
 	void groups_SetBool
-	(groups* g, const bitstream* a, int propId, bool val);
+	(groups* g, const bitstream* a, int propId, int val);
 	
 	//
 	// Sets an array of doubles.
@@ -209,7 +208,7 @@ extern "C" {
 	// This is to reduce usage of memory.
 	//
 	void groups_SetBoolArray
-	(groups* g, const bitstream* a, int propId, int n, const bool* values);
+	(groups* g, const bitstream* a, int propId, int n, const int* values);
 	
 	double* groups_GetDoubleArray
 	(groups* g, const bitstream* a, int propId);
@@ -217,7 +216,7 @@ extern "C" {
 	int* groups_GetIntArray
 	(groups* g, const bitstream* a, int propId);
 	
-	bool* groups_GetBoolArray
+	int* groups_GetBoolArray
 	(groups* g, const bitstream* a, int propId);
 	
 	const char** groups_GetStringArray
@@ -234,32 +233,32 @@ extern "C" {
 	//
 	// Returns true if the variable got default value.
 	//
-	bool groups_IsDefaultVariable
+	int groups_IsDefaultVariable
 	(const variable* var);
 	
 	//
 	// Returns true if the property is of an unknown data type.
 	//
-	bool groups_IsUnknown
+	int groups_IsUnknown
 	(int propId);
 	
-	bool groups_IsDouble
+	int groups_IsDouble
 	(int propId);
 	
-	bool groups_IsInt
+	int groups_IsInt
 	(int propId);
 	
-	bool groups_IsString
+	int groups_IsString
 	(int propId);
 	
-	bool groups_IsBool
+	int groups_IsBool
 	(int propId);
 	
     // Saves data to file in JSON format.
-    bool        groups_SaveToFile
-    (groups* g, string fileName);
+    int        groups_SaveToFile
+    (groups* g, const char* fileName);
     
-    bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message));
+    int groups_ReadFromFile(groups* g, const char* fileName, int verbose, void(*err)(int line, int column, const char* message));
     
 #endif
 	
