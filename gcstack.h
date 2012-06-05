@@ -39,8 +39,6 @@ extern "C" {
 
 #ifndef memgroups_gcstack
 #define memgroups_gcstack
-
-#include "readability.h"
     
 // Items for garbage collection.
 typedef struct gcstack_item gcstack_item;

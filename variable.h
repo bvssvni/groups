@@ -41,7 +41,6 @@ extern "C" {
 #define memgroups_variable
 	
 #include "gcstack.h"
-#include "readability.h"
 	
 	typedef struct variable {
 		gcstack_item gc;

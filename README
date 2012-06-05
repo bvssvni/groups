@@ -157,7 +157,9 @@ free(gc);	// Remember to release the pointer too!
 
 ITERATING THROUGH A BITSTREAM
 
-A bitstream is naturally divided into blocks, so you need to jump twice. It is normal to suptract 1 from the length to avoid reading outside memory for inverted bitstreams. If you always use AND,�OR,�EXCEPT�and never INVERT, then you don't have to worry about this. Inside the loop for the blocks you need another loop to step 1 from the start of the block to the end. This becomes very messy if you write nested iterations through a bitstream. Therefore you can copy a snippet in 'readability.h' that let's you write like this:
+A bitstream is naturally divided into blocks, so you need to jump twice. It is normal to suptract 1 from the length to avoid reading outside memory for inverted bitstreams. If you always use AND, OR, EXCEPT and never INVERT, then you don't have to worry about this. Inside the loop for the blocks you need another loop to step 1 from the start of the block to the end. This becomes very messy if you write nested iterations through a bitstream. Therefore you can copy a snippet in 'readability.h' that let's you write like this:
+
+#include "readability.h"
 
 foreach (X) {
 	if (_pos(X) > 1000)
@@ -202,7 +204,7 @@ groups_AddMember(g, me);
 
 The reason you pass NULL to 'member_AllocWithGC' is that when we add it to Groups it will be pushed on a gcstack containing all members. On insert it will loop through the properties and update the bitstreams. Inserting many new members is a heavier task than updating many members with new values.
 
-EXTRACT�DATA
+EXTRACT DATA
 
 The way you work with data in Groups is 'vertically' compared to object-oriented code. The advantage of this is that you can copy & paste snippets of code between complete different application or port easily from another language.
 

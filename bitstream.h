@@ -45,7 +45,6 @@ extern "C" {
 #include <string.h>
 	
 #include "gcstack.h"
-#include "readability.h"
 	
 	//
 	//		Bitstream is a mathematical object that contains one

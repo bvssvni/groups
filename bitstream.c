@@ -33,10 +33,7 @@
  either expressed or implied, of the FreeBSD Project.
  */
 
-#ifndef MEMGROUPS_READABILITY
-#define MEMGROUPS_READABILITY
 #include "readability.h"
-#endif
 
 #include "bitstream.h"
 

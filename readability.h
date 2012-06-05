@@ -32,27 +32,13 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
-
-/*
- 
- INSTRUCTIONS
- 
- To use this header, you must "unlock" it by copying the following code into your source.
- Do not put this in any header, because the macros can redefine existing ones in the project you refer from.
- 
- #ifndef MEMGROUPS_READABILITY
- #define MEMGROUPS_READABILITY
- #include "readability.h"
- #endif
- 
- */
-
  
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef MEMGROUPS_READABILITY
+#ifndef MEMGROUPS_READABILITY
+#define MEMGROUPS_READABILITY
     
 // This is to make the code easier to read and to import from C#.
 #define bool int

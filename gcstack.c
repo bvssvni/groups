@@ -37,10 +37,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef MEMGROUPS_READABILITY
-#define MEMGROUPS_READABILITY
 #include "readability.h"
-#endif
 
 #include "gcstack.h"
 

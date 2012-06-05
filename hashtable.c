@@ -36,10 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifndef MEMGROUPS_READABILITY
-#define MEMGROUPS_READABILITY
 #include "readability.h"
-#endif
 
 #include "hashtable.h"
 

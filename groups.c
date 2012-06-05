@@ -43,10 +43,7 @@
 #include "sorting.h"
 #include "property.h"
 
-#ifndef MEMGROUPS_READABILITY
-#define MEMGROUPS_READABILITY
 #include "readability.h"
-#endif
 
 #include "groups.h"
 

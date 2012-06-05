@@ -39,10 +39,7 @@
 
 #include "gcstack.h"
 
-#ifndef MEMGROUPS_READABILITY
-#define MEMGROUPS_READABILITY
 #include "readability.h"
-#endif
 
 #include "variable.h"
 
