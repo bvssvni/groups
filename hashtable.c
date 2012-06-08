@@ -120,7 +120,8 @@ int hashLayer_NextPrime(int prime)
         case 89: return 97;
         case 97: return 101;
 	}
-	return -1;
+    // Just expand with a static interval.
+	return prime+257;
 }
 
 void hashTable_Delete(void* p)
@@ -147,6 +148,11 @@ hash_table* hashTable_AllocWithGC(gcstack* gc)
 
 hash_table* hashTable_Init(hash_table* hash)
 {
+    if (hash == NULL) {
+        fprintf(stderr, "hashTable_Init: hash == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	hash->layers = gcstack_Init(gcstack_Alloc());
 	gcstack* layers = hash->layers;
 	hash->m_lastPrime = START_PRIME;
@@ -156,6 +162,16 @@ hash_table* hashTable_Init(hash_table* hash)
 
 hash_table* hashTable_InitWithMember(hash_table* obj, hash_table* b)
 {
+    if (obj == NULL) {
+        fprintf(stderr, "hashTable_InitWithMember: obj == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (b == NULL) {
+        fprintf(stderr, "hashTable_InitWithMember: b == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
     obj->layers = b->layers;
     obj->m_lastPrime = b->m_lastPrime;
     
@@ -167,6 +183,16 @@ hash_table* hashTable_InitWithMember(hash_table* obj, hash_table* b)
 
 void hashTable_Set(hash_table* hash, int id, void* value)
 {
+    if (hash == NULL) {
+        fprintf(stderr, "hashTable_Set: hash == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (id < 0) {
+        fprintf(stderr, "hashTable_Set: id < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	gcstack_item* cursor = hash->layers->root->next;
 	hash_layer* layer;
 	int n;

@@ -326,6 +326,44 @@ void* crash_hashTable_Delete(void* input)
     return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_Init(void* input)
+{
+    hashTable_Init(NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_InitWithMember(void* input)
+{
+    hashTable_InitWithMember(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_InitWithMember2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hashTable_InitWithMember(hashTable_AllocWithGC(gc), NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_Set(void* input)
+{
+    hashTable_Set(NULL, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_Set2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_Set(hs, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
 void* crash_hashLayer_InitWithSize(void* input)
 {
     hashLayer_InitWithSize(NULL, -1);
@@ -379,8 +417,13 @@ void crashtest_Run() {
     crash_Test(crash_bitstream_Size, "bitstream_Size");
     crash_Test(crash_groups_Delete, "groups_Delete");
     crash_Test(crash_gcstack_Delete, "gcstack_Delete");
-    crash_Test(crash_property_Delete, "property_Delete");
     crash_Test(crash_hashTable_Delete, "hashTable_Delete");
+    crash_Test(crash_hashTable_Init, "hashTable_Init");
+    crash_Test(crash_hashTable_InitWithMember, "hashTable_InitWithMember");
+    crash_Test(crash_hashTable_InitWithMember2, "hashTable_InitWithMember2");
+    crash_Test(crash_hashTable_Set, "hashTable_Set");
+    crash_Test(crash_hashTable_Set2, "hashTable_Set2");
+    crash_Test(crash_property_Delete, "property_Delete");
     crash_Test(crash_hashLayer_InitWithSize, "hashLayer_InitWithSize");
     crash_Test(crash_hashLayer_InitWithSize2, "hashLayer_InitWithSize2");
  
