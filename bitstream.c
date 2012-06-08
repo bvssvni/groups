@@ -67,6 +67,16 @@ bitstream* bitstream_AllocWithGC(gcstack* gc) {
 
 bitstream* bitstream_InitWithSize(bitstream* a, int size) {
 	bitstream_references++;
+    
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_InitWithSize: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (size < 0) {
+        fprintf(stderr, "bitstream_InitWithSize: size < 0\r\n");
+        pthread_exit(NULL);
+    }
 	
 	if (size == 0)
 	{
@@ -86,6 +96,16 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 {
 	bitstream_references++;
 	
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_InitWithValues: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (size < 0) {
+        fprintf(stderr, "bitstream_InitWithValues: size < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	a->length = size;
 	a->pointer = malloc(sizeof(int)*size);
 	memcpy((void*)a->pointer, (void*)vals, size*sizeof(int));
@@ -153,6 +173,16 @@ int* createArrayFromIndices(int count, int size, int const vals[])
 bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
 {
 	bitstream_references++;
+    
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_InitWithIndices: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (size < 0) {
+        fprintf(stderr, "bitstream_InitWithIndices: size < 0\r\n");
+        pthread_exit(NULL);
+    }
 	
 	a->length = countWithIndices(size, vals);
 	a->pointer = createArrayFromIndices(a->length, size, vals);
@@ -231,6 +261,16 @@ int countDeltaString(int n, string* old, string* new)
 bitstream* bitstream_InitWithDeltaDouble
 (bitstream* a, int n, const double* oldValues, const double* newValues)
 {
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_InitWithDeltaDouble: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "bitstream_InitWithDeltaDouble: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int count = countDeltaDouble(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -252,6 +292,16 @@ bitstream* bitstream_InitWithDeltaDouble
 bitstream* bitstream_InitWithDeltaInt
 (bitstream* a, int n, const int* oldValues, const int* newValues)
 {
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_InitWithDeltaInt: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "bitstream_InitWithDeltaInt: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int count = countDeltaInt(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -273,6 +323,16 @@ bitstream* bitstream_InitWithDeltaInt
 bitstream* bitstream_InitWithDeltaBool
 (bitstream* a, int n, const bool* oldValues, const bool* newValues)
 {
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_InitWithDeltaBool: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "bitstream_InitWithDeltaBool: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int count = countDeltaBool(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -294,6 +354,16 @@ bitstream* bitstream_InitWithDeltaBool
 bitstream* bitstream_InitWithDeltaString
 (bitstream* a, int n, const string* oldValues, const string* newValues)
 {
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_InitWithDeltaString: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "bitstream_InitWithDeltaString: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int count = countDeltaString(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -314,6 +384,11 @@ bitstream* bitstream_InitWithDeltaString
 
 void bitstream_Print(bitstream const*a)
 {
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_Print: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int length = a->length-1;
 	for (int i = 0; i < length; i += 2) {
 		int p1 = a->pointer[i];

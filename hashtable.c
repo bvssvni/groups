@@ -70,6 +70,15 @@ hash_layer* hashLayer_AllocWithGC(gcstack* gc)
 
 hash_layer* hashLayer_InitWithSize(hash_layer* hashLayer, int n)
 {
+    if (hashLayer == NULL) {
+        fprintf(stderr, "hashLayer_InitWithSize: hashLayer == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    if (n < 1) {
+        fprintf(stderr, "hashLayer_InitWithSize: n < 1\r\n");
+        pthread_exit(NULL);
+    }
+    
 	hashLayer->n = n;
 	
 	hashLayer->indices = malloc(sizeof(int)*n);
