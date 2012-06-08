@@ -43,7 +43,6 @@ extern "C" {
 #include <string.h>
     
 #include "gcstack.h"
-#include "variable.h"
 	
 	typedef struct hash_layer {
 		gcstack_item gc;
@@ -67,8 +66,6 @@ extern "C" {
 	int hashLayer_NextPrime(int prime);
 	
 	void hashTable_Delete(void* p);
-	
-    
     
 	hash_table* hashTable_AllocWithGC(gcstack* gc);
 	
@@ -76,12 +73,25 @@ extern "C" {
 	
     hash_table* hashTable_InitWithMember(hash_table* obj, hash_table* b);
     
-	void hashTable_Set(hash_table* hash, int id, void* value);
+	void                hashTable_Set
+    (hash_table* hash, int id, void* value);
 	
+    // Sets a string, the id is a hash value of the string.
+    // The string is used to check for per match.
+    // Don't mix with      hashTable_Set
+    void                hashTable_SetStringHash
+    (hash_table* hash, char* value);
+    
     // Returns a pointer that can not be changed because it can only be freed
     // by the hash table and if you need to change it you have to copy it.
 	const void*         hashTable_Get       
     (hash_table* hash, int id);
+    
+    // Returns true if the hash table contains a string.
+    // The values in the table are stored as string and it uses this for perfect matching.
+    // Don't mix with       hashTable_Get
+    int                hashTable_ContainsStringHash
+    (hash_table* hash, const char* value);
 	
     void                hashTable_SetDouble 
     (hash_table* obj, int propId, double val);

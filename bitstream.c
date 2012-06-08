@@ -33,6 +33,8 @@
  either expressed or implied, of the FreeBSD Project.
  */
 
+#include <pthread.h>
+
 #include "readability.h"
 
 #include "bitstream.h"
@@ -45,6 +47,11 @@ void bitstream_Delete(void* p) {
 	
 	bitstream* a = (bitstream*)p;
 	
+    if (a == NULL) {
+        fprintf(stderr, "bitstream_Delete: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	if (a->pointer != NULL)
 	{
 		free(a->pointer);

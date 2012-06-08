@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <pthread.h>
 
 #include "gcstack.h"
 #include "bitstream.h"
@@ -53,6 +54,11 @@ void groups_Delete(void* p)
 {
 	groups* g = (groups*)p;
 	
+    if (g == NULL) {
+        fprintf(stderr, "groups_Delete: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Free bitstream stuff.
 	gcstack* bitstreams = g->bitstreams;
 	if (bitstreams != NULL)
@@ -350,27 +356,27 @@ void groups_RemoveProperty(groups* g, int propId)
 	g->m_propertiesReady = false;
 }
 
-bool groups_IsDefaultVariable(const variable* var)
+bool groups_IsDefaultVariable(int propId, void* data)
 {
-	int type = var->propId/TYPE_STRIDE;
+	int type = propId/TYPE_STRIDE;
 	if (type == TYPE_DOUBLE) return false;
 	else if (type == TYPE_INT)
 	{
-		int* val = (int*)var->data;
+		int* val = (int*)data;
 		if (*val == -1) return true;
 	}
 	else if (type == TYPE_BOOL)
 	{
-		bool* val = (bool*)var->data;
+		bool* val = (bool*)data;
 		if (*val == 0) return true;
 	}
 	else if (type == TYPE_STRING)
 	{
-		char* val = (char*)var->data;
+		char* val = (char*)data;
 		if (val == NULL) return true;
 	}
 	
-	if (var->data == NULL) return true;
+	if (data == NULL) return true;
 	return false;
 }
 
@@ -974,7 +980,7 @@ void groups_RemoveMembers(groups* g, bitstream const* prop)
 		// Free the member but don't delete it, in order to maintain index.
 		index = _pos(prop);
 		obj = g->m_memberArray[index];
-		member_Delete(obj);
+		hashTable_Delete(obj);
 	} end_foreach (prop)
 	
 	g->m_bitstreamsReady = false;
@@ -1167,7 +1173,7 @@ int sscanInt(const char* text, int* output)
     return n*s;
 }
 
-bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
+bool groups_ReadFromFile(groups* g, string fileName, string config, bool verbose, void(*err)(int line, int column, const char* message))
 {
     // Get file size.
     struct stat s;

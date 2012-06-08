@@ -35,6 +35,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "readability.h"
 
@@ -116,6 +117,12 @@ int hashLayer_NextPrime(int prime)
 void hashTable_Delete(void* p)
 {
 	hash_table* hash = (hash_table*)p;
+    
+    if (hash == NULL) {
+        fprintf(stderr, "hashTable_Delete: hash == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	hash->m_lastPrime = 0;
 	if (hash->layers != NULL) {
 		gcstack_Delete(hash->layers);
@@ -207,6 +214,79 @@ void hashTable_Set(hash_table* hash, int id, void* value)
     newLayer->data[pos] = value;
 }
 
+
+unsigned long
+hashStringId(const char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+    
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c
+    
+    return hash;
+}
+
+void hashTable_SetStringHash(hash_table* hash, char* value)
+{
+    int id = hashStringId(value);
+    id = id < 0 ? -id : id;
+	gcstack_item* cursor = hash->layers->root->next;
+	hash_layer* layer;
+	int n;
+	int pos;
+	int exId;
+	int* indices;
+    int freePos = -1;
+    hash_layer* freeLayer = NULL;
+    
+	for (; cursor != NULL; cursor = cursor->next) {
+		layer = (hash_layer*)cursor;
+		
+		n = layer->n;
+		pos = id % n;
+		indices = layer->indices;
+		exId = indices[pos];
+        
+		if (exId == id && strcmp(value, layer->data[pos]) != 0)
+        {
+            // Replace the existing value.
+            free(layer->data[pos]);
+            indices[pos] = value == NULL ? -1 : id;
+            layer->data[pos] = value;
+            
+            return;
+		}
+        if (exId == -1 && freePos == -1)
+		{
+            // Remember the first encountered free slot.
+            freePos = pos;
+            freeLayer = layer;
+		}
+	}
+    
+    // Don't put anything in if the value is NULL.
+    // NULL is used to remove values from the hash table.
+    if (value == NULL) return;
+	
+    // Add in free layer.
+    if (freePos != -1)
+    {
+        freeLayer->indices[freePos] = id;
+        freeLayer->data[freePos] = value;
+        return;
+    }
+    
+	// Create new layer.
+	int nextPrime = hashLayer_NextPrime(hash->m_lastPrime);
+	hash_layer* newLayer = hashLayer_InitWithSize
+	(hashLayer_AllocWithGC(hash->layers), nextPrime);
+	hash->m_lastPrime = nextPrime;
+    pos = id % nextPrime;
+	newLayer->indices[pos] = id;
+    newLayer->data[pos] = value;
+}
+
 const void* hashTable_Get(hash_table* hash, int id)
 {
 	gcstack_item* cursor = hash->layers->root->next;
@@ -227,6 +307,30 @@ const void* hashTable_Get(hash_table* hash, int id)
 	}
     
 	return NULL;
+}
+
+bool hashTable_ContainsStringHash(hash_table* hash, const char* value)
+{
+    int id = hashStringId(value);
+    id = id < 0 ? -id : id;
+	gcstack_item* cursor = hash->layers->root->next;
+	hash_layer* layer;
+	int n;
+	int pos;
+	int exId;
+	int* indices;
+	for (; cursor != NULL; cursor = cursor->next) {
+		layer = (hash_layer*)cursor;
+		n = layer->n;
+		pos = id % n;
+		indices = layer->indices;
+		exId = indices[pos];
+        
+		// Return if already set.
+		if (exId == id && strcmp(value, layer->data[pos]) == 0) return true;
+	}
+    
+	return false;
 }
 
 void hashTable_SetDouble(hash_table* obj, int propId, double val)

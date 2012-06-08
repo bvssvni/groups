@@ -42,7 +42,6 @@ extern "C" {
 	
 #include "gcstack.h"
 #include "bitstream.h"
-#include "member.h"
 #include "hashtable.h"
 	
 	typedef struct groups {
@@ -234,7 +233,7 @@ extern "C" {
 	// Returns true if the variable got default value.
 	//
 	int groups_IsDefaultVariable
-	(const variable* var);
+    (int propId, void* data);
 	
 	//
 	// Returns true if the property is of an unknown data type.
@@ -258,7 +257,16 @@ extern "C" {
     int        groups_SaveToFile
     (groups* g, const char* fileName);
     
-    int groups_ReadFromFile(groups* g, const char* fileName, int verbose, void(*err)(int line, int column, const char* message));
+    // Reads data from a file.
+    // You need to specify in the configuration what kind of format you want to read.
+    int groups_ReadFromFile
+    (
+     groups* g, 
+     const char* fileName, 
+     const char* config, 
+     int verbose, 
+     void(*err)(int line, int column, const char* message)
+    );
     
 #endif
 	
