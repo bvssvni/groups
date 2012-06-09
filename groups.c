@@ -53,7 +53,7 @@
 void groups_Delete(void* p)
 {
 	groups* g = (groups*)p;
-	
+    
     if (g == NULL) {
         fprintf(stderr, "groups_Delete: g == NULL\r\n");
         pthread_exit(NULL);
@@ -122,6 +122,11 @@ groups* groups_AllocWithGC(gcstack* gc)
 
 groups* groups_Init(groups* g)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_Init: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	g->bitstreams = gcstack_Init(gcstack_Alloc());
 	g->m_bitstreamsReady = false;
 	g->m_bitstreamsArray = NULL;
@@ -207,6 +212,21 @@ void createBitstreamArray(groups* g)
 
 int groups_AddProperty(groups* g, const void* name, const void* propType)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_AddProperty: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (name == NULL) {
+        fprintf(stderr, "groups_AddProperty: name == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propType == NULL) {
+        fprintf(stderr, "groups_AddPropety: propType == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// We use the length of the bitstream stack to generate ids,
 	// because those bitstreams are set to empty instead of deleted.
 	int propIndex = g->bitstreams->length;
@@ -290,6 +310,16 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 
 int groups_GetProperty(groups* g, char const* name)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_GetProperty: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (name == NULL) {
+        fprintf(stderr, "groups_GetProperty: name == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int length = g->properties->length;
 	if (length == 0) return -1;
 	
@@ -307,6 +337,16 @@ int groups_GetProperty(groups* g, char const* name)
 
 bitstream* groups_GetBitstream(groups* g, int propId)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_GetBitstream: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_GetBitstream: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Filter out the type information.
 	propId %= TYPE_STRIDE;
 	
@@ -320,6 +360,16 @@ bitstream* groups_GetBitstream(groups* g, int propId)
 
 void groups_RemoveProperty(groups* g, int propId)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_RemoveProperty: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_RemoveProperty: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int index = propId % TYPE_STRIDE;
 	
 	// Delete content, but do not move from stack of bitstreams.
@@ -358,6 +408,16 @@ void groups_RemoveProperty(groups* g, int propId)
 
 bool groups_IsDefaultVariable(int propId, void* data)
 {
+    if (propId < 0) {
+        fprintf(stderr, "groups_IsDefaultVariable: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (data == NULL) {
+        fprintf(stderr, "groups_IsDefaultVariable: data == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int type = propId/TYPE_STRIDE;
 	if (type == TYPE_DOUBLE) return false;
 	else if (type == TYPE_INT)
@@ -394,6 +454,16 @@ void createMemberArray(groups* g)
 
 int groups_AddMember(groups* g, hash_table* obj)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_AddMember: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (obj == NULL) {
+        fprintf(stderr, "groups_AddMember: obj == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	int id = g->members->length;
 	hash_table* new;
     
@@ -485,6 +555,21 @@ int groups_AddMember(groups* g, hash_table* obj)
 //
 void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetDouble: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetDouble: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetDouble: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	

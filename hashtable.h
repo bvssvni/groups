@@ -39,11 +39,9 @@ extern "C" {
 
 #ifndef memgroups_hashtable
 #define memgroups_hashtable
-	
-#include <string.h>
     
 #include "gcstack.h"
-	
+    
 	typedef struct hash_layer {
 		gcstack_item gc;
 		int n;

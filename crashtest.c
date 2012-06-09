@@ -44,6 +44,142 @@ void* crash_groups_Delete(void* input)
     return &DID_NOT_CRASH;
 }
 
+void* crash_groups_Init(void* input)
+{
+    groups_Init(NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_AddProperty(void* input)
+{
+    groups_AddProperty(NULL, NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_AddProperty2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_AddProperty(g, NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_AddProperty3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_AddProperty(g, "name", NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetProperty(void* input)
+{
+    groups_GetProperty(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetProperty2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_GetProperty(g, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetBitstream(void* input)
+{
+    groups_GetBitstream(NULL, 0);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetBitstream2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_GetBitstream(g, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_RemoveProperty(void* input)
+{
+    groups_RemoveProperty(NULL, 0);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_RemoveProperty2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_RemoveProperty(g, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_IsDefaultVariable(void* input)
+{
+    groups_IsDefaultVariable(-1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_IsDefaultVariable2(void* input)
+{
+    groups_IsDefaultVariable(0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_AddMember(void* input)
+{
+    groups_AddMember(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_AddMember2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_AddMember(g, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDouble(void* input)
+{
+    groups_SetDouble(NULL, NULL, -1, 0);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDouble2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetDouble(g, NULL, -1, 0);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDouble3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetDouble(g, b, -1, 0);
+    
+    return &DID_NOT_CRASH;
+}
+
 void* crash_bitstream_Delete(void* input)
 {
     bitstream_Delete(NULL);
@@ -527,13 +663,30 @@ void crashtest_Run() {
     crash_Test(crash_bitstream_PopStart, "bitstream_PopStart");
     crash_Test(crash_bitstream_Print, "crash_bitstream_Print");
     crash_Test(crash_bitstream_Size, "bitstream_Size");
+    crash_Test(crash_groups_AddMember, "groups_AddMember");
+    crash_Test(crash_groups_AddMember2, "groups_AddMember2");
+    crash_Test(crash_groups_AddProperty, "groups_AddProperty");
+    crash_Test(crash_groups_AddProperty2, "groups_AddProperty2");
+    crash_Test(crash_groups_AddProperty3, "groups_AddProperty3");
     crash_Test(crash_groups_Delete, "groups_Delete");
+    crash_Test(crash_groups_GetBitstream, "groups_GetBitstream");
+    crash_Test(crash_groups_GetBitstream2, "groups_GetBitstream2");
+    crash_Test(crash_groups_Init, "groups_Init");
+    crash_Test(crash_groups_IsDefaultVariable, "groups_IsDefaultVariable");
+    crash_Test(crash_groups_IsDefaultVariable2, "groups_IsDefaultVariable2");
     crash_Test(crash_gcstack_Delete, "gcstack_Delete");
+    crash_Test(crash_groups_RemoveProperty, "groups_RemoveProperty");
+    crash_Test(crash_groups_RemoveProperty2, "groups_RemovePoperty2");
+    crash_Test(crash_groups_SetDouble, "groups_SetDouble");
+    crash_Test(crash_groups_SetDouble2, "groups_SetDouble2");
+    crash_Test(crash_groups_SetDouble3, "groups_SetDouble3");
     crash_Test(crash_hashTable_ContainsStringHash, "hashTable_ContainsStringHash");
     crash_Test(crash_hashTable_ContainsStringHash2, "hashTable_ContainsStringHash2");
     crash_Test(crash_hashTable_Delete, "hashTable_Delete");
     crash_Test(crash_hashTable_Get, "hashTable_Get");
     crash_Test(crash_hashTable_Get2, "hashTable_Get2");
+    crash_Test(crash_groups_GetProperty, "groups_GetProperty");
+    crash_Test(crash_groups_GetProperty2, "groups_GetProperty2");
     crash_Test(crash_hashTable_Init, "hashTable_Init");
     crash_Test(crash_hashTable_InitWithMember, "hashTable_InitWithMember");
     crash_Test(crash_hashTable_InitWithMember2, "hashTable_InitWithMember2");
