@@ -264,6 +264,16 @@ hashStringId(const char *str)
 
 void hashTable_SetStringHash(hash_table* hash, char* value)
 {
+    if (hash == NULL) {
+        fprintf(stderr, "hashTable_SetStringHash: hash == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (value == NULL) {
+        fprintf(stderr, "hashTable_SetStringHash: value == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
     int id = hashStringId(value);
     id = id < 0 ? -id : id;
 	gcstack_item* cursor = hash->layers->root->next;
@@ -324,6 +334,16 @@ void hashTable_SetStringHash(hash_table* hash, char* value)
 
 const void* hashTable_Get(hash_table* hash, int id)
 {
+    if (hash == NULL) {
+        fprintf(stderr, "hashTable_Get: hash == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (id < 0) {
+        fprintf(stderr, "hashTable_Get: id < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	gcstack_item* cursor = hash->layers->root->next;
 	hash_layer* layer;
 	int n;
@@ -346,6 +366,16 @@ const void* hashTable_Get(hash_table* hash, int id)
 
 bool hashTable_ContainsStringHash(hash_table* hash, const char* value)
 {
+    if (hash == NULL) {
+        fprintf(stderr, "hashTable_ContainsStringHash: hash == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (value == NULL) {
+        fprintf(stderr, "hashTable_ContainsStringHash: value == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
     int id = hashStringId(value);
     id = id < 0 ? -id : id;
 	gcstack_item* cursor = hash->layers->root->next;
@@ -370,6 +400,16 @@ bool hashTable_ContainsStringHash(hash_table* hash, const char* value)
 
 void hashTable_SetDouble(hash_table* obj, int propId, double val)
 {
+    if (obj == NULL) {
+        fprintf(stderr, "hashTable_SetDouble: obj == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "hashTable_SetDouble: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
     double* p = malloc(sizeof(double));
     *p = val;
     hashTable_Set(obj, propId, p);
@@ -377,6 +417,16 @@ void hashTable_SetDouble(hash_table* obj, int propId, double val)
 
 void hashTable_SetString(hash_table* obj, int propId, char const* val)
 {
+    if (obj == NULL) {
+        fprintf(stderr, "hashTable_SetString: obj == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "hashTable_SetString: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
     if (val == NULL)
     {
         hashTable_Set(obj, propId, NULL);
@@ -390,6 +440,16 @@ void hashTable_SetString(hash_table* obj, int propId, char const* val)
 
 void hashTable_SetInt(hash_table* obj, int propId, int val)
 {
+    if (obj == NULL) {
+        fprintf(stderr, "hashTable_SetInt: obj == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "hashTable_SetInt: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
     if (val == -1)
     {
         hashTable_Set(obj, propId, NULL);
@@ -403,6 +463,16 @@ void hashTable_SetInt(hash_table* obj, int propId, int val)
 
 void hashTable_SetBool(hash_table* obj, int propId, bool val)
 {
+    if (obj == NULL) {
+        fprintf(stderr, "hashTable_SetBool: obj == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "hashTable_SetBool: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
     if (val == 0)
     {
         hashTable_Set(obj, propId, 0);

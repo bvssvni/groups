@@ -364,6 +364,118 @@ void* crash_hashTable_Set2(void* input)
     return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_SetStringHash(void* input)
+{
+    hashTable_SetStringHash(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetStringHash2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_SetStringHash(hs, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_Get(void* input)
+{
+    hashTable_Get(NULL, 0);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_Get2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_Get(hs, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_ContainsStringHash(void* input)
+{
+    hashTable_ContainsStringHash(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_ContainsStringHash2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_ContainsStringHash(hs, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetDouble(void* input)
+{
+    hashTable_SetDouble(NULL, 0, 20);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetDouble2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_SetDouble(hs, -1, 20);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetString(void* input)
+{
+    hashTable_SetString(NULL, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetString2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_SetString(hs, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetInt(void* input)
+{
+    hashTable_SetInt(NULL, 0, 20);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetInt2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_SetInt(hs, -1, 20);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetBool(void* input)
+{
+    hashTable_SetBool(NULL, -1, 1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_hashTable_SetBool2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+    hashTable_SetBool(hs, -1, 1);
+    
+    return &DID_NOT_CRASH;
+}
+
 void* crash_hashLayer_InitWithSize(void* input)
 {
     hashLayer_InitWithSize(NULL, -1);
@@ -417,12 +529,26 @@ void crashtest_Run() {
     crash_Test(crash_bitstream_Size, "bitstream_Size");
     crash_Test(crash_groups_Delete, "groups_Delete");
     crash_Test(crash_gcstack_Delete, "gcstack_Delete");
+    crash_Test(crash_hashTable_ContainsStringHash, "hashTable_ContainsStringHash");
+    crash_Test(crash_hashTable_ContainsStringHash2, "hashTable_ContainsStringHash2");
     crash_Test(crash_hashTable_Delete, "hashTable_Delete");
+    crash_Test(crash_hashTable_Get, "hashTable_Get");
+    crash_Test(crash_hashTable_Get2, "hashTable_Get2");
     crash_Test(crash_hashTable_Init, "hashTable_Init");
     crash_Test(crash_hashTable_InitWithMember, "hashTable_InitWithMember");
     crash_Test(crash_hashTable_InitWithMember2, "hashTable_InitWithMember2");
     crash_Test(crash_hashTable_Set, "hashTable_Set");
     crash_Test(crash_hashTable_Set2, "hashTable_Set2");
+    crash_Test(crash_hashTable_SetBool, "hashTable_SetBool");
+    crash_Test(crash_hashTable_SetBool2, "hashTable_SetBool2");
+    crash_Test(crash_hashTable_SetDouble, "hashTable_SetDouble");
+    crash_Test(crash_hashTable_SetDouble2, "hashTable_SetDouble2");
+    crash_Test(crash_hashTable_SetInt, "crash_hashTable_SetInt");
+    crash_Test(crash_hashTable_SetInt2, "crash_hashTable_SetInt2");
+    crash_Test(crash_hashTable_SetString, "hashTable_SetString");
+    crash_Test(crash_hashTable_SetString2, "hashTable_SetString2");
+    crash_Test(crash_hashTable_SetStringHash, "hashTable_SetStringHash");
+    crash_Test(crash_hashTable_SetStringHash2, "hashTable_SetStringHash2");
     crash_Test(crash_property_Delete, "property_Delete");
     crash_Test(crash_hashLayer_InitWithSize, "hashLayer_InitWithSize");
     crash_Test(crash_hashLayer_InitWithSize2, "hashLayer_InitWithSize2");
