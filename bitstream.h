@@ -40,10 +40,6 @@ extern "C" {
 #ifndef memgroups_bitstream
 #define memgroups_bitstream
 	
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-	
 #include "gcstack.h"
 	
 	//

@@ -33,6 +33,10 @@
  either expressed or implied, of the FreeBSD Project.
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #include <pthread.h>
 
 #include "readability.h"
@@ -73,6 +77,8 @@ bitstream* bitstream_InitWithSize(bitstream* a, int size) {
         pthread_exit(NULL);
     }
     
+    a->pointer = NULL;
+    
     if (size < 0) {
         fprintf(stderr, "bitstream_InitWithSize: size < 0\r\n");
         pthread_exit(NULL);
@@ -86,6 +92,9 @@ bitstream* bitstream_InitWithSize(bitstream* a, int size) {
 	}
 	
 	a->length = size;
+    
+    if (size == 0) return a;
+    
 	a->pointer = malloc(sizeof(int)*size);
 	for (int i = 0; i < size; i++)
 		a->pointer[i] = 0;
@@ -101,6 +110,8 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
         pthread_exit(NULL);
     }
     
+    a->pointer = NULL;
+    
     if (size < 0) {
         fprintf(stderr, "bitstream_InitWithValues: size < 0\r\n");
         pthread_exit(NULL);
@@ -112,6 +123,9 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
     }
     
 	a->length = size;
+    
+    if (size == 0) return a;
+    
 	a->pointer = malloc(sizeof(int)*size);
 	memcpy((void*)a->pointer, (void*)vals, size*sizeof(int));
 	return a;
@@ -184,6 +198,8 @@ bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
         pthread_exit(NULL);
     }
     
+    a->pointer = NULL;
+    
     if (size < 0) {
         fprintf(stderr, "bitstream_InitWithIndices: size < 0\r\n");
         pthread_exit(NULL);
@@ -194,6 +210,11 @@ bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
         pthread_exit(NULL);
     }
 	
+    if (size == 0) {
+        a->length = 0;
+        return a;
+    }
+    
 	a->length = countWithIndices(size, vals);
 	a->pointer = createArrayFromIndices(a->length, size, vals);
 	return a;
@@ -276,6 +297,8 @@ bitstream* bitstream_InitWithDeltaDouble
         pthread_exit(NULL);
     }
     
+    a->pointer = NULL;
+    
     if (n < 0) {
         fprintf(stderr, "bitstream_InitWithDeltaDouble: n < 0\r\n");
         pthread_exit(NULL);
@@ -284,6 +307,11 @@ bitstream* bitstream_InitWithDeltaDouble
     if (oldValues == NULL || newValues == NULL) {
         fprintf(stderr, "bitstream_InitWithDeltaDouble: oldValues == NULL || newValues == NULL\r\n");
         pthread_exit(NULL);
+    }
+    
+    if (n == 0) {
+        a->length = 0;
+        return a;
     }
     
 	int count = countDeltaDouble(n, oldValues, newValues);
@@ -312,6 +340,8 @@ bitstream* bitstream_InitWithDeltaInt
         pthread_exit(NULL);
     }
     
+    a->pointer = NULL;
+    
     if (n < 0) {
         fprintf(stderr, "bitstream_InitWithDeltaInt: n < 0\r\n");
         pthread_exit(NULL);
@@ -320,6 +350,11 @@ bitstream* bitstream_InitWithDeltaInt
     if (oldValues == NULL || newValues == NULL) {
         fprintf(stderr, "bitstream_InitWithDeltaInt: oldValues == NULL || newValues == NULL\r\n");
         pthread_exit(NULL);
+    }
+    
+    if (n == 0) {
+        a->length = 0;
+        return a;
     }
     
 	int count = countDeltaInt(n, oldValues, newValues);
@@ -348,6 +383,8 @@ bitstream* bitstream_InitWithDeltaBool
         pthread_exit(NULL);
     }
     
+    a->pointer = NULL;
+    
     if (n < 0) {
         fprintf(stderr, "bitstream_InitWithDeltaBool: n < 0\r\n");
         pthread_exit(NULL);
@@ -356,6 +393,11 @@ bitstream* bitstream_InitWithDeltaBool
     if (oldValues == NULL || newValues == NULL) {
         fprintf(stderr, "bitstream_InitWithDeltaBool: oldValues == NULL || newValues == NULL\r\n");
         pthread_exit(NULL);
+    }
+    
+    if (n == 0) {
+        a->length = 0;
+        return a;
     }
     
 	int count = countDeltaBool(n, oldValues, newValues);
@@ -384,6 +426,8 @@ bitstream* bitstream_InitWithDeltaString
         pthread_exit(NULL);
     }
     
+    a->pointer = NULL;
+    
     if (n < 0) {
         fprintf(stderr, "bitstream_InitWithDeltaString: n < 0\r\n");
         pthread_exit(NULL);
@@ -392,6 +436,11 @@ bitstream* bitstream_InitWithDeltaString
     if (oldValues == NULL || newValues == NULL) {
         fprintf(stderr, "bitstream_InitWithDeltaString: oldValues == NULL || newValues == NULL\r\n");
         pthread_exit(NULL);
+    }
+    
+    if (n == 0) {
+        a->length = 0;
+        return a;
     }
     
 	int count = countDeltaString(n, oldValues, newValues);

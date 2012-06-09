@@ -180,6 +180,468 @@ void* crash_groups_SetDouble3(void* input)
     return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetString(void* input)
+{
+    groups_SetString(NULL, NULL, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetString2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetString(g, NULL, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetString3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetString(g, b, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetInt(void* input)
+{
+    groups_SetInt(NULL, NULL, 0, 20);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetInt2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetInt(g, NULL, 0, 20);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetInt3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetInt(g, b, -1, 20);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBool(void* input)
+{
+    groups_SetBool(NULL, NULL, -1, 1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBool2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetBool(g, NULL, 0, 1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBool3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetBool(g, b, -1, 1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDoubleArray(void* input)
+{
+    groups_SetDoubleArray(NULL, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDoubleArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetDoubleArray(g, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDoubleArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetDoubleArray(g, b, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDoubleArray4(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetDoubleArray(g, b, 0, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetDoubleArray5(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetDoubleArray(g, b, 0, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetStringArray(void* input)
+{
+    groups_SetStringArray(NULL, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetStringArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetStringArray(g, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetStringArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetStringArray(g, b, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetStringArray4(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetStringArray(g, b, 0, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetStringArray5(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetStringArray(g, b, 0, 20, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetIntArray(void* input)
+{
+    groups_SetIntArray(NULL, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetIntArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetIntArray(g, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetIntArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetIntArray(g, b, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetIntArray4(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetIntArray(g, b, 0, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetIntArray5(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetIntArray(g, b, 0, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBoolArray(void* input)
+{
+    groups_SetBoolArray(NULL, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBoolArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SetBoolArray(g, NULL, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBoolArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetBoolArray(g, b, -1, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBoolArray4(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetBoolArray(g, b, 0, -1, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SetBoolArray5(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_SetBoolArray(g, b, 0, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetDoubleArray(void* input)
+{
+    groups_GetDoubleArray(NULL, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetDoubleArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_GetDoubleArray(g, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetDoubleArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_GetDoubleArray(g, b, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetIntArray(void* input)
+{
+    groups_GetIntArray(NULL, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetIntArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_GetIntArray(g, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetIntArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_GetIntArray(g, b, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetBoolArray(void* input)
+{
+    groups_GetBoolArray(NULL, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetBoolArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_GetBoolArray(g, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetBoolArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_GetBoolArray(g, b, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetStringArray(void* input)
+{
+    groups_GetStringArray(NULL, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetStringArray2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_GetStringArray(g, NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetStringArray3(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+    groups_GetStringArray(g, b, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_PropertyNameById(void* input)
+{
+    groups_PropertyNameById(NULL, -1);
+
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_PropertyNameById2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_PropertyNameById(g, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_PrintMember(void* input)
+{
+    groups_PrintMember(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_PrintMember2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_PrintMember(g, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_RemoveMember(void* input)
+{
+    groups_RemoveMember(NULL, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_RemoveMember2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_RemoveMember(g, -1);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_RemoveMembers(void* input)
+{
+    groups_RemoveMembers(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_RemoveMembers2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_RemoveMembers(g, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SaveToFile(void* input)
+{
+    groups_SaveToFile(NULL, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_SaveToFile2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_SaveToFile(g, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_ReadFromFile(void* input)
+{
+    groups_ReadFromFile(NULL, NULL, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
+void* crash_groups_ReadFromFile2(void* input)
+{
+    gcstack* gc = (gcstack*)input;
+    groups* g = groups_Init(groups_AllocWithGC(gc));
+    groups_ReadFromFile(g, NULL, 0, NULL);
+    
+    return &DID_NOT_CRASH;
+}
+
 void* crash_bitstream_Delete(void* input)
 {
     bitstream_Delete(NULL);
@@ -677,9 +1139,15 @@ void crashtest_Run() {
     crash_Test(crash_gcstack_Delete, "gcstack_Delete");
     crash_Test(crash_groups_RemoveProperty, "groups_RemoveProperty");
     crash_Test(crash_groups_RemoveProperty2, "groups_RemovePoperty2");
+    crash_Test(crash_groups_SetBool, "groups_SetBool");
+    crash_Test(crash_groups_SetBool2, "groups_SetBool2");
+    crash_Test(crash_groups_SetBool3, "groups_SetBool3");
     crash_Test(crash_groups_SetDouble, "groups_SetDouble");
     crash_Test(crash_groups_SetDouble2, "groups_SetDouble2");
     crash_Test(crash_groups_SetDouble3, "groups_SetDouble3");
+    crash_Test(crash_groups_SetInt, "groups_SetInt");
+    crash_Test(crash_groups_SetInt2, "groups_SetInt2");
+    crash_Test(crash_groups_SetInt3, "groups_SetInt3");
     crash_Test(crash_hashTable_ContainsStringHash, "hashTable_ContainsStringHash");
     crash_Test(crash_hashTable_ContainsStringHash2, "hashTable_ContainsStringHash2");
     crash_Test(crash_hashTable_Delete, "hashTable_Delete");
@@ -696,6 +1164,55 @@ void crashtest_Run() {
     crash_Test(crash_hashTable_SetBool2, "hashTable_SetBool2");
     crash_Test(crash_hashTable_SetDouble, "hashTable_SetDouble");
     crash_Test(crash_hashTable_SetDouble2, "hashTable_SetDouble2");
+    
+    crash_Test(crash_groups_GetBoolArray, "groups_GetBoolArray");
+    crash_Test(crash_groups_GetBoolArray2, "groups_GetBoolArray2");
+    crash_Test(crash_groups_GetBoolArray3, "groups_GetBoolArray3");
+    crash_Test(crash_groups_GetDoubleArray, "groups_GetDoubleArray");
+    crash_Test(crash_groups_GetDoubleArray2, "groups_GetDoubleArray2");
+    crash_Test(crash_groups_GetDoubleArray3, "groups_GetDoubleArray3");
+    crash_Test(crash_groups_GetIntArray, "groups_GetIntArray");
+    crash_Test(crash_groups_GetIntArray2, "groups_GetIntArray2");
+    crash_Test(crash_groups_GetIntArray3, "groups_GetIntArray3");
+    crash_Test(crash_groups_GetStringArray, "groups_GetStringArray");
+    crash_Test(crash_groups_GetStringArray2, "groups_GetStringArray2");
+    crash_Test(crash_groups_GetStringArray3, "groups_GetStringArray3");
+    crash_Test(crash_groups_PrintMember, "groups_PrintMember");
+    crash_Test(crash_groups_PrintMember2, "groups_PrintMember2");
+    crash_Test(crash_groups_PropertyNameById, "groups_PropertyNameById");
+    crash_Test(crash_groups_PropertyNameById2, "groups_PropertyNameById2");
+    crash_Test(crash_groups_ReadFromFile, "groups_ReadFromFile");
+    crash_Test(crash_groups_ReadFromFile2, "groups_ReadFromFile2");
+    crash_Test(crash_groups_RemoveMember, "groups_RemoveMember");
+    crash_Test(crash_groups_RemoveMember2, "groups_RemoveMember2");
+    crash_Test(crash_groups_RemoveMembers, "groups_RemoveMembers");
+    crash_Test(crash_groups_RemoveMembers2, "groups_RemoveMembers2");
+    crash_Test(crash_groups_SaveToFile, "groups_SaveToFile");
+    crash_Test(crash_groups_SaveToFile2, "groups_SaveToFile2");
+    crash_Test(crash_groups_SetBoolArray, "groups_SetBoolArray");
+    crash_Test(crash_groups_SetBoolArray2, "groups_SetBoolArray2");
+    crash_Test(crash_groups_SetBoolArray3, "groups_SetBoolArray3");
+    crash_Test(crash_groups_SetBoolArray4, "groups_SetBoolArray4");
+    crash_Test(crash_groups_SetBoolArray5, "groups_SetBoolArray5");
+    crash_Test(crash_groups_SetDoubleArray, "groups_SetDoubleArray");
+    crash_Test(crash_groups_SetDoubleArray2, "groups_SetDoubleArray2");
+    crash_Test(crash_groups_SetDoubleArray3, "groups_SetDoubleArray3");
+    crash_Test(crash_groups_SetDoubleArray4, "groups_SetDoubleArray4");
+    crash_Test(crash_groups_SetDoubleArray5, "groups_SetDoubleArray5");
+    crash_Test(crash_groups_SetIntArray, "groups_SetIntArray");
+    crash_Test(crash_groups_SetIntArray2, "groups_SetIntArray2");
+    crash_Test(crash_groups_SetIntArray3, "groups_SetIntArray3");
+    crash_Test(crash_groups_SetIntArray4, "groups_SetIntArray4");
+    crash_Test(crash_groups_SetIntArray5, "groups_SetIntArray5");
+    crash_Test(crash_groups_SetStringArray, "groups_SetStringArray");
+    crash_Test(crash_groups_SetStringArray2, "groups_SetStringArray2");
+    crash_Test(crash_groups_SetStringArray3, "groups_SetStringArray3");
+    crash_Test(crash_groups_SetStringArray4, "groups_SetStringArray4");
+    crash_Test(crash_groups_SetStringArray5, "groups_SetStringArray5");
+    crash_Test(crash_groups_SetString, "groups_SetString");
+    crash_Test(crash_groups_SetString2, "groups_SetString2");
+    crash_Test(crash_groups_SetString3, "groups_SetString3");
+    
     crash_Test(crash_hashTable_SetInt, "crash_hashTable_SetInt");
     crash_Test(crash_hashTable_SetInt2, "crash_hashTable_SetInt2");
     crash_Test(crash_hashTable_SetString, "hashTable_SetString");

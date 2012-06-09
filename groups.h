@@ -257,13 +257,11 @@ extern "C" {
     int        groups_SaveToFile
     (groups* g, const char* fileName);
     
-    // Reads data from a file.
-    // You need to specify in the configuration what kind of format you want to read.
+    // Reads data from a file in JSON format.
     int groups_ReadFromFile
     (
      groups* g, 
      const char* fileName, 
-     const char* config, 
      int verbose, 
      void(*err)(int line, int column, const char* message)
     );

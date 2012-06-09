@@ -599,6 +599,21 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 //
 void groups_SetString(groups* g, const bitstream* a, int propId, const char* val)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetString: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetString: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetString: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -630,6 +645,21 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 
 void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetInt: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetInt: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetInt: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -662,6 +692,21 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 
 void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetBool: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetBool: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetBool: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -699,6 +744,31 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 //
 void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, const double* values)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetDoubleArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetDoubleArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetDoubleArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "groups_SetDoubleArray: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (values == NULL) {
+        fprintf(stderr, "groups_SetDoubleArray: values == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -728,6 +798,31 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 void groups_SetStringArray
 (groups* g, const bitstream* a, int propId, int n, const char** values)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetStringArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetStringArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetStringArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "groups_SetStringArray: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (values == NULL) {
+        fprintf(stderr, "groups_SetStringArray: values == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -782,6 +877,31 @@ void groups_SetStringArray
 void groups_SetIntArray
 (groups* g, const bitstream* a, int propId, int n, const int* values)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetIntArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetIntArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetIntArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "groups_SetIntArray: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (values == NULL) {
+        fprintf(stderr, "groups_SetIntArray: values == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -834,6 +954,31 @@ void groups_SetIntArray
 void groups_SetBoolArray
 (groups* g, const bitstream* a, int propId, int n, const bool* values)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SetBoolArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetBoolArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetBoolArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "groups_SetBoolArray: n < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (values == NULL) {
+        fprintf(stderr, "groups_SetBoolArray: values == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -887,6 +1032,21 @@ void groups_SetBoolArray
 double* groups_GetDoubleArray
 (groups* g, const bitstream* a, int propId)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_GetDoubleArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_GetDoubleArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_GetDoubleArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -910,6 +1070,21 @@ double* groups_GetDoubleArray
 int* groups_GetIntArray
 (groups* g, const bitstream* a, int propId)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_GetIntArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_SetIntArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_SetIntArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -932,6 +1107,21 @@ int* groups_GetIntArray
 bool* groups_GetBoolArray
 (groups* g, const bitstream* a, int propId)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_GetBoolArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_GetBoolArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_GetBoolArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -954,6 +1144,21 @@ bool* groups_GetBoolArray
 const char** groups_GetStringArray
 (groups* g, const bitstream* a, int propId)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_GetStringArray: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (a == NULL) {
+        fprintf(stderr, "groups_GetStringArray: a == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_GetStringArray: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -975,6 +1180,16 @@ const char** groups_GetStringArray
 
 const char* groups_PropertyNameById(const groups* g, int propId)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_PropertyNameById: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (propId < 0) {
+        fprintf(stderr, "groups_PropertyNameById: propId < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	property* prop;
 	gcstack_item* cursor = g->properties->root->next;
 	for (; cursor != NULL; cursor = cursor->next)
@@ -987,6 +1202,16 @@ const char* groups_PropertyNameById(const groups* g, int propId)
 
 void groups_PrintMember(const groups* g, const hash_table* obj)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_PrintMember: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (obj == NULL) {
+        fprintf(stderr, "groups_PrintMember: obj == NULL");
+        pthread_exit(NULL);
+    }
+    
     int propId, type;
     
     hashTable_foreach(obj) {
@@ -1007,6 +1232,16 @@ void groups_PrintMember(const groups* g, const hash_table* obj)
 
 void groups_RemoveMember(groups* g, int index)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_RemoveMember: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (index < 0) {
+        fprintf(stderr, "groups_RemoveMember: index < 0\r\n");
+        pthread_exit(NULL);
+    }
+    
 	createMemberArray(g);
 	
 	hash_table* obj = g->m_memberArray[index];
@@ -1045,6 +1280,16 @@ void groups_RemoveMember(groups* g, int index)
 
 void groups_RemoveMembers(groups* g, bitstream const* prop)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_RemoveMembers: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (prop == NULL) {
+        fprintf(stderr, "groups_RemoveMembers: prop == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
 	createMemberArray(g);
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
@@ -1152,6 +1397,16 @@ void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
 
 bool groups_SaveToFile(groups* g, string fileName)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_SaveToFile: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (fileName == NULL) {
+        fprintf(stderr, "groups_SaveToFile: fileName == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
     FILE* f = fopen(fileName, "w");
     if (f == NULL)
         return false;
@@ -1199,6 +1454,16 @@ bool groups_SaveToFile(groups* g, string fileName)
 
 void groups_AppendMembers(groups* g, gcstack* newMembers)
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_AppendMembers: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (newMembers == NULL) {
+        fprintf(stderr, "groups_AppendMembers: newMembers == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
     gcstack_item* cursor = newMembers->root->next;
     for (; cursor != NULL; cursor = cursor->next)
     {
@@ -1258,8 +1523,18 @@ int sscanInt(const char* text, int* output)
     return n*s;
 }
 
-bool groups_ReadFromFile(groups* g, string fileName, string config, bool verbose, void(*err)(int line, int column, const char* message))
+bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
 {
+    if (g == NULL) {
+        fprintf(stderr, "groups_ReadFromFile: g == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
+    if (fileName == NULL) {
+        fprintf(stderr, "groups_ReadFromFile: fileName == NULL\r\n");
+        pthread_exit(NULL);
+    }
+    
     // Get file size.
     struct stat s;
     if (stat(fileName, &s) != 0) {
