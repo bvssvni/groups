@@ -1065,3 +1065,32 @@ int bitstream_PopEnd(bitstream* a)
 	
 	return id;
 }
+
+const char** bitstream_GetWords(bitstream* a, string text)
+{
+    if (a == NULL) errorhandling_Crash("bitstream_GetWords: a == NULL");
+    
+    if (text == NULL) return NULL;
+    
+    int length = a->length/2;
+    const char** arr = malloc(sizeof(char*)*length);
+    
+    int start, end;
+    int wordLength;
+    char* str;
+    for (int i = 0; i < length; i++) {
+        start = a->pointer[i*2];
+        end = a->pointer[i*2+1];
+        wordLength = end - start;
+        
+        str = malloc((wordLength+1)*sizeof(char));
+        for (int j = 0; j < wordLength; j++)
+            str[j] = text[start+j];
+        str[wordLength] = '\0';
+        
+        arr[i] = str;
+    }
+    
+    return arr;
+}
+
