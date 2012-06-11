@@ -331,7 +331,7 @@ int groups_GetProperty(groups* g, char const* name)
 
 char** groups_GetPropertyNames(groups* g)
 {
-    if (g == NULL) crash("groups_GetPropertyNames: g == NULL\r\n");
+    if (g == NULL) crash("groups_GetPropertyNames: g == NULL");
     
     int length = g->properties->length;
     char** arr = malloc(sizeof(char*)*length);
