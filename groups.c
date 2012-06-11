@@ -329,6 +329,23 @@ int groups_GetProperty(groups* g, char const* name)
 	return prop->propId;
 }
 
+char** groups_GetPropertyNames(groups* g)
+{
+    if (g == NULL) crash("groups_GetPropertyNames: g == NULL\r\n");
+    
+    int length = g->properties->length;
+    char** arr = malloc(sizeof(char*)*length);
+    gcstack_item* cursor = g->properties->root->next;
+    property* prop;
+    int k = 0;
+    for (; cursor != NULL; cursor = cursor->next)
+    {
+        prop = (property*)cursor;
+        arr[k++] = prop->name;
+    }
+    return arr;
+}
+
 bitstream* groups_GetBitstream(groups* g, int propId)
 {
     if (g == NULL) {

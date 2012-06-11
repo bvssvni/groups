@@ -109,6 +109,12 @@ extern "C" {
 	//
 	int groups_GetProperty
 	(groups* g, char const* name);
+    
+    //
+    //      Returns an array of property names.
+    //
+    char** groups_GetPropertyNames
+    (groups* g);
 	
 	//
 	//		Bitstream is the object you use to group objects fast.
