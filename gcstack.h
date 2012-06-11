@@ -125,11 +125,35 @@ void gcstack_Push
 // This array can be sorted with sorting_Sort.
 gcstack_item** gcstack_CreateItemsArray
 (gcstack const* gc);
+    
+    int* gcstack_CreateIntArray
+    (gcstack const* gc);
+    
+    double* gcstack_CreateDoubleArray
+    (gcstack const* gc);
+    
+    int* gcstack_CreateBoolArray
+    (gcstack const* gc);
+    
+    const char** gcstack_CreateStringArray
+    (gcstack const* gc);
 
 // Create an array of items that are on the stack backward.
 // This array can be sorted with sorting_Sort.
 gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
 
+    int* gcstack_CreateIntArrayBackward
+    (gcstack const* gc);
+    
+    double* gcstack_CreateDoubleArrayBackward
+    (gcstack const* gc);
+    
+    const char** gcstack_CreateStringArrayBackward
+    (gcstack const* gc);
+    
+    int* gcstack_CreateBoolArrayBackward
+    (gcstack const* gc);
+    
 // Print out a list of items on the stack to command window.
 void gcstack_Print
 (gcstack const* gc, void(*print)(void*a));

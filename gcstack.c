@@ -43,6 +43,32 @@
 
 #include "gcstack.h"
 
+
+typedef struct gcdouble
+{
+    gcstack_item gc;
+    double val;
+} gcdouble;
+
+typedef struct gcint
+{
+    gcstack_item gc;
+    int val;
+} gcint;
+
+typedef struct gcbool
+{
+    gcstack_item gc;
+    bool val;
+} gcbool;
+
+typedef struct gcstring
+{
+    gcstack_item gc;
+    char* val;
+} gcstring;
+
+
 gcstack* gcstack_Alloc()
 {
 	return malloc(sizeof(gcstack));
@@ -85,6 +111,66 @@ gcstack_item** gcstack_CreateItemsArray(gcstack const* gc)
 	return arr;
 }
 
+int* gcstack_CreateIntArray(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	int* arr = malloc(gc->length*sizeof(int));
+    gcint* item;
+	for (int i = 0; i < length; i++)
+	{
+		item = (gcint*)cursor;
+        arr[i] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
+double* gcstack_CreateDoubleArray(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	double* arr = malloc(gc->length*sizeof(double));
+    gcdouble* item;
+	for (int i = 0; i < length; i++)
+	{
+		item = (gcdouble*)cursor;
+        arr[i] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
+bool* gcstack_CreateBoolArray(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	bool* arr = malloc(gc->length*sizeof(bool));
+    gcbool* item;
+	for (int i = 0; i < length; i++)
+	{
+		item = (gcbool*)cursor;
+        arr[i] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
+string* gcstack_CreateStringArray(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	string* arr = malloc(gc->length*sizeof(string));
+    gcstring* item;
+	for (int i = 0; i < length; i++)
+	{
+		item = (gcstring*)cursor;
+        arr[i] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
 gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc)
 {
 	int length = gc->length;
@@ -98,6 +184,65 @@ gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc)
 	return arr;
 }
 
+int* gcstack_CreateIntArrayBackward(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	int* arr = malloc(gc->length*sizeof(int));
+    gcint* item;
+	for (int i = 0; i < length; i++)
+	{
+        item = (gcint*)cursor;
+		arr[length-i-1] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
+double* gcstack_CreateDoubleArrayBackward(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	double* arr = malloc(gc->length*sizeof(double));
+    gcdouble* item;
+	for (int i = 0; i < length; i++)
+	{
+        item = (gcdouble*)cursor;
+		arr[length-i-1] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
+string* gcstack_CreateStringArrayBackward(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	string* arr = malloc(gc->length*sizeof(string));
+    gcstring* item;
+	for (int i = 0; i < length; i++)
+	{
+        item = (gcstring*)cursor;
+		arr[length-i-1] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
+
+bool* gcstack_CreateBoolArrayBackward(gcstack const* gc)
+{
+	int length = gc->length;
+	gcstack_item* cursor = gc->root->next;
+	bool* arr = malloc(gc->length*sizeof(bool));
+    gcbool* item;
+	for (int i = 0; i < length; i++)
+	{
+        item = (gcbool*)cursor;
+		arr[length-i-1] = item->val;
+		cursor = cursor->next;
+	}
+	return arr;
+}
 
 void gcstack_Print(gcstack const* gc, void(*print)(void*a))
 {
@@ -253,30 +398,6 @@ void gcstack_Push(gcstack* gc, void* p)
 	gc->root->next = item;
 	gc->length++;
 }
-
-typedef struct gcdouble
-{
-    gcstack_item gc;
-    double val;
-} gcdouble;
-
-typedef struct gcint
-{
-    gcstack_item gc;
-    int val;
-} gcint;
-
-typedef struct gcbool
-{
-    gcstack_item gc;
-    bool val;
-} gcbool;
-
-typedef struct gcstring
-{
-    gcstack_item gc;
-    char* val;
-} gcstring;
 
 gcstack_item* gcstack_PushDouble(gcstack* gc, double val)
 {

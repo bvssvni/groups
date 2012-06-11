@@ -441,6 +441,43 @@ bitstream* bitstream_InitWithDeltaString
 	return a;
 }
 
+bitstream* bitstream_InitWithWordsInString(bitstream* a, string text, string spaceCharacters, string splitCharacters)
+{
+    // Loop through and find all sections that does not contain splitting characters.
+    gcstack* words = gcstack_Init(gcstack_Alloc());
+    int k = 0;
+    bool wasSpace = true;
+    bool isSpace = false;
+    bool isSplit = false;
+    char* spaceCh = NULL;
+    char* splitCh = NULL;
+    for (char ch = text[0]; ch != '\0'; ch = text[++k])
+    {
+        spaceCh = strchr(spaceCharacters, ch);
+        splitCh = strchr(splitCharacters, ch);
+        isSplit = splitCh != NULL;
+        isSpace = spaceCh != NULL || isSplit;
+        
+        // Split characters are marked whether they follow another or not.
+        if (isSplit) gcstack_PushInt(words, k);
+        else if (!isSpace && wasSpace) gcstack_PushInt(words, k);
+        else if (isSpace && !wasSpace) gcstack_PushInt(words, k);
+        wasSpace = isSpace;
+    }
+    
+    // If there is no split character at the end, we have to use end of text.
+    if ((words->length % 2) != 0)
+        gcstack_PushInt(words, k);
+    
+    int* arr = gcstack_CreateIntArrayBackward(words);
+    bitstream_InitWithValues(a, words->length, arr);
+    free(arr);
+    gcstack_Delete(words);
+    free(words);
+    
+    return a;
+}
+
 void bitstream_Print(bitstream const*a)
 {
     if (a == NULL) {

@@ -117,22 +117,35 @@ bitstream*	bitstream_InitWithValues
 bitstream* bitstream_InitWithIndices
 (bitstream* a, int size, int const vals[]);
 	
-//
-//			This looks for difference between a set of old values
-//			and new values of type double.
-//
-bitstream* bitstream_InitWithDeltaDouble
-(bitstream* a, int n, const double* oldValues, const double* newValues);
+    //
+    //      DELTA CHANGES
+    //
+    //      When you have one array of new values and one of old values,
+    //      you can compare them and find which has changed and which has not.
+    //      It is assumed that the arrays got the same size.
+    //
+    
+    bitstream* bitstream_InitWithDeltaDouble
+    (bitstream* a, int n, const double* oldValues, const double* newValues);
 
-bitstream* bitstream_InitWithDeltaInt
-(bitstream* a, int n, const int* oldValues, const int* newValues);
+    bitstream* bitstream_InitWithDeltaInt
+    (bitstream* a, int n, const int* oldValues, const int* newValues);
 	
-bitstream* bitstream_InitWithDeltaBool
-(bitstream* a, int n, const int* oldValues, const int* newValues);
+    bitstream* bitstream_InitWithDeltaBool
+    (bitstream* a, int n, const int* oldValues, const int* newValues);
 	
-bitstream* bitstream_InitWithDeltaString
-(bitstream* a, int n, const char** oldValues, const char** newValues);
+    bitstream* bitstream_InitWithDeltaString
+    (bitstream* a, int n, const char** oldValues, const char** newValues);
 	
+    //
+    //      TEXT PROCESSING
+    //
+    //      Sometimes it is nice to find out where words are in a string.
+    //      Space characters are ignored if they are neighbors to a previous one, for example '  '.
+    //      Split characters are not ignores when neighbor to a previous one, for example 'a,,b,c'.
+    //
+    bitstream* bitstream_InitWithWordsInString
+    (bitstream* a, const char* text, const char* spaceCharacters, const char* splitCharacters);
 //
 //			Cleans up the structure within a bistream.
 //			Frees up the pointer that is pointing to the data.
