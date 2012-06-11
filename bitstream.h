@@ -150,7 +150,7 @@ extern "C" {
     //
     //      Returns an array of strings by extracting word locations within a text.
     //
-    const char** bitstream_GetWords
+    char** bitstream_GetWords
     (bitstream* a, const char* text);
     
     //
