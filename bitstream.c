@@ -39,6 +39,7 @@
 
 #include <pthread.h>
 
+#include "errorhandling.h"
 #include "readability.h"
 
 #include "bitstream.h"
@@ -52,8 +53,7 @@ void bitstream_Delete(void* p) {
 	bitstream* a = (bitstream*)p;
 	
     if (a == NULL) {
-        fprintf(stderr, "bitstream_Delete: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Delete: a == NULL");
     }
     
 	if (a->pointer != NULL)
@@ -73,15 +73,13 @@ bitstream* bitstream_InitWithSize(bitstream* a, int size) {
 	bitstream_references++;
     
     if (a == NULL) {
-        fprintf(stderr, "bitstream_InitWithSize: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithSize: a == NULL");
     }
     
     a->pointer = NULL;
     
     if (size < 0) {
-        fprintf(stderr, "bitstream_InitWithSize: size < 0\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithSize: size < 0");
     }
 	
 	if (size == 0)
@@ -106,20 +104,17 @@ bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 	bitstream_references++;
 	
     if (a == NULL) {
-        fprintf(stderr, "bitstream_InitWithValues: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithValues: a == NULL");
     }
     
     a->pointer = NULL;
     
     if (size < 0) {
-        fprintf(stderr, "bitstream_InitWithValues: size < 0\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithValues: size < 0");
     }
     
     if (vals == NULL) {
-        fprintf(stderr, "bitstream_InitWithValues: vals == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithValues: vals == NULL");
     }
     
 	a->length = size;
@@ -194,20 +189,17 @@ bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
 	bitstream_references++;
     
     if (a == NULL) {
-        fprintf(stderr, "bitstream_InitWithIndices: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithIndices: a == NULL");
     }
     
     a->pointer = NULL;
     
     if (size < 0) {
-        fprintf(stderr, "bitstream_InitWithIndices: size < 0\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithIndices: size < 0");
     }
     
     if (vals == NULL) {
-        fprintf(stderr, "bitstream_InitWithIndices: vals == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithIndices: vals == NULL");
     }
 	
     if (size == 0) {
@@ -293,20 +285,17 @@ bitstream* bitstream_InitWithDeltaDouble
 (bitstream* a, int n, const double* oldValues, const double* newValues)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaDouble: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaDouble: a == NULL");
     }
     
     a->pointer = NULL;
     
     if (n < 0) {
-        fprintf(stderr, "bitstream_InitWithDeltaDouble: n < 0\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaDouble: n < 0");
     }
     
     if (oldValues == NULL || newValues == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaDouble: oldValues == NULL || newValues == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaDouble: oldValues == NULL || newValues == NULL");
     }
     
     if (n == 0) {
@@ -336,20 +325,17 @@ bitstream* bitstream_InitWithDeltaInt
 (bitstream* a, int n, const int* oldValues, const int* newValues)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaInt: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaInt: a == NULL");
     }
     
     a->pointer = NULL;
     
     if (n < 0) {
-        fprintf(stderr, "bitstream_InitWithDeltaInt: n < 0\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaInt: n < 0");
     }
     
     if (oldValues == NULL || newValues == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaInt: oldValues == NULL || newValues == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaInt: oldValues == NULL || newValues == NULL");
     }
     
     if (n == 0) {
@@ -379,20 +365,17 @@ bitstream* bitstream_InitWithDeltaBool
 (bitstream* a, int n, const bool* oldValues, const bool* newValues)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaBool: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaBool: a == NULL");
     }
     
     a->pointer = NULL;
     
     if (n < 0) {
-        fprintf(stderr, "bitstream_InitWithDeltaBool: n < 0\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaBool: n < 0");
     }
     
     if (oldValues == NULL || newValues == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaBool: oldValues == NULL || newValues == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaBool: oldValues == NULL || newValues == NULL");
     }
     
     if (n == 0) {
@@ -422,20 +405,17 @@ bitstream* bitstream_InitWithDeltaString
 (bitstream* a, int n, const string* oldValues, const string* newValues)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaString: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaString: a == NULL");
     }
     
     a->pointer = NULL;
     
     if (n < 0) {
-        fprintf(stderr, "bitstream_InitWithDeltaString: n < 0\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaString: n < 0");
     }
     
     if (oldValues == NULL || newValues == NULL) {
-        fprintf(stderr, "bitstream_InitWithDeltaString: oldValues == NULL || newValues == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_InitWithDeltaString: oldValues == NULL || newValues == NULL");
     }
     
     if (n == 0) {
@@ -464,8 +444,7 @@ bitstream* bitstream_InitWithDeltaString
 void bitstream_Print(bitstream const*a)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_Print: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Print: a == NULL");
     }
     
 	int length = a->length-1;
@@ -480,13 +459,11 @@ void bitstream_Print(bitstream const*a)
 bitstream* bitstream_DirectJoin(gcstack* gc, 
 								bitstream const* a, bitstream const* b) {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_DirectJoin: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_DirectJoin: a == NULL");
     }
     
     if (b == NULL) {
-        fprintf(stderr, "bitstream_DirectJoin: b == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_DirectJoin: b == NULL");
     }
     
 	bitstream* arr = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
@@ -501,8 +478,7 @@ bitstream* bitstream_DirectJoin(gcstack* gc,
 
 bitstream* bitstream_Clone(gcstack* gc, bitstream const* a) {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_Clone: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Clone: a == NULL");
     }
     
 	bitstream* b = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
@@ -566,8 +542,7 @@ int countAnd(bitstream const* a, bitstream const* b)
 bitstream* bitstream_And(gcstack* gc, bitstream const* a, bitstream const* b)
 {
     if (a == NULL || b == NULL) {
-        fprintf(stderr, "bitstream_And: a == NULL || b == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_And: a == NULL || b == NULL");
     }
     
 	int list = 0;
@@ -686,8 +661,7 @@ int countOr(bitstream const* a, bitstream const* b)
 bitstream* bitstream_Or(gcstack* gc, bitstream const* a, bitstream const* b)
 {
     if (a == NULL || b == NULL) {
-        fprintf(stderr, "bitstream_Or: a == NULL || b == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Or: a == NULL || b == NULL");
     }
     
 	int count = countOr(a,b);
@@ -786,8 +760,7 @@ int countInvert(bitstream* a, int inv)
 bitstream* bitstream_Invert(gcstack* gc, bitstream* a, int inv)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_Invert: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Invert: a == NULL");
     }
     
 	bitstream* res = bitstream_InitWithSize
@@ -874,8 +847,7 @@ int countExcept(bitstream const* a, bitstream const* b)
 bitstream* bitstream_Except(gcstack* gc, bitstream const* a, bitstream const* b)
 {
     if (a == NULL || b == NULL) {
-        fprintf(stderr, "bitstream_Except: a == NULL || b == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Except: a == NULL || b == NULL");
     }
     
 	int a_length = a->length;
@@ -940,8 +912,7 @@ bitstream* bitstream_Except(gcstack* gc, bitstream const* a, bitstream const* b)
 int bitstream_Size(bitstream const* list)
 {
     if (list == NULL) {
-        fprintf(stderr, "bitstream_Size: list == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Size: list == NULL");
     }
     
 	int listCount = list->length;
@@ -986,8 +957,7 @@ int bitstream_AbsSub(bitstream const* list)
 int bitstream_Abs(bitstream const* list, int maximum)
 {
     if (list == NULL) {
-        fprintf(stderr, "bitstream_Abs: list == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_Abs: list == NULL");
     }
     
 	if (list->length == 0)
@@ -1001,8 +971,7 @@ int bitstream_Abs(bitstream const* list, int maximum)
 int* bitstream_ArrayPointer(bitstream const* a)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_ArrayPointer: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_ArrayPointer: a == NULL");
     }
     
 	return a->pointer;
@@ -1011,8 +980,7 @@ int* bitstream_ArrayPointer(bitstream const* a)
 int bitstream_NumberOfBlocks(bitstream const* a)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_NumberOfBlocsk: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_NumberOfBlocsk: a == NULL");
     }
     
 	return a->length/2;
@@ -1021,8 +989,7 @@ int bitstream_NumberOfBlocks(bitstream const* a)
 int bitstream_PopStart(bitstream* a)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_PopStart: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_PopStart: a == NULL");
     }
     
 	int length = a->length;
@@ -1046,8 +1013,7 @@ int bitstream_PopStart(bitstream* a)
 int bitstream_PopEnd(bitstream* a)
 {
     if (a == NULL) {
-        fprintf(stderr, "bitstream_PopEnd: a == NULL\r\n");
-        pthread_exit(NULL);
+        crash("bitstream_PopEnd: a == NULL");
     }
     
 	int length = a->length;

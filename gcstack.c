@@ -38,6 +38,7 @@
 #include <string.h>
 #include <pthread.h>
 
+#include "errorhandling.h"
 #include "readability.h"
 
 #include "gcstack.h"
@@ -60,8 +61,7 @@ gcstack* gcstack_Init(gcstack* gc)
 void gcstack_Delete(gcstack* gc)
 {
     if (gc == NULL) {
-        fprintf(stderr, "gcstack_Delete: gc == NULL\r\n");
-        pthread_exit(NULL);
+        crash("gcstack_Delete: gc == NULL");
     }
     
 	gcstack_End(gc, NULL);
@@ -121,8 +121,7 @@ gcstack_item* gcstack_Start(gcstack const* gc)
 void gcstack_End(gcstack* gc, gcstack_item* end)
 {
     if (gc == NULL) {
-        fprintf(stderr, "gcstack_End: gc == NULL\r\n");
-        pthread_exit(NULL);
+        crash("gcstack_End: gc == NULL");
     }
     
 	gcstack_item* cursor = gc->root->next;
