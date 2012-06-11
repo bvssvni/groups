@@ -56,7 +56,7 @@ void groups_Delete(void* p)
 	groups* g = (groups*)p;
     
     if (g == NULL) {
-        crash("groups_Delete: g == NULL");
+        errorhandling_Crash("groups_Delete: g == NULL");
     }
     
 	// Free bitstream stuff.
@@ -123,7 +123,7 @@ groups* groups_AllocWithGC(gcstack* gc)
 groups* groups_Init(groups* g)
 {
     if (g == NULL) {
-        crash("groups_Init: g == NULL");
+        errorhandling_Crash("groups_Init: g == NULL");
     }
     
 	g->bitstreams = gcstack_Init(gcstack_Alloc());
@@ -212,15 +212,15 @@ void createBitstreamArray(groups* g)
 int groups_AddProperty(groups* g, const void* name, const void* propType)
 {
     if (g == NULL) {
-        crash("groups_AddProperty: g == NULL");
+        errorhandling_Crash("groups_AddProperty: g == NULL");
     }
     
     if (name == NULL) {
-        crash("groups_AddProperty: name == NULL");
+        errorhandling_Crash("groups_AddProperty: name == NULL");
     }
     
     if (propType == NULL) {
-        crash("groups_AddPropety: propType == NULL");
+        errorhandling_Crash("groups_AddPropety: propType == NULL");
     }
     
 	// We use the length of the bitstream stack to generate ids,
@@ -307,11 +307,11 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 int groups_GetProperty(groups* g, char const* name)
 {
     if (g == NULL) {
-        crash("groups_GetProperty: g == NULL");
+        errorhandling_Crash("groups_GetProperty: g == NULL");
     }
     
     if (name == NULL) {
-        crash("groups_GetProperty: name == NULL");
+        errorhandling_Crash("groups_GetProperty: name == NULL");
     }
     
 	int length = g->properties->length;
@@ -331,7 +331,7 @@ int groups_GetProperty(groups* g, char const* name)
 
 char** groups_GetPropertyNames(groups* g)
 {
-    if (g == NULL) crash("groups_GetPropertyNames: g == NULL");
+    if (g == NULL) errorhandling_Crash("groups_GetPropertyNames: g == NULL");
     
     int length = g->properties->length;
     char** arr = malloc(sizeof(char*)*length);
@@ -349,11 +349,11 @@ char** groups_GetPropertyNames(groups* g)
 bitstream* groups_GetBitstream(groups* g, int propId)
 {
     if (g == NULL) {
-        crash("groups_GetBitstream: g == NULL");
+        errorhandling_Crash("groups_GetBitstream: g == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_GetBitstream: propId < 0");
+        errorhandling_Crash("groups_GetBitstream: propId < 0");
     }
     
 	// Filter out the type information.
@@ -370,11 +370,11 @@ bitstream* groups_GetBitstream(groups* g, int propId)
 void groups_RemoveProperty(groups* g, int propId)
 {
     if (g == NULL) {
-        crash("groups_RemoveProperty: g == NULL");
+        errorhandling_Crash("groups_RemoveProperty: g == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_RemoveProperty: propId < 0");
+        errorhandling_Crash("groups_RemoveProperty: propId < 0");
     }
     
 	int index = propId % TYPE_STRIDE;
@@ -416,11 +416,11 @@ void groups_RemoveProperty(groups* g, int propId)
 bool groups_IsDefaultVariable(int propId, void* data)
 {
     if (propId < 0) {
-        crash("groups_IsDefaultVariable: propId < 0");
+        errorhandling_Crash("groups_IsDefaultVariable: propId < 0");
     }
     
     if (data == NULL) {
-        crash("groups_IsDefaultVariable: data == NULL");
+        errorhandling_Crash("groups_IsDefaultVariable: data == NULL");
     }
     
 	int type = propId/TYPE_STRIDE;
@@ -460,11 +460,11 @@ void createMemberArray(groups* g)
 int groups_AddMember(groups* g, hash_table* obj)
 {
     if (g == NULL) {
-        crash("groups_AddMember: g == NULL");
+        errorhandling_Crash("groups_AddMember: g == NULL");
     }
     
     if (obj == NULL) {
-        crash("groups_AddMember: obj == NULL");
+        errorhandling_Crash("groups_AddMember: obj == NULL");
     }
     
 	int id = g->members->length;
@@ -559,15 +559,15 @@ int groups_AddMember(groups* g, hash_table* obj)
 void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 {
     if (g == NULL) {
-        crash("groups_SetDouble: g == NULL");
+        errorhandling_Crash("groups_SetDouble: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetDouble: a == NULL");
+        errorhandling_Crash("groups_SetDouble: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetDouble: propId < 0");
+        errorhandling_Crash("groups_SetDouble: propId < 0");
     }
     
 	// Create member array so we can access members directly.
@@ -600,15 +600,15 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 void groups_SetString(groups* g, const bitstream* a, int propId, const char* val)
 {
     if (g == NULL) {
-        crash("groups_SetString: g == NULL");
+        errorhandling_Crash("groups_SetString: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetString: a == NULL");
+        errorhandling_Crash("groups_SetString: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetString: propId < 0");
+        errorhandling_Crash("groups_SetString: propId < 0");
     }
     
 	// Create member array so we can access members directly.
@@ -643,15 +643,15 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 {
     if (g == NULL) {
-        crash("groups_SetInt: g == NULL");
+        errorhandling_Crash("groups_SetInt: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetInt: a == NULL");
+        errorhandling_Crash("groups_SetInt: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetInt: propId < 0");
+        errorhandling_Crash("groups_SetInt: propId < 0");
     }
     
 	// Create member array so we can access members directly.
@@ -687,15 +687,15 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 {
     if (g == NULL) {
-        crash("groups_SetBool: g == NULL");
+        errorhandling_Crash("groups_SetBool: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetBool: a == NULL");
+        errorhandling_Crash("groups_SetBool: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetBool: propId < 0");
+        errorhandling_Crash("groups_SetBool: propId < 0");
     }
     
 	// Create member array so we can access members directly.
@@ -736,23 +736,23 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, const double* values)
 {
     if (g == NULL) {
-        crash("groups_SetDoubleArray: g == NULL");
+        errorhandling_Crash("groups_SetDoubleArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetDoubleArray: a == NULL");
+        errorhandling_Crash("groups_SetDoubleArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetDoubleArray: propId < 0");
+        errorhandling_Crash("groups_SetDoubleArray: propId < 0");
     }
     
     if (n < 0) {
-        crash("groups_SetDoubleArray: n < 0");
+        errorhandling_Crash("groups_SetDoubleArray: n < 0");
     }
     
     if (values == NULL) {
-        crash("groups_SetDoubleArray: values == NULL");
+        errorhandling_Crash("groups_SetDoubleArray: values == NULL");
     }
     
 	// Create member array so we can access members directly.
@@ -785,23 +785,23 @@ void groups_SetStringArray
 (groups* g, const bitstream* a, int propId, int n, const char** values)
 {
     if (g == NULL) {
-        crash("groups_SetStringArray: g == NULL");
+        errorhandling_Crash("groups_SetStringArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetStringArray: a == NULL");
+        errorhandling_Crash("groups_SetStringArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetStringArray: propId < 0");
+        errorhandling_Crash("groups_SetStringArray: propId < 0");
     }
     
     if (n < 0) {
-        crash("groups_SetStringArray: n < 0");
+        errorhandling_Crash("groups_SetStringArray: n < 0");
     }
     
     if (values == NULL) {
-        crash("groups_SetStringArray: values == NULL");
+        errorhandling_Crash("groups_SetStringArray: values == NULL");
     }
     
 	// Create member array so we can access members directly.
@@ -859,23 +859,23 @@ void groups_SetIntArray
 (groups* g, const bitstream* a, int propId, int n, const int* values)
 {
     if (g == NULL) {
-        crash("groups_SetIntArray: g == NULL");
+        errorhandling_Crash("groups_SetIntArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetIntArray: a == NULL");
+        errorhandling_Crash("groups_SetIntArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetIntArray: propId < 0");
+        errorhandling_Crash("groups_SetIntArray: propId < 0");
     }
     
     if (n < 0) {
-        crash("groups_SetIntArray: n < 0");
+        errorhandling_Crash("groups_SetIntArray: n < 0");
     }
     
     if (values == NULL) {
-        crash("groups_SetIntArray: values == NULL");
+        errorhandling_Crash("groups_SetIntArray: values == NULL");
     }
     
 	// Create member array so we can access members directly.
@@ -931,23 +931,23 @@ void groups_SetBoolArray
 (groups* g, const bitstream* a, int propId, int n, const bool* values)
 {
     if (g == NULL) {
-        crash("groups_SetBoolArray: g == NULL");
+        errorhandling_Crash("groups_SetBoolArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetBoolArray: a == NULL");
+        errorhandling_Crash("groups_SetBoolArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetBoolArray: propId < 0");
+        errorhandling_Crash("groups_SetBoolArray: propId < 0");
     }
     
     if (n < 0) {
-        crash("groups_SetBoolArray: n < 0");
+        errorhandling_Crash("groups_SetBoolArray: n < 0");
     }
     
     if (values == NULL) {
-        crash("groups_SetBoolArray: values == NULL");
+        errorhandling_Crash("groups_SetBoolArray: values == NULL");
     }
     
 	// Create member array so we can access members directly.
@@ -1004,15 +1004,15 @@ double* groups_GetDoubleArray
 (groups* g, const bitstream* a, int propId)
 {
     if (g == NULL) {
-        crash("groups_GetDoubleArray: g == NULL");
+        errorhandling_Crash("groups_GetDoubleArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_GetDoubleArray: a == NULL");
+        errorhandling_Crash("groups_GetDoubleArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_GetDoubleArray: propId < 0");
+        errorhandling_Crash("groups_GetDoubleArray: propId < 0");
     }
     
 	// Make sure we have a table with pointers to members.
@@ -1039,15 +1039,15 @@ int* groups_GetIntArray
 (groups* g, const bitstream* a, int propId)
 {
     if (g == NULL) {
-        crash("groups_GetIntArray: g == NULL");
+        errorhandling_Crash("groups_GetIntArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_SetIntArray: a == NULL");
+        errorhandling_Crash("groups_SetIntArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_SetIntArray: propId < 0");
+        errorhandling_Crash("groups_SetIntArray: propId < 0");
     }
     
 	// Make sure we have a table with pointers to members.
@@ -1073,15 +1073,15 @@ bool* groups_GetBoolArray
 (groups* g, const bitstream* a, int propId)
 {
     if (g == NULL) {
-        crash("groups_GetBoolArray: g == NULL");
+        errorhandling_Crash("groups_GetBoolArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_GetBoolArray: a == NULL");
+        errorhandling_Crash("groups_GetBoolArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_GetBoolArray: propId < 0");
+        errorhandling_Crash("groups_GetBoolArray: propId < 0");
     }
     
 	// Make sure we have a table with pointers to members.
@@ -1107,15 +1107,15 @@ const char** groups_GetStringArray
 (groups* g, const bitstream* a, int propId)
 {
     if (g == NULL) {
-        crash("groups_GetStringArray: g == NULL");
+        errorhandling_Crash("groups_GetStringArray: g == NULL");
     }
     
     if (a == NULL) {
-        crash("groups_GetStringArray: a == NULL");
+        errorhandling_Crash("groups_GetStringArray: a == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_GetStringArray: propId < 0");
+        errorhandling_Crash("groups_GetStringArray: propId < 0");
     }
     
 	// Make sure we have a table with pointers to members.
@@ -1140,11 +1140,11 @@ const char** groups_GetStringArray
 const char* groups_PropertyNameById(const groups* g, int propId)
 {
     if (g == NULL) {
-        crash("groups_PropertyNameById: g == NULL");
+        errorhandling_Crash("groups_PropertyNameById: g == NULL");
     }
     
     if (propId < 0) {
-        crash("groups_PropertyNameById: propId < 0");
+        errorhandling_Crash("groups_PropertyNameById: propId < 0");
     }
     
 	property* prop;
@@ -1160,11 +1160,11 @@ const char* groups_PropertyNameById(const groups* g, int propId)
 void groups_PrintMember(const groups* g, const hash_table* obj)
 {
     if (g == NULL) {
-        crash("groups_PrintMember: g == NULL");
+        errorhandling_Crash("groups_PrintMember: g == NULL");
     }
     
     if (obj == NULL) {
-        crash("groups_PrintMember: obj == NULL");
+        errorhandling_Crash("groups_PrintMember: obj == NULL");
     }
     
     int propId, type;
@@ -1188,11 +1188,11 @@ void groups_PrintMember(const groups* g, const hash_table* obj)
 void groups_RemoveMember(groups* g, int index)
 {
     if (g == NULL) {
-        crash("groups_RemoveMember: g == NULL");
+        errorhandling_Crash("groups_RemoveMember: g == NULL");
     }
     
     if (index < 0) {
-        crash("groups_RemoveMember: index < 0");
+        errorhandling_Crash("groups_RemoveMember: index < 0");
     }
     
 	createMemberArray(g);
@@ -1234,11 +1234,11 @@ void groups_RemoveMember(groups* g, int index)
 void groups_RemoveMembers(groups* g, bitstream const* prop)
 {
     if (g == NULL) {
-        crash("groups_RemoveMembers: g == NULL");
+        errorhandling_Crash("groups_RemoveMembers: g == NULL");
     }
     
     if (prop == NULL) {
-        crash("groups_RemoveMembers: prop == NULL");
+        errorhandling_Crash("groups_RemoveMembers: prop == NULL");
     }
     
 	createMemberArray(g);
@@ -1349,11 +1349,11 @@ void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
 bool groups_SaveToFile(groups* g, string fileName)
 {
     if (g == NULL) {
-        crash("groups_SaveToFile: g == NULL");
+        errorhandling_Crash("groups_SaveToFile: g == NULL");
     }
     
     if (fileName == NULL) {
-        crash("groups_SaveToFile: fileName == NULL");
+        errorhandling_Crash("groups_SaveToFile: fileName == NULL");
     }
     
     FILE* f = fopen(fileName, "w");
@@ -1404,11 +1404,11 @@ bool groups_SaveToFile(groups* g, string fileName)
 void groups_AppendMembers(groups* g, gcstack* newMembers)
 {
     if (g == NULL) {
-        crash("groups_AppendMembers: g == NULL");
+        errorhandling_Crash("groups_AppendMembers: g == NULL");
     }
     
     if (newMembers == NULL) {
-        crash("groups_AppendMembers: newMembers == NULL");
+        errorhandling_Crash("groups_AppendMembers: newMembers == NULL");
     }
     
     gcstack_item* cursor = newMembers->root->next;
@@ -1473,11 +1473,11 @@ int sscanInt(const char* text, int* output)
 bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
 {
     if (g == NULL) {
-        crash("groups_ReadFromFile: g == NULL");
+        errorhandling_Crash("groups_ReadFromFile: g == NULL");
     }
     
     if (fileName == NULL) {
-        crash("groups_ReadFromFile: fileName == NULL");
+        errorhandling_Crash("groups_ReadFromFile: fileName == NULL");
     }
     
     // Get file size.

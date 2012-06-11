@@ -61,7 +61,7 @@ gcstack* gcstack_Init(gcstack* gc)
 void gcstack_Delete(gcstack* gc)
 {
     if (gc == NULL) {
-        crash("gcstack_Delete: gc == NULL");
+        errorhandling_Crash("gcstack_Delete: gc == NULL");
     }
     
 	gcstack_End(gc, NULL);
@@ -121,7 +121,7 @@ gcstack_item* gcstack_Start(gcstack const* gc)
 void gcstack_End(gcstack* gc, gcstack_item* end)
 {
     if (gc == NULL) {
-        crash("gcstack_End: gc == NULL");
+        errorhandling_Crash("gcstack_End: gc == NULL");
     }
     
 	gcstack_item* cursor = gc->root->next;

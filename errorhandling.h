@@ -13,8 +13,10 @@ extern "C" {
 #ifndef MemGroups_errorhandling_h
 #define MemGroups_errorhandling_h
 
-    void crash(const char* message);
-
+    void errorhandling_Crash(const char* message);
+    void errorhandling_OnCrashExitApp();
+    void errorhandling_OnCrashExitThread();
+    
 #endif
 
 #ifdef __cplusplus

@@ -48,7 +48,7 @@ void property_Delete(void* p)
 	property* prop = (property*)p;
     
     if (prop == NULL) {
-        crash("property_Delete: prop == NULL");
+        errorhandling_Crash("property_Delete: prop == NULL");
     }
     
 	if (prop->name != NULL)
