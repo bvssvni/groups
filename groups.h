@@ -129,6 +129,14 @@ extern "C" {
 	//
 	bitstream* groups_GetBitstream
 	(groups* g, int propId);
+    
+    //
+    //      This method returns a bitstream containing all members.
+    //      It takes the whole range from 0 to the length of member stack,
+    //      and subtracts the deleted members with exclude.
+    //
+    bitstream* groups_GetAll
+    (groups* g);
 	
 	//
 	// Removes the bitstream, but not the data itself from the members.

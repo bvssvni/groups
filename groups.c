@@ -369,6 +369,21 @@ bitstream* groups_GetBitstream(groups* g, int propId)
 	return g->m_bitstreamsArray[propId];
 }
 
+bitstream* groups_GetAll(groups* g) {
+    int length = g->members->length;
+    bitstream* a = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 
+                                            2, (int[]){0, length});
+    bitstream* deleted = g->m_deletedMembers;
+    
+    // If there are no deleted members, then return the whole range.
+    if (deleted == NULL) return a;
+    
+    bitstream* b = bitstream_Except(NULL, a, deleted);
+    bitstream_Delete(a);
+    free(a);
+    return b;
+}
+
 void groups_RemoveProperty(groups* g, int propId)
 {
     if (g == NULL) {
