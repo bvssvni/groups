@@ -87,9 +87,18 @@ gcstack* gcstack_Init
 gcstack_item* gcstack_Start
 (gcstack const* gc);
 
-void gcstack_End
-(gcstack* gc, gcstack_item* start);
+    //
+    //      Destroys objects on the stack back to a certain pointer.
+    //
+    void gcstack_End
+    (gcstack* gc, gcstack_item* start);
 
+    //
+    //      Destroys objects on the stack back to a certain size.
+    //
+    void gcstack_EndLevel
+    (gcstack* gc, int level);
+    
 void gcstack_Pop
 (gcstack* gc, void* p);
 

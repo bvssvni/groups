@@ -46,6 +46,7 @@
 
 #include "errorhandling.h"
 #include "readability.h"
+#include "parsing.h"
 
 #include "groups.h"
 
@@ -1435,57 +1436,6 @@ void groups_AppendMembers(groups* g, gcstack* newMembers)
     }
 }
 
-// The sscanf function does allow tracking of how many characters are read.
-// This function computes the number of characters.
-int sscanfSizeOf(const char* text, int type) {
-    bool acceptNumeric = true;
-    bool acceptDot = type == TYPE_DOUBLE || type == TYPE_STRING;
-    bool acceptDoubleQuote = false;
-    bool acceptWhiteSpace = true;
-    bool acceptComma = false;
-    bool acceptParanthesis = type == TYPE_STRING;
-    
-    bool isNumeric, isDot, isDoubleQuote, isWhiteSpace, isComma, isParanthesis;
-    
-    int i = 0;
-    for (i = 0; text[i] != '\0'; i++) {
-        
-        isNumeric = text[i] >= '0' && text[i] <= '9';
-        isDot = text[i] == '.';
-        isDoubleQuote = text[i] == '"';
-        isWhiteSpace = text[i] == ' ' || text[i] == '\r' || text[i] == '\n' || text[i] == '\t';
-        isComma = text[i] == ',';
-        isParanthesis = text[i] == '}' || text[i] == '{' || text[i] == ']' || text[i] == '[' ||
-            text[i] == ')' || text[i] == '(';
-        
-        if (isNumeric && !acceptNumeric) break;
-        if (isDot && !acceptDot) break;
-        if (isDoubleQuote && !acceptDoubleQuote) break;
-        if (isWhiteSpace && !acceptWhiteSpace) break;
-        if (isComma && !acceptComma) break;
-        if (isParanthesis && !acceptParanthesis) break;
-    }
-    
-    return i;
-}
-
-// Reads a double from text and returns the number of characters read.
-int sscanDouble(const char* text, double* output)
-{
-    int s = sscanfSizeOf(text, TYPE_DOUBLE);
-    if (s == 0) return 0;
-    int n = sscanf(text, "%lg", output);
-    return n*s;
-}
-
-// Reads an int from text and returns the number of characters read.
-int sscanInt(const char* text, int* output)
-{
-    int s = sscanfSizeOf(text, TYPE_INT);
-    if (s == 0) return 0;
-    int n = sscanf(text, "%i", output);
-    return n*s;
-}
 
 bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
 {
@@ -1688,7 +1638,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                 if (isId) {
                     // Read the id, take a step back to include last read character.
                     buffPos--; column--;
-                    delta = sscanInt(buff+buffPos, &valInt);
+                    delta = parsing_ScanInt(buff+buffPos, &valInt);
                     buffPos += delta;
                     column += delta;
                     hashTable_SetInt(hs, TMP_ID_PROPID, valInt);
@@ -1707,7 +1657,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                         int type = propId/TYPE_STRIDE;
                         if (type == TYPE_INT) {
                             buffPos--; column--;
-                            delta = sscanInt(buff+buffPos, &valInt);
+                            delta = parsing_ScanInt(buff+buffPos, &valInt);
                             buffPos += delta;
                             column += delta;
                             hashTable_SetInt(hs, propId, valInt);
@@ -1715,7 +1665,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                         }
                         else if (type == TYPE_DOUBLE) {
                             buffPos--; column--;
-                            delta = sscanDouble(buff+buffPos, &valDouble);
+                            delta = parsing_ScanDouble(buff+buffPos, &valDouble);
                             
                             buffPos += delta;
                             column += delta;
@@ -1724,7 +1674,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
                         }
                         else if (type == TYPE_BOOL) {
                             buffPos--; column--;
-                            delta = sscanInt(buff+buffPos-1, &valInt)-1;
+                            delta = parsing_ScanInt(buff+buffPos-1, &valInt)-1;
                             buffPos += delta;
                             column += delta;
                             hashTable_SetBool(hs, propId, valInt);

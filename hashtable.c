@@ -251,7 +251,7 @@ void hashTable_Set(hash_table* hash, int id, void* value)
 
 
 unsigned long
-hashStringId(const char *str)
+hashTable_GenerateHashId(const char *str)
 {
     unsigned long hash = 5381;
     int c;
@@ -272,7 +272,7 @@ void hashTable_SetStringHash(hash_table* hash, char* value)
         errorhandling_Crash("hashTable_SetStringHash: value == NULL");
     }
     
-    int id = hashStringId(value);
+    int id = hashTable_GenerateHashId(value);
     id = id < 0 ? -id : id;
 	gcstack_item* cursor = hash->layers->root->next;
 	hash_layer* layer;
@@ -370,7 +370,7 @@ bool hashTable_ContainsStringHash(hash_table* hash, const char* value)
         errorhandling_Crash("hashTable_ContainsStringHash: value == NULL");
     }
     
-    int id = hashStringId(value);
+    int id = hashTable_GenerateHashId(value);
     id = id < 0 ? -id : id;
 	gcstack_item* cursor = hash->layers->root->next;
 	hash_layer* layer;

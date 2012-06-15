@@ -263,6 +263,34 @@ gcstack_item* gcstack_Start(gcstack const* gc)
 	return gc->root->next;
 }
 
+void gcstack_EndLevel(gcstack* gc, int level)
+{
+    if (gc == NULL) {
+        errorhandling_Crash("gcstack_End: gc == NULL");
+    }
+    
+	gcstack_item* cursor = gc->root->next;
+	gcstack_item* next;
+	while (cursor != NULL && gc->length > level) {
+		next = cursor->next;
+		
+		// Ignore if previous is set to null.
+		if (cursor->previous != NULL)
+		{
+			if (cursor->free != NULL)
+			{
+				cursor->free(cursor);
+			}
+			
+			free(cursor);
+		}
+		cursor = next;
+        
+		gc->length--;
+	}
+	gc->root->next = cursor;
+}
+
 void gcstack_End(gcstack* gc, gcstack_item* end)
 {
     if (gc == NULL) {

@@ -71,25 +71,49 @@ extern "C" {
 	
     hash_table* hashTable_InitWithMember(hash_table* obj, hash_table* b);
     
-	void                hashTable_Set
-    (hash_table* hash, int id, void* value);
 	
-    // Sets a string, the id is a hash value of the string.
-    // The string is used to check for per match.
-    // Don't mix with      hashTable_Set
+    //
+    //      HASHING
+    //
+    //      Using hashing of strings, you can check for the existence of a string very fast.
+    //      This is a different way to use hash table than storing pointers by id.
+    //      It should not be mixed with other usages.
+    //
+    unsigned long hashTable_GenerateHashId
+    (const char *str);
+    
+    //
+    //      Sets a string, the id is a hash value of the string.
+    //      The string is used to check for per match.
+    //      Don't mix with      hashTable_Set
+    //
     void                hashTable_SetStringHash
     (hash_table* hash, char* value);
     
-    // Returns a pointer that can not be changed because it can only be freed
-    // by the hash table and if you need to change it you have to copy it.
-	const void*         hashTable_Get       
-    (hash_table* hash, int id);
-    
-    // Returns true if the hash table contains a string.
-    // The values in the table are stored as string and it uses this for perfect matching.
-    // Don't mix with       hashTable_Get
+    //
+    //      Returns true if the hash table contains a string.
+    //      The values in the table are stored as string and it uses this for perfect matching.
+    //      Don't mix with       hashTable_Get
+    //
     int                hashTable_ContainsStringHash
     (hash_table* hash, const char* value);
+    
+    //
+    //      POINTER BY ID
+    //
+    //      Sets a pointer in the hash table by an id.
+    //      If you use a double data type, use hashTable_SetDouble.
+    //
+	void hashTable_Set
+    (hash_table* hash, int id, void* value);
+    
+    //
+    //      Returns a pointer that can not be changed because it can only be freed
+    //      by the hash table and if you need to change it you have to copy it.
+	//
+    const void*         hashTable_Get       
+    (hash_table* hash, int id);
+    
 	
     void                hashTable_SetDouble 
     (hash_table* obj, int propId, double val);
