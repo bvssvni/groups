@@ -22,10 +22,35 @@ void errorhandling_OnCrashExitThread()
     m_crashApp = 0;
 }
 
-void errorhandling_Crash(const char* message) {
+void errorhandling_CrashWithMessage(const char* message) {
     fprintf(stderr, "%s\r\n", message);
     if (m_crashApp)
         exit(1);
     else
         pthread_exit(NULL);
 }
+
+void errorhandling_CrashWithFunctionAndMessage(const char* functionName, const char* message) {
+    fprintf(stderr, "%s: %s\r\n", functionName, message);
+    if (m_crashApp)
+        exit(1);
+    else
+        pthread_exit(NULL);
+}
+
+void errorhandling_CrashWithLineAndFunctionAndMessage(int line, const char* functionName, const char* message) {
+    fprintf(stderr, "%i, %s: %s\r\n", line, functionName, message);
+    if (m_crashApp)
+        exit(1);
+    else
+        pthread_exit(NULL);
+}
+
+void errorhandling_CrashWithFileAndLineAndFunctionAndMessage(const char* file, int line, const char* functionName, const char* message) {
+    fprintf(stderr, "%s %i, %s: %s\r\n", file, line, functionName, message);
+    if (m_crashApp)
+        exit(1);
+    else
+        pthread_exit(NULL);
+}
+

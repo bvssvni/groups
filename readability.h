@@ -105,6 +105,9 @@ for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
 
 #define _pos(a)    __j##a
  
+    //
+    //      FOR EACH DESIGNED FOR HASH TABLE
+    //
  
 #define hashTable_foreach(a) gcstack_item* __cursor##a = a->layers->root->next; \
 hash_layer* __layer##a; \
@@ -124,6 +127,13 @@ if (__indices##a[__i##a] == -1) continue;
 #define _hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
 #define _hashTable_string(a) (char*)__layer##a->data[__i##a]
 
+    //
+    //      SIMPLIFIED ERROR HANDLING
+    //
+    
+#define _err(cond) if (cond) errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
+
+    
 #endif
     
 #ifdef __cplusplus

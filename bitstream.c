@@ -47,14 +47,12 @@
 int bitstream_references = 0;
 
 void bitstream_Delete(void* p) {
+    _err(p == NULL);
+    
 	bitstream_references--;
 	// printf("%i\r\n", bitstream_references);
 	
 	bitstream* a = (bitstream*)p;
-	
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_Delete: a == NULL");
-    }
     
 	if (a->pointer != NULL)
 	{
@@ -70,17 +68,11 @@ bitstream* bitstream_AllocWithGC(gcstack* gc) {
 }
 
 bitstream* bitstream_InitWithSize(bitstream* a, int size) {
+    _err(a == NULL); _err(size < 0);
+    
 	bitstream_references++;
     
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_InitWithSize: a == NULL");
-    }
-    
     a->pointer = NULL;
-    
-    if (size < 0) {
-        errorhandling_Crash("bitstream_InitWithSize: size < 0");
-    }
 	
 	if (size == 0)
 	{
@@ -101,22 +93,11 @@ bitstream* bitstream_InitWithSize(bitstream* a, int size) {
 
 bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 {
+    _err(a == NULL); _err(size < 0); _err(vals == NULL);
+    
 	bitstream_references++;
-	
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_InitWithValues: a == NULL");
-    }
     
     a->pointer = NULL;
-    
-    if (size < 0) {
-        errorhandling_Crash("bitstream_InitWithValues: size < 0");
-    }
-    
-    if (vals == NULL) {
-        errorhandling_Crash("bitstream_InitWithValues: vals == NULL");
-    }
-    
 	a->length = size;
     
     if (size == 0) return a;
@@ -186,22 +167,12 @@ int* createArrayFromIndices(int count, int size, int const vals[])
 
 bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
 {
-	bitstream_references++;
+    _err(a == NULL); _err(size < 0); _err(vals == NULL);
     
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_InitWithIndices: a == NULL");
-    }
+	bitstream_references++;
     
     a->pointer = NULL;
     
-    if (size < 0) {
-        errorhandling_Crash("bitstream_InitWithIndices: size < 0");
-    }
-    
-    if (vals == NULL) {
-        errorhandling_Crash("bitstream_InitWithIndices: vals == NULL");
-    }
-	
     if (size == 0) {
         a->length = 0;
         return a;
@@ -284,19 +255,9 @@ int countDeltaString(int n, string* old, string* new)
 bitstream* bitstream_InitWithDeltaDouble
 (bitstream* a, int n, const double* oldValues, const double* newValues)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaDouble: a == NULL");
-    }
+    _err(a == NULL); _err(n < 0); _err(oldValues == NULL); _err(newValues == NULL);
     
     a->pointer = NULL;
-    
-    if (n < 0) {
-        errorhandling_Crash("bitstream_InitWithDeltaDouble: n < 0");
-    }
-    
-    if (oldValues == NULL || newValues == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaDouble: oldValues == NULL || newValues == NULL");
-    }
     
     if (n == 0) {
         a->length = 0;
@@ -324,19 +285,9 @@ bitstream* bitstream_InitWithDeltaDouble
 bitstream* bitstream_InitWithDeltaInt
 (bitstream* a, int n, const int* oldValues, const int* newValues)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaInt: a == NULL");
-    }
+    _err(a == NULL); _err(n < 0); _err(oldValues == NULL); _err(newValues == NULL);
     
     a->pointer = NULL;
-    
-    if (n < 0) {
-        errorhandling_Crash("bitstream_InitWithDeltaInt: n < 0");
-    }
-    
-    if (oldValues == NULL || newValues == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaInt: oldValues == NULL || newValues == NULL");
-    }
     
     if (n == 0) {
         a->length = 0;
@@ -364,19 +315,9 @@ bitstream* bitstream_InitWithDeltaInt
 bitstream* bitstream_InitWithDeltaBool
 (bitstream* a, int n, const bool* oldValues, const bool* newValues)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaBool: a == NULL");
-    }
+    _err(a == NULL); _err(n < 0); _err(oldValues == NULL); _err(newValues == NULL);
     
     a->pointer = NULL;
-    
-    if (n < 0) {
-        errorhandling_Crash("bitstream_InitWithDeltaBool: n < 0");
-    }
-    
-    if (oldValues == NULL || newValues == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaBool: oldValues == NULL || newValues == NULL");
-    }
     
     if (n == 0) {
         a->length = 0;
@@ -404,19 +345,9 @@ bitstream* bitstream_InitWithDeltaBool
 bitstream* bitstream_InitWithDeltaString
 (bitstream* a, int n, const string* oldValues, const string* newValues)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaString: a == NULL");
-    }
+    _err(a == NULL); _err(n < 0); _err(oldValues == NULL); _err(newValues == NULL);
     
     a->pointer = NULL;
-    
-    if (n < 0) {
-        errorhandling_Crash("bitstream_InitWithDeltaString: n < 0");
-    }
-    
-    if (oldValues == NULL || newValues == NULL) {
-        errorhandling_Crash("bitstream_InitWithDeltaString: oldValues == NULL || newValues == NULL");
-    }
     
     if (n == 0) {
         a->length = 0;
@@ -443,6 +374,8 @@ bitstream* bitstream_InitWithDeltaString
 
 bitstream* bitstream_InitWithWordsInString(bitstream* a, string text, string spaceCharacters, string splitCharacters)
 {
+    _err(a == NULL); _err(text == NULL); _err(spaceCharacters == NULL); _err(splitCharacters == NULL);
+    
     // Loop through and find all sections that does not contain splitting characters.
     gcstack* words = gcstack_Init(gcstack_Alloc());
     int k = 0;
@@ -480,9 +413,7 @@ bitstream* bitstream_InitWithWordsInString(bitstream* a, string text, string spa
 
 void bitstream_Print(bitstream const*a)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_Print: a == NULL");
-    }
+    _err(a == NULL);
     
 	int length = a->length-1;
 	for (int i = 0; i < length; i += 2) {
@@ -495,13 +426,7 @@ void bitstream_Print(bitstream const*a)
 
 bitstream* bitstream_DirectJoin(gcstack* gc, 
 								bitstream const* a, bitstream const* b) {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_DirectJoin: a == NULL");
-    }
-    
-    if (b == NULL) {
-        errorhandling_Crash("bitstream_DirectJoin: b == NULL");
-    }
+    _err(a == NULL); _err(b == NULL);
     
 	bitstream* arr = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
 	arr->length = a->length + b->length;
@@ -514,9 +439,7 @@ bitstream* bitstream_DirectJoin(gcstack* gc,
 }
 
 bitstream* bitstream_Clone(gcstack* gc, bitstream const* a) {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_Clone: a == NULL");
-    }
+    _err(a == NULL);
     
 	bitstream* b = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
 	b->length = a->length;
@@ -578,9 +501,7 @@ int countAnd(bitstream const* a, bitstream const* b)
 
 bitstream* bitstream_And(gcstack* gc, bitstream const* a, bitstream const* b)
 {
-    if (a == NULL || b == NULL) {
-        errorhandling_Crash("bitstream_And: a == NULL || b == NULL");
-    }
+    _err(a == NULL); _err(b == NULL);
     
 	int list = 0;
 	bitstream* arr = bitstream_InitWithSize
@@ -697,9 +618,7 @@ int countOr(bitstream const* a, bitstream const* b)
 
 bitstream* bitstream_Or(gcstack* gc, bitstream const* a, bitstream const* b)
 {
-    if (a == NULL || b == NULL) {
-        errorhandling_Crash("bitstream_Or: a == NULL || b == NULL");
-    }
+    _err(a == NULL); _err(b == NULL);
     
 	int count = countOr(a,b);
 	
@@ -796,9 +715,7 @@ int countInvert(bitstream* a, int inv)
 
 bitstream* bitstream_Invert(gcstack* gc, bitstream* a, int inv)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_Invert: a == NULL");
-    }
+    _err(a == NULL);
     
 	bitstream* res = bitstream_InitWithSize
 	(bitstream_AllocWithGC(gc), countInvert(a, inv));
@@ -883,9 +800,7 @@ int countExcept(bitstream const* a, bitstream const* b)
 
 bitstream* bitstream_Except(gcstack* gc, bitstream const* a, bitstream const* b)
 {
-    if (a == NULL || b == NULL) {
-        errorhandling_Crash("bitstream_Except: a == NULL || b == NULL");
-    }
+    _err(a == NULL); _err(b == NULL);
     
 	int a_length = a->length;
 	int b_length = b->length;
@@ -948,9 +863,7 @@ bitstream* bitstream_Except(gcstack* gc, bitstream const* a, bitstream const* b)
 
 int bitstream_Size(bitstream const* list)
 {
-    if (list == NULL) {
-        errorhandling_Crash("bitstream_Size: list == NULL");
-    }
+    _err(list == NULL);
     
 	int listCount = list->length;
 	int sum = 0;
@@ -993,9 +906,7 @@ int bitstream_AbsSub(bitstream const* list)
 
 int bitstream_Abs(bitstream const* list, int maximum)
 {
-    if (list == NULL) {
-        errorhandling_Crash("bitstream_Abs: list == NULL");
-    }
+    _err(list == NULL);
     
 	if (list->length == 0)
 		return 0;
@@ -1007,27 +918,21 @@ int bitstream_Abs(bitstream const* list, int maximum)
 
 int* bitstream_ArrayPointer(bitstream const* a)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_ArrayPointer: a == NULL");
-    }
+    _err(a == NULL);
     
 	return a->pointer;
 }
 
 int bitstream_NumberOfBlocks(bitstream const* a)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_NumberOfBlocsk: a == NULL");
-    }
+    _err(a == NULL);
     
 	return a->length/2;
 }
 
 int bitstream_PopStart(bitstream* a)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_PopStart: a == NULL");
-    }
+    _err(a == NULL);
     
 	int length = a->length;
 	if (length < 2) return -1;
@@ -1049,9 +954,7 @@ int bitstream_PopStart(bitstream* a)
 
 int bitstream_PopEnd(bitstream* a)
 {
-    if (a == NULL) {
-        errorhandling_Crash("bitstream_PopEnd: a == NULL");
-    }
+    _err(a == NULL);
     
 	int length = a->length;
 	if (length < 2) return -1;
@@ -1068,7 +971,7 @@ int bitstream_PopEnd(bitstream* a)
 
 char** bitstream_GetWords(bitstream* a, string text)
 {
-    if (a == NULL) errorhandling_Crash("bitstream_GetWords: a == NULL");
+    _err(a == NULL);
     
     if (text == NULL) return NULL;
     

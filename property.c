@@ -40,16 +40,15 @@
 
 #include "gcstack.h"
 #include "errorhandling.h"
+#include "readability.h"
 #include "property.h"
 
 
 void property_Delete(void* p)
 {
-	property* prop = (property*)p;
+    _err(p == NULL);
     
-    if (prop == NULL) {
-        errorhandling_Crash("property_Delete: prop == NULL");
-    }
+	property* prop = (property*)p;
     
 	if (prop->name != NULL)
 	{
@@ -65,6 +64,8 @@ property* property_AllocWithGC(gcstack* gc)
 
 property* property_InitWithNameAndId(property* prop, char const* name, int propId)
 {
+    _err(prop == NULL); _err(name == NULL);
+    
 	int nameLength = strlen(name);
 	char* newName = malloc(sizeof(char)*nameLength);
 	prop->name = strcpy(newName, name);

@@ -13,7 +13,23 @@ extern "C" {
 #ifndef MemGroups_errorhandling_h
 #define MemGroups_errorhandling_h
 
-    void errorhandling_Crash(const char* message);
+    //
+    //      CRASH HANDLING
+    //
+    
+    void errorhandling_CrashWithMessage
+    (const char* message);
+    
+    void errorhandling_CrashWithFunctionAndMessage
+    (const char* functionName, const char* message);
+    
+    void errorhandling_CrashWithLineAndFunctionAndMessage
+    (int line, const char* functionName, const char* message);
+    
+    //
+    //      CRASH CONFIGURATION
+    //
+    
     void errorhandling_OnCrashExitApp();
     void errorhandling_OnCrashExitThread();
     

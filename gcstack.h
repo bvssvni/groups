@@ -40,14 +40,48 @@ extern "C" {
 #ifndef memgroups_gcstack
 #define memgroups_gcstack
     
-// Items for garbage collection.
-typedef struct gcstack_item gcstack_item;
-struct gcstack_item
-{
-	gcstack_item* previous;
-	gcstack_item* next;
-	void(*free)(void* p);
-};
+    //
+    //      GARBAGE COLLECTION
+    //
+    //      Declare 'gcstack_item gc' at beginning of struct to support being added to this stack.
+    //
+    typedef struct gcstack_item gcstack_item;
+    struct gcstack_item
+    {
+        gcstack_item* previous;
+        gcstack_item* next;
+        void(*free)(void* p);
+    };
+    
+    //
+    //      STANDARD DATA TYPES
+    //
+    //      These types are commonly used and got their own data type to be easier to use.
+    //
+    typedef struct gcdouble
+    {
+        gcstack_item gc;
+        double val;
+    } gcdouble;
+    
+    typedef struct gcint
+    {
+        gcstack_item gc;
+        int val;
+    } gcint;
+    
+    typedef struct gcbool
+    {
+        gcstack_item gc;
+        int val;
+    } gcbool;
+    
+    typedef struct gcstring
+    {
+        gcstack_item gc;
+        char* val;
+    } gcstring;
+
 
 // Garbage collector stack.
 // This works as the container of a double-linked list.
@@ -83,6 +117,18 @@ gcstack_item* gcstack_malloc
 
 gcstack* gcstack_Init
 (gcstack* gc);
+    
+    //
+    //      If you don't like to have items in reverse, you can reorder them.
+    //
+    void gcstack_ReverseWithLevel
+    (gcstack* gc, int level);
+    
+    //
+    //      When reversing to another stack, you need to specify a level where to stop.
+    //
+    void gcstack_ReverseToOtherStackWithLevel
+    (gcstack* from, gcstack* to, int level);
 
 gcstack_item* gcstack_Start
 (gcstack const* gc);
@@ -163,10 +209,19 @@ gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
     int* gcstack_CreateBoolArrayBackward
     (gcstack const* gc);
     
-// Print out a list of items on the stack to command window.
-void gcstack_Print
-(gcstack const* gc, void(*print)(void*a));
+    //
+    //      Print out a list of items on the stack to command window.
+    //
+    void gcstack_Print
+    (gcstack const* gc, void(*print)(void*a));
 
+    //
+    //      Prints out the stack as if they all were ints.
+    //      Don't do this if you are not sure.
+    //
+    void gcstack_PrintInt
+    (gcstack const* gc);
+    
 #endif
 
 #ifdef __cplusplus
