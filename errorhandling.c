@@ -46,6 +46,15 @@ void errorhandling_CrashWithLineAndFunctionAndMessage(int line, const char* func
         pthread_exit(NULL);
 }
 
+void errorhandling_CrashExpression
+(const char* message, int pos, const char* expr) {
+    fprintf(stderr, "%i: ERROR, %s\r\n", pos, message);
+    fprintf(stderr, "%s\r\n", expr);
+    for (int i = 0; i < pos; i++)
+        fprintf(stderr, " ");
+    fprintf(stderr, "^");
+}
+
 void errorhandling_CrashWithFileAndLineAndFunctionAndMessage(const char* file, int line, const char* functionName, const char* message) {
     fprintf(stderr, "%s %i, %s: %s\r\n", file, line, functionName, message);
     if (m_crashApp)

@@ -50,7 +50,7 @@ extern "C" {
     {
         gcstack_item* previous;
         gcstack_item* next;
-        void(*free)(void* p);
+        void(*freeSubPointers)(void* p);
     };
     
     //

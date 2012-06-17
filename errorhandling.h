@@ -26,6 +26,9 @@ extern "C" {
     void errorhandling_CrashWithLineAndFunctionAndMessage
     (int line, const char* functionName, const char* message);
     
+    void errorhandling_CrashExpression
+    (const char* message, int pos, const char* expr);
+    
     //
     //      CRASH CONFIGURATION
     //

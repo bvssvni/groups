@@ -56,7 +56,7 @@ gcstack* gcstack_Init(gcstack* gc)
 	gc->root = malloc(sizeof(gcstack_item));
 	gc->root->next = NULL;
 	gc->root->previous = NULL;
-	gc->root->free = NULL;
+	gc->root->freeSubPointers = NULL;
 	return gc;
 }
 
@@ -335,9 +335,9 @@ void gcstack_EndLevel(gcstack* gc, int level)
 		// Ignore if previous is set to null.
 		if (cursor->previous != NULL)
 		{
-			if (cursor->free != NULL)
+			if (cursor->freeSubPointers != NULL)
 			{
-				cursor->free(cursor);
+				cursor->freeSubPointers(cursor);
 			}
 			
 			free(cursor);
@@ -361,9 +361,9 @@ void gcstack_End(gcstack* gc, gcstack_item* end)
 		// Ignore if previous is set to null.
 		if (cursor->previous != NULL)
 		{
-			if (cursor->free != NULL)
+			if (cursor->freeSubPointers != NULL)
 			{
-				cursor->free(cursor);
+				cursor->freeSubPointers(cursor);
 			}
 			
 			free(cursor);
@@ -383,20 +383,20 @@ void gcstack_free(gcstack* gc, void* p)
 		gcstack_Pop(gc, p);
 	}
     gcstack_item* item = (gcstack_item*)p;
-    if (item->free != NULL)
+    if (item->freeSubPointers != NULL)
     {
-        item->free(item);
+        item->freeSubPointers(item);
 	}
     free(item);
 }
 
-gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*free)(void* p))
+gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*freeSubPointers)(void* p))
 {
     _err(size < 0);
     
 	gcstack_item* item = malloc(size);
     
-	item->free = free;
+	item->freeSubPointers = freeSubPointers;
 	
 	if (gc == NULL)
 	{

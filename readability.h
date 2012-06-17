@@ -53,6 +53,8 @@ extern "C" {
 #define TYPE_INT 3
 #define TYPE_BOOL 4
 #define TYPE_UNKNOWN 5
+#define TYPE_VARIABLE 100
+#define TYPE_ARRAY 200
 	
 //
 //		FOREACH MACROES
@@ -133,6 +135,7 @@ if (__indices##a[__i##a] == -1) continue;
     
 #define _err(cond) if (cond) errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
 
+#define _errExp(message,pos,expr) errorhandling_CrashExpression(message, pos, expr)
     
 #endif
     
