@@ -87,48 +87,48 @@ extern "C" {
 //
 
 #define macro_foreach_reverse(a) \
-int __start##a, __end##a, __i##a, __j##a; \
-for (__i##a = a->length-2; __i##a >= 0; __i##a -= 2) { \
-__start##a = a->pointer[__i##a]; \
-__end##a = a->pointer[__i##a+1]; \
-for (__j##a = __end##a-1; __j##a >= __start##a; __j##a--) {
+int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; \
+for (_macro_i##a = a->length-2; _macro_i##a >= 0; _macro_i##a -= 2) { \
+_macro_start##a = a->pointer[_macro_i##a]; \
+_macro_end##a = a->pointer[_macro_i##a+1]; \
+for (_macro_j##a = _macro_end##a-1; _macro_j##a >= _macro_start##a; _macro_j##a--) {
 
 #define macro_foreach(a) \
-int __len##a = a->length-1; \
-int __start##a, __end##a, __i##a, __j##a; \
-for (__i##a = 0; __i##a < __len##a; __i##a += 2) { \
-__start##a = a->pointer[__i##a]; \
-__end##a = a->pointer[__i##a+1]; \
-for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
+int _macro_len##a = a->length-1; \
+int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; \
+for (_macro_i##a = 0; _macro_i##a < _macro_len##a; _macro_i##a += 2) { \
+_macro_start##a = a->pointer[_macro_i##a]; \
+_macro_end##a = a->pointer[_macro_i##a+1]; \
+for (_macro_j##a = _macro_start##a; _macro_j##a < _macro_end##a; _macro_j##a++) {
 
-#define macro_end_foreach(a) }}__BREAK_BITSTREAM_##a:;
+#define macro_end_foreach(a) }}_macro_BREAK_BITSTREAM_##a:;
 
-#define macro_break(a)     goto __BREAK_BITSTREAM_##a
+#define macro_break(a)     goto _macro_BREAK_BITSTREAM_##a
 
-#define macro_pos(a)    __j##a
+#define macro_pos(a)    _macro_j##a
  
     //
     //      FOR EACH DESIGNED FOR HASH TABLE
     //
  
-#define macro_hashTable_foreach(a) gcstack_item* __cursor##a = a->layers->root->next; \
-hash_layer* __layer##a; \
-int* __indices##a; \
-int __n##a, __i##a; \
-for (; __cursor##a != NULL; __cursor##a = __cursor##a->next) { \
-__layer##a = (hash_layer*)__cursor##a; \
-__indices##a = __layer##a->indices; \
-__n##a = __layer##a->n; \
-for (__i##a = 0; __i##a < __n##a; __i##a++) { \
-if (__indices##a[__i##a] == -1) continue;
+#define macro_hashTable_foreach(a) gcstack_item* _macro_cursor##a = a->layers->root->next; \
+hash_layer* _macro_layer##a; \
+int* _macro_indices##a; \
+int _macro_n##a, _macro_i##a; \
+for (; _macro_cursor##a != NULL; _macro_cursor##a = _macro_cursor##a->next) { \
+_macro_layer##a = (hash_layer*)_macro_cursor##a; \
+_macro_indices##a = _macro_layer##a->indices; \
+_macro_n##a = _macro_layer##a->n; \
+for (_macro_i##a = 0; _macro_i##a < _macro_n##a; _macro_i##a++) { \
+if (_macro_indices##a[_macro_i##a] == -1) continue;
 
-#define macro_hashTable_id(a) __indices##a[__i##a]
-#define macro_hashTable_value(a) __layer##a->data[__i##a]
-#define macro_hashTable_double(a) *(double*)__layer##a->data[__i##a]
-#define macro_hashTable_int(a) *(int*)__layer##a->data[__i##a]
-#define macro_hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
-#define macro_hashTable_string(a) (char*)__layer##a->data[__i##a]
-
+#define macro_hashTable_id(a) _macro_indices##a[_macro_i##a]
+#define macro_hashTable_value(a) _macro_layer##a->data[_macro_i##a]
+#define macro_hashTable_double(a) *(double*)_macro_layer##a->data[_macro_i##a]
+#define macro_hashTable_int(a) *(int*)_macro_layer##a->data[_macro_i##a]
+#define macro_hashTable_bool(a) *(bool*)_macro_layer##a->data[_macro_i##a]
+#define macro_hashTable_string(a) (char*)_macro_layer##a->data[_macro_i##a]
+    
     //
     //      SIMPLIFIED ERROR HANDLING
     //
