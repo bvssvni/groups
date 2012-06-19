@@ -86,14 +86,14 @@ extern "C" {
 //		Tip: Declaring variables before the loop will increase performance.
 //
 
-#define foreach_reverse(a) \
+#define macro_foreach_reverse(a) \
 int __start##a, __end##a, __i##a, __j##a; \
 for (__i##a = a->length-2; __i##a >= 0; __i##a -= 2) { \
 __start##a = a->pointer[__i##a]; \
 __end##a = a->pointer[__i##a+1]; \
 for (__j##a = __end##a-1; __j##a >= __start##a; __j##a--) {
 
-#define foreach(a) \
+#define macro_foreach(a) \
 int __len##a = a->length-1; \
 int __start##a, __end##a, __i##a, __j##a; \
 for (__i##a = 0; __i##a < __len##a; __i##a += 2) { \
@@ -101,17 +101,17 @@ __start##a = a->pointer[__i##a]; \
 __end##a = a->pointer[__i##a+1]; \
 for (__j##a = __start##a; __j##a < __end##a; __j##a++) {
 
-#define end_foreach(a) }}__BREAK_BITSTREAM_##a:;
+#define macro_end_foreach(a) }}__BREAK_BITSTREAM_##a:;
 
-#define _break(a)     goto __BREAK_BITSTREAM_##a
+#define macro_break(a)     goto __BREAK_BITSTREAM_##a
 
-#define _pos(a)    __j##a
+#define macro_pos(a)    __j##a
  
     //
     //      FOR EACH DESIGNED FOR HASH TABLE
     //
  
-#define hashTable_foreach(a) gcstack_item* __cursor##a = a->layers->root->next; \
+#define macro_hashTable_foreach(a) gcstack_item* __cursor##a = a->layers->root->next; \
 hash_layer* __layer##a; \
 int* __indices##a; \
 int __n##a, __i##a; \
@@ -122,20 +122,20 @@ __n##a = __layer##a->n; \
 for (__i##a = 0; __i##a < __n##a; __i##a++) { \
 if (__indices##a[__i##a] == -1) continue;
 
-#define _hashTable_id(a) __indices##a[__i##a]
-#define _hashTable_value(a) __layer##a->data[__i##a]
-#define _hashTable_double(a) *(double*)__layer##a->data[__i##a]
-#define _hashTable_int(a) *(int*)__layer##a->data[__i##a]
-#define _hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
-#define _hashTable_string(a) (char*)__layer##a->data[__i##a]
+#define macro_hashTable_id(a) __indices##a[__i##a]
+#define macro_hashTable_value(a) __layer##a->data[__i##a]
+#define macro_hashTable_double(a) *(double*)__layer##a->data[__i##a]
+#define macro_hashTable_int(a) *(int*)__layer##a->data[__i##a]
+#define macro_hashTable_bool(a) *(bool*)__layer##a->data[__i##a]
+#define macro_hashTable_string(a) (char*)__layer##a->data[__i##a]
 
     //
     //      SIMPLIFIED ERROR HANDLING
     //
     
-#define _err(cond) if (cond) errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
+#define macro_err(cond) if (cond) errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
 
-#define _errExp(message,pos,expr) errorhandling_CrashExpression(message, pos, expr)
+#define macro_errExp(message,pos,expr) errorhandling_CrashExpression(message, pos, expr)
     
 #endif
     

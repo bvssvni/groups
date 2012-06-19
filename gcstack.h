@@ -210,6 +210,8 @@ gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
     (gcstack const* gc);
     
     //
+    //      PRINTING
+    //
     //      Print out a list of items on the stack to command window.
     //
     void gcstack_Print
@@ -220,6 +222,9 @@ gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
     //      Don't do this if you are not sure.
     //
     void gcstack_PrintInt
+    (gcstack const* gc);
+    
+    void gcstack_PrintString
     (gcstack const* gc);
     
 #endif

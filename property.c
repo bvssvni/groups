@@ -46,7 +46,7 @@
 
 void property_Delete(void* p)
 {
-    _err(p == NULL);
+    macro_err(p == NULL);
     
 	property* prop = (property*)p;
     
@@ -64,7 +64,7 @@ property* property_AllocWithGC(gcstack* gc)
 
 property* property_InitWithNameAndId(property* prop, char const* name, int propId)
 {
-    _err(prop == NULL); _err(name == NULL);
+    macro_err(prop == NULL); macro_err(name == NULL);
     
 	int nameLength = strlen(name);
 	char* newName = malloc(sizeof(char)*nameLength);

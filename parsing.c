@@ -14,7 +14,7 @@
 #include "parsing.h"
 
 int parsing_ScanfSizeOf(const char* text, int type) {
-    _err(text == NULL);
+    macro_err(text == NULL);
     
     bool acceptNumeric = true;
     bool acceptDot = type == TYPE_DOUBLE || type == TYPE_STRING;
@@ -49,7 +49,7 @@ int parsing_ScanfSizeOf(const char* text, int type) {
 
 int parsing_ScanDouble(const char* text, double* output)
 {
-    _err(text == NULL); _err(output == NULL);
+    macro_err(text == NULL); macro_err(output == NULL);
     
     int s = parsing_ScanfSizeOf(text, TYPE_DOUBLE);
     if (s == 0) return 0;
@@ -59,7 +59,7 @@ int parsing_ScanDouble(const char* text, double* output)
 
 int parsing_ScanInt(const char* text, int* output)
 {
-    _err(text == NULL); _err(output == NULL);
+    macro_err(text == NULL); macro_err(output == NULL);
     
     int s = parsing_ScanfSizeOf(text, TYPE_INT);
     if (s == 0) return 0;
@@ -73,7 +73,7 @@ int parsing_ScanInt(const char* text, int* output)
 
 int parsing_SkipWhiteSpace(const char* text)
 {
-    _err(text == NULL);
+    macro_err(text == NULL);
     
     int i;
     char ch;
@@ -87,7 +87,7 @@ int parsing_SkipWhiteSpace(const char* text)
 }
 
 int parsing_ReadCharacter(const char* text, char ch) {
-    _err(text == NULL);
+    macro_err(text == NULL);
     return text[0] == ch ? 1 : 0;
 }
 

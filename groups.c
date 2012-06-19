@@ -54,7 +54,7 @@
 
 void groups_Delete(void* p)
 {
-    _err(p == NULL);
+    macro_err(p == NULL);
     
 	groups* g = (groups*)p;
     
@@ -121,7 +121,7 @@ groups* groups_AllocWithGC(gcstack* gc)
 
 groups* groups_Init(groups* g)
 {
-    _err(g == NULL);
+    macro_err(g == NULL);
     
 	g->bitstreams = gcstack_Init(gcstack_Alloc());
 	g->m_bitstreamsReady = false;
@@ -208,9 +208,7 @@ void createBitstreamArray(groups* g)
 
 int groups_AddProperty(groups* g, const void* name, const void* propType)
 {
-    _err(g == NULL);
-    _err(name == NULL);
-    _err(propType == NULL);
+    macro_err(g == NULL); macro_err(name == NULL); macro_err(propType == NULL);
     
 	// We use the length of the bitstream stack to generate ids,
 	// because those bitstreams are set to empty instead of deleted.
@@ -295,8 +293,7 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 
 int groups_GetProperty(groups* g, char const* name)
 {
-    _err(g == NULL);
-    _err(name == NULL);
+    macro_err(g == NULL); macro_err(name == NULL);
     
 	int length = g->properties->length;
 	if (length == 0) return -1;
@@ -315,7 +312,7 @@ int groups_GetProperty(groups* g, char const* name)
 
 char** groups_GetPropertyNames(groups* g)
 {
-    _err(g == NULL);
+    macro_err(g == NULL);
     
     sortProperties(g);
     
@@ -334,8 +331,7 @@ char** groups_GetPropertyNames(groups* g)
 
 bitstream* groups_GetBitstream(groups* g, int propId)
 {
-    _err(g == NULL);
-    _err(propId < 0);
+    macro_err(g == NULL); macro_err(propId < 0);
     
 	// Filter out the type information.
 	propId %= TYPE_STRIDE;
@@ -349,7 +345,7 @@ bitstream* groups_GetBitstream(groups* g, int propId)
 }
 
 bitstream* groups_GetAll(groups* g) {
-    _err(g == NULL);
+    macro_err(g == NULL);
     
     int length = g->members->length;
     bitstream* a = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 
@@ -367,8 +363,7 @@ bitstream* groups_GetAll(groups* g) {
 
 void groups_RemoveProperty(groups* g, int propId)
 {
-    _err(g == NULL);
-    _err(propId < 0);
+    macro_err(g == NULL); macro_err(propId < 0);
     
 	int index = propId % TYPE_STRIDE;
 	
@@ -408,8 +403,7 @@ void groups_RemoveProperty(groups* g, int propId)
 
 bool groups_IsDefaultVariable(int propId, void* data)
 {
-    _err(propId < 0);
-    _err(data == NULL);
+    macro_err(propId < 0); macro_err(data == NULL);
     
 	int type = propId/TYPE_STRIDE;
 	if (type == TYPE_DOUBLE) return false;
@@ -447,8 +441,7 @@ void createMemberArray(groups* g)
 
 int groups_AddMember(groups* g, hash_table* obj)
 {
-    _err(g == NULL);
-    _err(obj == NULL);
+    macro_err(g == NULL); macro_err(obj == NULL);
     
 	int id = g->members->length;
 	hash_table* new;
@@ -515,8 +508,8 @@ int groups_AddMember(groups* g, hash_table* obj)
 	b = bitstream_InitWithValues
 	(bitstream_AllocWithGC(gc), 2, (const int[]){id, id+1});
     
-    hashTable_foreach(new) {
-        propId = _hashTable_id(new);
+    macro_hashTable_foreach(new) {
+        propId = macro_hashTable_id(new);
         index = propId%TYPE_STRIDE;
         
         a = g->m_bitstreamsArray[index];
@@ -525,7 +518,7 @@ int groups_AddMember(groups* g, hash_table* obj)
 		c = bitstream_Or(gc, a, b);
 		// Switch stacks so the new one is kept.
 		gcstack_Swap(c, a);
-    } end_foreach(new)
+    } macro_end_foreach(new)
 	
 	gcstack_Delete(gc);
 	free(gc); 
@@ -541,20 +534,18 @@ int groups_AddMember(groups* g, hash_table* obj)
 //
 void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 {
-    _err(g == NULL);
-    _err(a == NULL);
-    _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
 	int i;
 	hash_table* obj;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
         hashTable_SetDouble(obj, propId, val);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	// Double does not have a default value, so we need no condition here.
 	createBitstreamArray(g);
@@ -574,20 +565,18 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 //
 void groups_SetString(groups* g, const bitstream* a, int propId, const char* val)
 {
-    _err(g == NULL);
-    _err(a == NULL);
-    _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
 	int i;
 	hash_table* obj;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
         hashTable_SetString(obj, propId, val);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -609,9 +598,7 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 
 void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 {
-    _err(g == NULL);
-    _err(a == NULL);
-    _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -619,11 +606,11 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 	bool isDefault = -1 == val;
 	int i;
 	hash_table* obj;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
 		hashTable_SetInt(obj, propId, val);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -645,9 +632,7 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 
 void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 {
-    _err(g == NULL);
-    _err(a == NULL);
-    _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -655,11 +640,11 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 	bool isDefault = 0 == val;
 	int i;
     hash_table* obj;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
 		hashTable_SetBool(obj, propId, val);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -686,7 +671,8 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 //
 void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, const double* values)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0); _err(n < 0); _err(values == NULL);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+    macro_err(n < 0); macro_err(values == NULL);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -696,11 +682,11 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 	
 	// We need a counter to read the right value from the array.
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
 		hashTable_SetDouble(obj, propId, values[k++]);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -717,7 +703,8 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 void groups_SetStringArray
 (groups* g, const bitstream* a, int propId, int n, const char** values)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0); _err(n < 0); _err(values == NULL);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+    macro_err(n < 0); macro_err(values == NULL);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -734,11 +721,11 @@ void groups_SetStringArray
 	
 	// We need an index to read properly from the values.
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
 		hashTable_SetString(obj, propId, values[k++]);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -773,7 +760,8 @@ void groups_SetStringArray
 void groups_SetIntArray
 (groups* g, const bitstream* a, int propId, int n, const int* values)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0); _err(n < 0); _err(values == NULL);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+    macro_err(n < 0); macro_err(values == NULL);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -790,11 +778,11 @@ void groups_SetIntArray
 	
 	// We need an index to read properly from the values.
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
 		hashTable_SetInt(obj, propId, values[k++]);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -827,7 +815,8 @@ void groups_SetIntArray
 void groups_SetBoolArray
 (groups* g, const bitstream* a, int propId, int n, const bool* values)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0); _err(n < 0); _err(values == NULL);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+    macro_err(n < 0); macro_err(values == NULL);
     
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -844,11 +833,11 @@ void groups_SetBoolArray
 	
 	// We need an index to read properly from the values.
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
 		hashTable_SetBool(obj, propId, values[k++]);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
 	
@@ -882,7 +871,7 @@ void groups_SetBoolArray
 double* groups_GetDoubleArray
 (groups* g, const bitstream* a, int propId)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -894,11 +883,11 @@ double* groups_GetDoubleArray
 	hash_table* obj;
 	
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
         arr[k++] = *((double*)hashTable_Get(obj, propId));
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	return arr;
 }
@@ -907,7 +896,7 @@ double* groups_GetDoubleArray
 int* groups_GetIntArray
 (groups* g, const bitstream* a, int propId)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -919,11 +908,11 @@ int* groups_GetIntArray
 	hash_table* obj;
 	
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
         arr[k++] = *((int*)hashTable_Get(obj, propId));
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	return arr;
 }
@@ -931,7 +920,7 @@ int* groups_GetIntArray
 bool* groups_GetBoolArray
 (groups* g, const bitstream* a, int propId)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -943,11 +932,11 @@ bool* groups_GetBoolArray
 	hash_table* obj;
 	
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
         arr[k++] = *((bool*)hashTable_Get(obj, propId));
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	return arr;
 }
@@ -955,7 +944,7 @@ bool* groups_GetBoolArray
 const char** groups_GetStringArray
 (groups* g, const bitstream* a, int propId)
 {
-    _err(g == NULL); _err(a == NULL); _err(propId < 0);
+    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
     
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -967,18 +956,18 @@ const char** groups_GetStringArray
 	hash_table* obj;
 	
 	int k = 0;
-	foreach (a) {
-		i = _pos(a);
+	macro_foreach (a) {
+		i = macro_pos(a);
 		obj = g->m_memberArray[i];
         arr[k++] = (const char*)hashTable_Get(obj, propId);
-	} end_foreach(a)
+	} macro_end_foreach(a)
 	
 	return arr;
 }
 
 const char* groups_PropertyNameById(const groups* g, int propId)
 {
-    _err(g == NULL); _err(propId < 0);
+    macro_err(g == NULL); macro_err(propId < 0);
     
 	property* prop;
 	gcstack_item* cursor = g->properties->root->next;
@@ -992,29 +981,29 @@ const char* groups_PropertyNameById(const groups* g, int propId)
 
 void groups_PrintMember(const groups* g, const hash_table* obj)
 {
-    _err(g == NULL); _err(obj == NULL);
+    macro_err(g == NULL); macro_err(obj == NULL);
     
     int propId, type;
     
-    hashTable_foreach(obj) {
-            propId = _hashTable_id(obj);
+    macro_hashTable_foreach(obj) {
+            propId = macro_hashTable_id(obj);
             type = propId/TYPE_STRIDE;
             const char* name = groups_PropertyNameById(g, propId);
             if (type == TYPE_DOUBLE)
-                printf("%s:%lg ", name, _hashTable_double(obj));
+                printf("%s:%lg ", name, macro_hashTable_double(obj));
             else if (type == TYPE_INT)
-                printf("%s:%i ", name, _hashTable_int(obj));
+                printf("%s:%i ", name, macro_hashTable_int(obj));
             else if (type == TYPE_BOOL)
-                printf("%s:%i ", name, _hashTable_bool(obj));
+                printf("%s:%i ", name, macro_hashTable_bool(obj));
             else if (type == TYPE_STRING)
-                printf("%s:%s ", name, _hashTable_string(obj));
-    } end_foreach(obj)
+                printf("%s:%s ", name, macro_hashTable_string(obj));
+    } macro_end_foreach(obj)
     printf("\r\n");
 }
 
 void groups_RemoveMember(groups* g, int index)
 {
-    _err(g == NULL); _err(index < 0);
+    macro_err(g == NULL); macro_err(index < 0);
     
 	createMemberArray(g);
 	
@@ -1026,14 +1015,14 @@ void groups_RemoveMember(groups* g, int index)
 	bitstream* b = bitstream_InitWithValues
 	(bitstream_AllocWithGC(gc), 2, (int[]){index,index+1});
 	bitstream* c;
-    hashTable_foreach(obj) {
-        propId = _hashTable_id(obj);
+    macro_hashTable_foreach(obj) {
+        propId = macro_hashTable_id(obj);
         a = groups_GetBitstream(g, propId);
         if (a == NULL) continue;
         
 		c = bitstream_Except(gc, a, b);
 		gcstack_Swap(c, a);
-    } end_foreach(obj)
+    } macro_end_foreach(obj)
     
 	g->m_bitstreamsReady = false;
 	g->m_membersReady = false;
@@ -1054,7 +1043,7 @@ void groups_RemoveMember(groups* g, int index)
 
 void groups_RemoveMembers(groups* g, bitstream const* prop)
 {
-    _err(g == NULL); _err(prop == NULL);
+    macro_err(g == NULL); macro_err(prop == NULL);
     
 	createMemberArray(g);
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
@@ -1072,12 +1061,12 @@ void groups_RemoveMembers(groups* g, bitstream const* prop)
 	
 	int index;
 	hash_table* obj;
-	foreach (prop) {
+	macro_foreach (prop) {
 		// Free the member but don't delete it, in order to maintain index.
-		index = _pos(prop);
+		index = macro_pos(prop);
 		obj = g->m_memberArray[index];
 		hashTable_Delete(obj);
-	} end_foreach (prop)
+	} macro_end_foreach (prop)
 	
 	g->m_bitstreamsReady = false;
 	g->m_membersReady = false;
@@ -1123,8 +1112,8 @@ void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
     int propId, type;
     bool first = true;
     
-    hashTable_foreach(obj) {
-        propId = _hashTable_id(obj);
+    macro_hashTable_foreach(obj) {
+        propId = macro_hashTable_id(obj);
         type = propId/TYPE_STRIDE;
         
         // Write comma to separate the items in the document.
@@ -1133,14 +1122,14 @@ void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
         
         const char* name = groups_PropertyNameById(g, propId);
         if (type == TYPE_DOUBLE)
-            fprintf(f, "%s:%lg", name, _hashTable_double(obj));
+            fprintf(f, "%s:%lg", name, macro_hashTable_double(obj));
         else if (type == TYPE_INT)
-            fprintf(f, "%s:%i", name, _hashTable_int(obj));
+            fprintf(f, "%s:%i", name, macro_hashTable_int(obj));
         else if (type == TYPE_BOOL)
-            fprintf(f, "%s:%i", name, _hashTable_bool(obj));
+            fprintf(f, "%s:%i", name, macro_hashTable_bool(obj));
         else if (type == TYPE_STRING)
-            fprintf(f, "%s:\"%s\"", name, _hashTable_string(obj));
-    } end_foreach(obj)
+            fprintf(f, "%s:\"%s\"", name, macro_hashTable_string(obj));
+    } macro_end_foreach(obj)
 }
 
 void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
@@ -1163,7 +1152,7 @@ void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
 
 bool groups_SaveToFile(groups* g, string fileName)
 {
-    _err(g == NULL); _err(fileName == NULL);
+    macro_err(g == NULL); macro_err(fileName == NULL);
     
     FILE* f = fopen(fileName, "w");
     if (f == NULL)
@@ -1212,7 +1201,7 @@ bool groups_SaveToFile(groups* g, string fileName)
 
 void groups_AppendMembers(groups* g, gcstack* newMembers)
 {
-    _err(g == NULL); _err(newMembers == NULL);
+    macro_err(g == NULL); macro_err(newMembers == NULL);
     
     gcstack_item* cursor = newMembers->root->next;
     for (; cursor != NULL; cursor = cursor->next)
@@ -1224,7 +1213,7 @@ void groups_AppendMembers(groups* g, gcstack* newMembers)
 
 bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
 {
-    _err(g == NULL); _err(fileName == NULL);
+    macro_err(g == NULL); macro_err(fileName == NULL);
     
     // Get file size.
     struct stat s;
