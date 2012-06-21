@@ -159,27 +159,48 @@ void gcstack_Push
     gcstack_item*       gcstack_PushBool        (gcstack* gc, int val);
     gcstack_item*       gcstack_PushString      (gcstack* gc, const char* val);
 
-    // Pops double from the stack.
-    double      gcstack_PopDouble       (gcstack* gc);
-    int         gcstack_PopInt          (gcstack* gc);
-    int        gcstack_PopBool         (gcstack* gc);
-    char*       gcstack_PopString       (gcstack* gc);
+    //
+    //      Pops double from the stack.
+    //
+    double gcstack_PopDouble
+    (gcstack* gc);
     
-    double      gcstack_PopDoubleWithItem       (gcstack* gc, gcstack_item* item);
-    int         gcstack_PopIntWithItem          (gcstack* gc, gcstack_item* item);
-    int        gcstack_PopBoolWithItem         (gcstack* gc, gcstack_item* item);
-    char*       gcstack_PopStringWithItem       (gcstack* gc, gcstack_item* item);
+    int gcstack_PopInt
+    (gcstack* gc);
     
-    // Pops double from the stack with a specific item.
-    double gcstack_PopDoubleWithItem(gcstack* gc, gcstack_item* item);
+    int gcstack_PopBool
+    (gcstack* gc);
     
-// Create an array of items that are on the stack.
-// In a stack the first item has usually the last index.
-// If you need the array to be in the same order as incremental index,
-// Use the 'gcstack_CreateItemsArrayBackward' function instead.
-// This array can be sorted with sorting_Sort.
-gcstack_item** gcstack_CreateItemsArray
-(gcstack const* gc);
+    char* gcstack_PopString
+    (gcstack* gc);
+    
+    double gcstack_PopDoubleWithItem
+    (gcstack* gc, gcstack_item* item);
+    
+    int gcstack_PopIntWithItem
+    (gcstack* gc, gcstack_item* item);
+    
+    int gcstack_PopBoolWithItem
+    (gcstack* gc, gcstack_item* item);
+    
+    char* gcstack_PopStringWithItem
+    (gcstack* gc, gcstack_item* item);
+    
+    //
+    //      Pops double from the stack with a specific item.
+    //
+    double gcstack_PopDoubleWithItem
+    (gcstack* gc, gcstack_item* item);
+    
+    //
+    //      Create an array of items that are on the stack.
+    //      In a stack the first item has usually the last index.
+    //      If you need the array to be in the same order as incremental index,
+    //      Use the 'gcstack_CreateItemsArrayBackward' function instead.
+    //      This array can be sorted with sorting_Sort.
+    //
+    gcstack_item** gcstack_CreateItemsArray
+    (gcstack const* gc);
     
     int* gcstack_CreateIntArray
     (gcstack const* gc);
@@ -193,9 +214,11 @@ gcstack_item** gcstack_CreateItemsArray
     const char** gcstack_CreateStringArray
     (gcstack const* gc);
 
-// Create an array of items that are on the stack backward.
-// This array can be sorted with sorting_Sort.
-gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
+    //
+    //      Create an array of items that are on the stack backward.
+    //      This array can be sorted with sorting_Sort.
+    //
+    gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
 
     int* gcstack_CreateIntArrayBackward
     (gcstack const* gc);
@@ -226,6 +249,12 @@ gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc);
     
     void gcstack_PrintString
     (gcstack const* gc);
+    
+    //
+    //      Takes all int values on the stack and constructs a string from it.
+    //
+    char* gcstack_PopIntsAsString
+    (gcstack* gc);
     
 #endif
 

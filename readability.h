@@ -132,10 +132,43 @@ if (_macro_indices##a[_macro_i##a] == -1) continue;
     //
     //      SIMPLIFIED ERROR HANDLING
     //
-    
+    //      Crashes thread or application and prints a detailed error message.
+    //      It also prints the condition under which the thread or application should crash.
+    //
 #define macro_err(cond) if (cond) errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
 
+    //
+    //      This macro is specially suited for expression errors.
+    //      It displays where in an expression an error happened.
+    //      At the moment, it supports only single-line expression.
+    //
 #define macro_errExp(message,pos,expr) errorhandling_CrashExpression(message, pos, expr)
+    
+    //
+    //      SIMPLIFIED STRING HANDLING
+    //
+    // PERFORMANCE COMPLEXITY LEVEL (CL)
+    // 2^X per 10 sec
+    // Jun 21 2012 17:37:16
+    // 268435456
+    // Leak 0
+    // Duration: 14.928422
+    // cl 27.421938, offset -0.578062
+    // ________________________________
+    // macro_string_concat(myName, "Alpha ", "Centuri");
+    //
+    //      This string concat macro is very fast.
+    //      It allocated on the stack so 'assignTo' does not need to be released.
+    //
+#define macro_string_concat(assignTo,string1,string2) \
+    const char* _macro_string1##assignTo = string1; \
+    const char* _macro_string2##assignTo = string2; \
+    int _macro_string1Length##assignTo = strlen(_macro_string1##assignTo); \
+    int _macro_string2Length##assignTo = strlen(_macro_string2##assignTo); \
+    char assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo+1]; \
+    memcpy(assignTo, _macro_string1##assignTo, _macro_string1Length##assignTo); \
+    memcpy(assignTo+_macro_string1Length##assignTo, _macro_string2##assignTo, _macro_string2Length##assignTo); \
+    assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo] = '\0'
     
 #endif
     

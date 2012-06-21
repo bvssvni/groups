@@ -673,3 +673,37 @@ char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
     return val;
 }
 
+/*
+ PERFORMANCE COMPLEXITY LEVEL (CL)
+ 2^X per 10 sec
+ Jun 21 2012 08:06:39
+ 8388608
+ Leak 0
+ Duration: 13.925738
+ cl 22.522246, offset -0.477754
+ ________________________________
+
+ gcstack* st = gcstack_Init(gcstack_Alloc());
+ gcstack_PushInt(st, 'S');
+ gcstack_PushInt(st, 'v');
+ gcstack_PushInt(st, 'e');
+ gcstack_PushInt(st, 'n');
+ 
+ char* text = gcstack_PopIntsAsString(st);
+ free(text);
+ 
+ gcstack_Delete(st);
+ free(st);
+ */
+char* gcstack_PopIntsAsString(gcstack* gc) {
+    char* str = malloc(sizeof(char)*gc->length);
+    gcstack_item* cursor = gc->root->next;
+    int index = gc->length-1;
+    for (; cursor != NULL; cursor = cursor->next) {
+        str[index] = ((gcint*)cursor)->val;
+        index--;
+    }
+    gcstack_End(gc, NULL);
+    return str;
+}
+
