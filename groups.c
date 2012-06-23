@@ -1107,6 +1107,50 @@ bool groups_IsBool(int propId)
 	return propId/TYPE_STRIDE == TYPE_BOOL;
 }
 
+void groups_PrintStringToFile(FILE* f, const char* text) {
+    // Put quotation mark at the beginning.
+    fputc('"', f);
+    char ch;
+    for (const char* cursor = text; *cursor != '\0'; cursor++) {
+        ch = *cursor;
+        
+        // Handle escaped characters.
+        if (ch == '"') {
+            fputc('\\', f);
+            fputc('"', f);
+        }
+        else if (ch == '\t') {
+            fputc('\\', f);
+            fputc('t', f);
+        }
+        else if (ch == '\r') {
+            fputc('\\', f);
+            fputc('r', f);
+        }
+        else if (ch == '\n') {
+            fputc('\\', f);
+            fputc('n', f);
+        }
+        else if (ch == '\\') {
+            fputc('\\', f);
+            fputc('\\', f);
+        }
+        else if (ch == '/') {
+            fputc('\\', f);
+            fputc('/', f);
+        }
+        else if (ch == '\f') {
+            fputc('\\', f);
+            fputc('f', f);
+        }
+        else {
+            fputc(ch, f);
+        }
+    }
+    // Put quotation mark at the end.
+    fputc('"', f);
+}
+
 void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
 {
     int propId, type;
@@ -1127,8 +1171,10 @@ void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
             fprintf(f, "%s:%i", name, macro_hashTable_int(obj));
         else if (type == TYPE_BOOL)
             fprintf(f, "%s:%i", name, macro_hashTable_bool(obj));
-        else if (type == TYPE_STRING)
-            fprintf(f, "%s:\"%s\"", name, macro_hashTable_string(obj));
+        else if (type == TYPE_STRING) {
+            fprintf(f, "%s:", name);
+            groups_PrintStringToFile(f, macro_hashTable_string(obj));
+        }
     } macro_end_foreach(obj)
 }
 

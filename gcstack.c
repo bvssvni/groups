@@ -696,13 +696,14 @@ char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
  free(st);
  */
 char* gcstack_PopIntsAsString(gcstack* gc) {
-    char* str = malloc(sizeof(char)*gc->length);
+    char* str = malloc(sizeof(char)*(gc->length+1));
     gcstack_item* cursor = gc->root->next;
     int index = gc->length-1;
     for (; cursor != NULL; cursor = cursor->next) {
         str[index] = ((gcint*)cursor)->val;
         index--;
     }
+    str[gc->length] = '\0';
     gcstack_End(gc, NULL);
     return str;
 }

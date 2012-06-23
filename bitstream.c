@@ -46,7 +46,8 @@
 
 int bitstream_references = 0;
 
-void bitstream_Delete(void* p) {
+void bitstream_Delete(void* p)
+{
     macro_err(p == NULL);
     
 	bitstream_references--;
