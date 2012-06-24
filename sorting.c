@@ -47,24 +47,24 @@
  
  void swap(int *a, int *b)
  {
-	int t=*a; *a=*b; *b=t;
+ int t=*a; *a=*b; *b=t;
  }
  void sort(int arr[], int beg, int end)
  {
-	if (end > beg + 1)
-	{
-		int piv = arr[beg], l = beg + 1, r = end;
-		while (l < r)
-		{
-			if (arr[l] <= piv)
-				l++;
-			else
-				swap(&arr[l], &arr[--r]);
-		}
-		swap(&arr[--l], &arr[beg]);
-		sort(arr, beg, l);
-		sort(arr, r, end);
-	}
+ if (end > beg + 1)
+ {
+ int piv = arr[beg], l = beg + 1, r = end;
+ while (l < r)
+ {
+ if (arr[l] <= piv)
+ l++;
+ else
+ swap(&arr[l], &arr[--r]);
+ }
+ swap(&arr[--l], &arr[beg]);
+ sort(arr, beg, l);
+ sort(arr, r, end);
+ }
  }
  
  */
@@ -85,8 +85,8 @@ void swapData(byte*t, byte*a, byte*b, int stride)
 }
 
 void sorting_Sort(void* arr[], 
-				 int beg, int end, int stride, void*t,
-				 int(*compare)(void const* a, void const* b))
+		  int beg, int end, int stride, void*t,
+		  int(*compare)(void const* a, void const* b))
 {
 	if (end <= beg + 1) return;
 	
@@ -114,7 +114,7 @@ void sorting_Sort(void* arr[],
 // Searches a list of variables for a string using binary search.
 //
 int sorting_SearchBinary(int n, void const* arr[], void const* data, 
-							 int(*compare)(void const*a,void const* b))
+			 int(*compare)(void const*a,void const* b))
 {
 	int l=0;
 	int u=n-1;

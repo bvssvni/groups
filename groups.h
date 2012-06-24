@@ -43,31 +43,31 @@ extern "C" {
 #include "gcstack.h"
 #include "bitstream.h"
 #include "hashtable.h"
-    
-    //
-    //      PROPERTY STRUCTURE
-    //
-    //      This is a sub structure of the Groups structure.
-    //
-    typedef struct property property;
-    struct property {
-        gcstack_item gc;
-        char* name;
-        int propId;
-    };
-    
-    void property_Delete
-    (void* p);
-    
-    property* property_AllocWithGC
-    (gcstack* gc);
-    
-    property* property_InitWithNameAndId
-    (property* prop, char const* name, int propId);
-
-    //
-    //      GROUPS STRUCTURE
-    //
+	
+	//
+	//      PROPERTY STRUCTURE
+	//
+	//      This is a sub structure of the Groups structure.
+	//
+	typedef struct property property;
+	struct property {
+		gcstack_item gc;
+		char* name;
+		int propId;
+	};
+	
+	void property_Delete
+	(void* p);
+	
+	property* property_AllocWithGC
+	(gcstack* gc);
+	
+	property* property_InitWithNameAndId
+	(property* prop, char const* name, int propId);
+	
+	//
+	//      GROUPS STRUCTURE
+	//
 	typedef struct groups {
 		// Allow struct to be garbage collected by gcstack.
 		gcstack_item gc;
@@ -133,12 +133,12 @@ extern "C" {
 	//
 	int groups_GetProperty
 	(groups* g, char const* name);
-    
-    //
-    //      Returns an array of property names.
-    //
-    const char** groups_GetPropertyNames
-    (groups* g);
+	
+	//
+	//      Returns an array of property names.
+	//
+	const char** groups_GetPropertyNames
+	(groups* g);
 	
 	//
 	//		Bitstream is the object you use to group objects fast.
@@ -153,14 +153,14 @@ extern "C" {
 	//
 	const bitstream* groups_GetBitstream
 	(groups* g, int propId);
-    
-    //
-    //      This method returns a bitstream containing all members.
-    //      It takes the whole range from 0 to the length of member stack,
-    //      and subtracts the deleted members with exclude.
-    //
-    bitstream* groups_GetAll
-    (groups* g);
+	
+	//
+	//      This method returns a bitstream containing all members.
+	//      It takes the whole range from 0 to the length of member stack,
+	//      and subtracts the deleted members with exclude.
+	//
+	bitstream* groups_GetAll
+	(groups* g);
 	
 	//
 	// Removes the bitstream, but not the data itself from the members.
@@ -271,7 +271,7 @@ extern "C" {
 	// Returns true if the variable got default value.
 	//
 	int groups_IsDefaultVariable
-    (int propId, void* data);
+	(int propId, void* data);
 	
 	//
 	// Returns true if the property is of an unknown data type.
@@ -291,19 +291,19 @@ extern "C" {
 	int groups_IsBool
 	(int propId);
 	
-    // Saves data to file in JSON format.
-    int        groups_SaveToFile
-    (groups* g, const char* fileName);
-    
-    // Reads data from a file in JSON format.
-    int groups_ReadFromFile
-    (
-     groups* g, 
-     const char* fileName, 
-     int verbose, 
-     void(*err)(int line, int column, const char* message)
-    );
-    
+	// Saves data to file in JSON format.
+	int        groups_SaveToFile
+	(groups* g, const char* fileName);
+	
+	// Reads data from a file in JSON format.
+	int groups_ReadFromFile
+	(
+	 groups* g, 
+	 const char* fileName, 
+	 int verbose, 
+	 void(*err)(int line, int column, const char* message)
+	 );
+	
 #endif
 	
 #ifdef __cplusplus

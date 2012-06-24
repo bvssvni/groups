@@ -50,8 +50,8 @@ gcstack* gcstack_Alloc()
 
 gcstack* gcstack_Init(gcstack* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	gc->length = 0;
 	gc->root = malloc(sizeof(gcstack_item));
 	gc->root->next = NULL;
@@ -62,8 +62,8 @@ gcstack* gcstack_Init(gcstack* gc)
 
 void gcstack_Delete(gcstack* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	gcstack_End(gc, NULL);
 	if (gc->root != NULL) {
 		free(gc->root);
@@ -72,54 +72,54 @@ void gcstack_Delete(gcstack* gc)
 }
 
 void gcstack_ReverseWithLevel(gcstack* gc, int level) {
-    macro_err(gc == NULL); macro_err(level < 0);
-    
-    gcstack_item* cursor = gc->root->next;
-    gcstack_item* start = cursor;
-    gcstack_item* last = NULL;
-    int len = gc->length;
-    gcstack_item* next = NULL;
-    
-    for (int i = len; i > level; i--) {
-        // Swap previous and next for each item.
-        next = cursor->next;
-        cursor->next = cursor->previous;
-        cursor->previous = next;
-        last = cursor;
-        cursor = next;
-    }
-    
-    if (last != NULL)
-        last->previous = gc->root;
-    gc->root->next = last;
-    
-    if (start != NULL)
-        start->next = next;
-    if (next != NULL)
-        next->previous = start;
+	macro_err(gc == NULL); macro_err(level < 0);
+	
+	gcstack_item* cursor = gc->root->next;
+	gcstack_item* start = cursor;
+	gcstack_item* last = NULL;
+	int len = gc->length;
+	gcstack_item* next = NULL;
+	
+	for (int i = len; i > level; i--) {
+		// Swap previous and next for each item.
+		next = cursor->next;
+		cursor->next = cursor->previous;
+		cursor->previous = next;
+		last = cursor;
+		cursor = next;
+	}
+	
+	if (last != NULL)
+		last->previous = gc->root;
+	gc->root->next = last;
+	
+	if (start != NULL)
+		start->next = next;
+	if (next != NULL)
+		next->previous = start;
 }
 
 void gcstack_ReverseToOtherStackWithLevel(gcstack* from, gcstack* to, int level) {
-    macro_err(from == NULL); macro_err(to == NULL); macro_err(level < 0);
-    
-    gcstack_item* cursor = from->root->next;
-    gcstack_item* next;
-    int length = from->length;
-    
-    // Push the item onto the other stack until reaching level.
-    for (int i = length; i > level; i--) {
-        next = cursor->next;
-        
-        gcstack_Pop(from, cursor);
-        gcstack_Push(to, cursor);
-        cursor = next;
-    }
+	macro_err(from == NULL); macro_err(to == NULL); macro_err(level < 0);
+	
+	gcstack_item* cursor = from->root->next;
+	gcstack_item* next;
+	int length = from->length;
+	
+	// Push the item onto the other stack until reaching level.
+	for (int i = length; i > level; i--) {
+		next = cursor->next;
+		
+		gcstack_Pop(from, cursor);
+		gcstack_Push(to, cursor);
+		cursor = next;
+	}
 }
 
 gcstack_item** gcstack_CreateItemsArray(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item** arr = malloc(gc->length*sizeof(void*));
@@ -133,16 +133,16 @@ gcstack_item** gcstack_CreateItemsArray(gcstack const* gc)
 
 int* gcstack_CreateIntArray(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	int* arr = malloc(gc->length*sizeof(int));
-    gcint* item;
+	gcint* item;
 	for (int i = 0; i < length; i++)
 	{
 		item = (gcint*)cursor;
-        arr[i] = item->val;
+		arr[i] = item->val;
 		cursor = cursor->next;
 	}
 	return arr;
@@ -150,16 +150,16 @@ int* gcstack_CreateIntArray(gcstack const* gc)
 
 double* gcstack_CreateDoubleArray(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	double* arr = malloc(gc->length*sizeof(double));
-    gcdouble* item;
+	gcdouble* item;
 	for (int i = 0; i < length; i++)
 	{
 		item = (gcdouble*)cursor;
-        arr[i] = item->val;
+		arr[i] = item->val;
 		cursor = cursor->next;
 	}
 	return arr;
@@ -167,16 +167,16 @@ double* gcstack_CreateDoubleArray(gcstack const* gc)
 
 bool* gcstack_CreateBoolArray(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	bool* arr = malloc(gc->length*sizeof(bool));
-    gcbool* item;
+	gcbool* item;
 	for (int i = 0; i < length; i++)
 	{
 		item = (gcbool*)cursor;
-        arr[i] = item->val;
+		arr[i] = item->val;
 		cursor = cursor->next;
 	}
 	return arr;
@@ -184,16 +184,16 @@ bool* gcstack_CreateBoolArray(gcstack const* gc)
 
 string* gcstack_CreateStringArray(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	string* arr = malloc(gc->length*sizeof(string));
-    gcstring* item;
+	gcstring* item;
 	for (int i = 0; i < length; i++)
 	{
 		item = (gcstring*)cursor;
-        arr[i] = item->val;
+		arr[i] = item->val;
 		cursor = cursor->next;
 	}
 	return arr;
@@ -201,8 +201,8 @@ string* gcstack_CreateStringArray(gcstack const* gc)
 
 gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item** arr = malloc(gc->length*sizeof(void*));
@@ -216,15 +216,15 @@ gcstack_item** gcstack_CreateItemsArrayBackward(gcstack const* gc)
 
 int* gcstack_CreateIntArrayBackward(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	int* arr = malloc(gc->length*sizeof(int));
-    gcint* item;
+	gcint* item;
 	for (int i = 0; i < length; i++)
 	{
-        item = (gcint*)cursor;
+		item = (gcint*)cursor;
 		arr[length-i-1] = item->val;
 		cursor = cursor->next;
 	}
@@ -233,15 +233,15 @@ int* gcstack_CreateIntArrayBackward(gcstack const* gc)
 
 double* gcstack_CreateDoubleArrayBackward(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	double* arr = malloc(gc->length*sizeof(double));
-    gcdouble* item;
+	gcdouble* item;
 	for (int i = 0; i < length; i++)
 	{
-        item = (gcdouble*)cursor;
+		item = (gcdouble*)cursor;
 		arr[length-i-1] = item->val;
 		cursor = cursor->next;
 	}
@@ -250,15 +250,15 @@ double* gcstack_CreateDoubleArrayBackward(gcstack const* gc)
 
 string* gcstack_CreateStringArrayBackward(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	string* arr = malloc(gc->length*sizeof(string));
-    gcstring* item;
+	gcstring* item;
 	for (int i = 0; i < length; i++)
 	{
-        item = (gcstring*)cursor;
+		item = (gcstring*)cursor;
 		arr[length-i-1] = item->val;
 		cursor = cursor->next;
 	}
@@ -267,15 +267,15 @@ string* gcstack_CreateStringArrayBackward(gcstack const* gc)
 
 bool* gcstack_CreateBoolArrayBackward(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* cursor = gc->root->next;
 	bool* arr = malloc(gc->length*sizeof(bool));
-    gcbool* item;
+	gcbool* item;
 	for (int i = 0; i < length; i++)
 	{
-        item = (gcbool*)cursor;
+		item = (gcbool*)cursor;
 		arr[length-i-1] = item->val;
 		cursor = cursor->next;
 	}
@@ -284,8 +284,8 @@ bool* gcstack_CreateBoolArrayBackward(gcstack const* gc)
 
 void gcstack_Print(gcstack const* gc, void(*print)(void*a))
 {
-    macro_err(gc == NULL); macro_err(print == NULL);
-    
+	macro_err(gc == NULL); macro_err(print == NULL);
+	
 	int length = gc->length;
 	gcstack_item* item = gc->root->next;
 	for (int i = 0; i < length; i++)
@@ -299,53 +299,53 @@ void gcstack_Print(gcstack const* gc, void(*print)(void*a))
 
 void gcstack_PrintInt(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* item = gc->root->next;
-    gcint* intItem;
+	gcint* intItem;
 	for (int i = 0; i < length; i++)
 	{
-        intItem = (gcint*)item;
+		intItem = (gcint*)item;
 		printf("%i ", intItem->val);
 		
 		// print(cursor);
 		if (item->next == NULL) break;
 		item = item->next;
 	}
-    printf("\r\n");
+	printf("\r\n");
 }
 
 void gcstack_PrintString(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	int length = gc->length;
 	gcstack_item* item = gc->root->next;
-    gcstring* stringItem;
+	gcstring* stringItem;
 	for (int i = 0; i < length; i++)
 	{
-        stringItem = (gcstring*)item;
+		stringItem = (gcstring*)item;
 		printf("%s ", stringItem->val);
 		
 		// print(cursor);
 		if (item->next == NULL) break;
 		item = item->next;
 	}
-    printf("\r\n");
+	printf("\r\n");
 }
 
 const gcstack_item* gcstack_Start(gcstack const* gc)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	return gc->root->next;
 }
 
 void gcstack_EndLevel(gcstack* gc, int level)
 {
-    macro_err(gc == NULL); macro_err(level < 0);
-    
+	macro_err(gc == NULL); macro_err(level < 0);
+	
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item* next;
 	while (cursor != NULL && gc->length > level) {
@@ -362,7 +362,7 @@ void gcstack_EndLevel(gcstack* gc, int level)
 			free(cursor);
 		}
 		cursor = next;
-        
+		
 		gc->length--;
 	}
 	gc->root->next = cursor;
@@ -370,8 +370,8 @@ void gcstack_EndLevel(gcstack* gc, int level)
 
 void gcstack_End(gcstack* gc, const gcstack_item* end)
 {
-    macro_err(gc == NULL);
-    
+	macro_err(gc == NULL);
+	
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item* next;
 	while (cursor != end) {
@@ -388,7 +388,7 @@ void gcstack_End(gcstack* gc, const gcstack_item* end)
 			free(cursor);
 		}
 		cursor = next;
-
+		
 		gc->length--;
 	}
 	gc->root->next = cursor;
@@ -396,25 +396,25 @@ void gcstack_End(gcstack* gc, const gcstack_item* end)
 
 void gcstack_free(gcstack* gc, void* p)
 {
-    macro_err(p == NULL);
-    
+	macro_err(p == NULL);
+	
 	if (gc != NULL) {
 		gcstack_Pop(gc, p);
 	}
-    gcstack_item* item = (gcstack_item*)p;
-    if (item->freeSubPointers != NULL)
-    {
-        item->freeSubPointers(item);
+	gcstack_item* item = (gcstack_item*)p;
+	if (item->freeSubPointers != NULL)
+	{
+		item->freeSubPointers(item);
 	}
-    free(item);
+	free(item);
 }
 
 gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*freeSubPointers)(void* p))
 {
-    macro_err(size < 0);
-    
+	macro_err(size < 0);
+	
 	gcstack_item* item = malloc(size);
-    
+	
 	item->freeSubPointers = freeSubPointers;
 	
 	if (gc == NULL)
@@ -424,7 +424,7 @@ gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*freeSubPointers)(void*
 		item->previous = NULL;
 		return item;
 	}
-		
+	
 	gcstack_item* root = gc->root;
 	gcstack_item* rootNext = root->next;
 	
@@ -444,8 +444,8 @@ gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*freeSubPointers)(void*
 
 void gcstack_Swap(void* aPtr, void* bPtr)
 {
-    macro_err(aPtr == NULL); macro_err(bPtr == NULL);
-    
+	macro_err(aPtr == NULL); macro_err(bPtr == NULL);
+	
 	gcstack_item* a = (gcstack_item*)aPtr;
 	gcstack_item* b = (gcstack_item*)bPtr;
 	gcstack_item* prevA = a->previous;
@@ -472,8 +472,8 @@ void gcstack_Swap(void* aPtr, void* bPtr)
 
 void gcstack_Pop(gcstack* gc, void* p)
 {
-    macro_err(gc == NULL); macro_err(p == NULL);
-    
+	macro_err(gc == NULL); macro_err(p == NULL);
+	
 	gcstack_item* item = (gcstack_item*)p;
 	// Detach from old stack.
 	if (item->previous != NULL)
@@ -489,7 +489,7 @@ void gcstack_Pop(gcstack* gc, void* p)
 
 void gcstack_Push(gcstack* gc, gcstack_item* item)
 {
-    macro_err(gc == NULL); macro_err(item == NULL);
+	macro_err(gc == NULL); macro_err(item == NULL);
 	
 	// Detach from old stack.
 	if (item->previous != NULL)
@@ -498,7 +498,7 @@ void gcstack_Push(gcstack* gc, gcstack_item* item)
 		if (item->next != NULL)
 			item->next->previous = item->previous;
 	}
-		
+	
 	// Attach to new stack.
 	if (gc->root->next != NULL)
 		gc->root->next->previous = item;
@@ -512,163 +512,163 @@ void gcstack_Push(gcstack* gc, gcstack_item* item)
 
 gcstack_item* gcstack_PushDouble(gcstack* gc, double val)
 {
-    macro_err(gc == NULL);
-    
-    gcdouble* d = (gcdouble*)gcstack_malloc(gc, sizeof(gcdouble), NULL);
-    d->val = val;
-    return (gcstack_item*)d;
+	macro_err(gc == NULL);
+	
+	gcdouble* d = (gcdouble*)gcstack_malloc(gc, sizeof(gcdouble), NULL);
+	d->val = val;
+	return (gcstack_item*)d;
 }
 
 gcstack_item* gcstack_PushInt(gcstack* gc, int val)
 {
-    macro_err(gc == NULL);
-    
-    gcint* d = (gcint*)gcstack_malloc(gc, sizeof(gcint), NULL);
-    d->val = val;
-    return (gcstack_item*)d;
+	macro_err(gc == NULL);
+	
+	gcint* d = (gcint*)gcstack_malloc(gc, sizeof(gcint), NULL);
+	d->val = val;
+	return (gcstack_item*)d;
 }
 
 gcstack_item* gcstack_PushBool(gcstack* gc, bool val)
 {
-    macro_err(gc == NULL);
-    
-    gcbool* d = (gcbool*)gcstack_malloc(gc, sizeof(gcbool), NULL);
-    d->val = val;
-    return (gcstack_item*)d;
+	macro_err(gc == NULL);
+	
+	gcbool* d = (gcbool*)gcstack_malloc(gc, sizeof(gcbool), NULL);
+	d->val = val;
+	return (gcstack_item*)d;
 }
 
 void gcstring_Delete(void* p)
 {
-    macro_err(p == NULL);
-    
-    gcstring* d = (gcstring*)p;
-    free(d->val);
-    d->val = NULL;
+	macro_err(p == NULL);
+	
+	gcstring* d = (gcstring*)p;
+	free(d->val);
+	d->val = NULL;
 }
 
 gcstack_item* gcstack_PushString(gcstack* gc, string val)
 {
-    macro_err(gc == NULL); macro_err(val == NULL);
-    
-    gcstring* d = (gcstring*)gcstack_malloc(gc, sizeof(gcstring), gcstring_Delete);
-    d->val = malloc(strlen(val)*sizeof(char));
-    strcpy(d->val, val);
-    return (gcstack_item*)d;
+	macro_err(gc == NULL); macro_err(val == NULL);
+	
+	gcstring* d = (gcstring*)gcstack_malloc(gc, sizeof(gcstring), gcstring_Delete);
+	d->val = malloc(strlen(val)*sizeof(char));
+	strcpy(d->val, val);
+	return (gcstack_item*)d;
 }
 
 double gcstack_PopDouble(gcstack* gc)
 {
-    macro_err(gc == NULL);
-    
-    gcstack_item* item = gc->root->next;
-    if (item == NULL) return 0.0;
-    
-    gcstack_Pop(gc, item);
-    gcdouble* d = (gcdouble*)item;
-    double val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	gcstack_item* item = gc->root->next;
+	if (item == NULL) return 0.0;
+	
+	gcstack_Pop(gc, item);
+	gcdouble* d = (gcdouble*)item;
+	double val = d->val;
+	free(d);
+	return val;
 }
 
 int gcstack_PopInt(gcstack* gc)
 {
-    macro_err(gc == NULL);
-    
-    gcstack_item* item = gc->root->next;
-    if (item == NULL) return -1;
-    
-    gcstack_Pop(gc, item);
-    gcint* d = (gcint*)item;
-    int val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	gcstack_item* item = gc->root->next;
+	if (item == NULL) return -1;
+	
+	gcstack_Pop(gc, item);
+	gcint* d = (gcint*)item;
+	int val = d->val;
+	free(d);
+	return val;
 }
 
 bool gcstack_PopBool(gcstack* gc)
 {
-    macro_err(gc == NULL);
-    
-    gcstack_item* item = gc->root->next;
-    if (item == NULL) return false;
-    
-    gcstack_Pop(gc, item);
-    gcbool* d = (gcbool*)item;
-    bool val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	gcstack_item* item = gc->root->next;
+	if (item == NULL) return false;
+	
+	gcstack_Pop(gc, item);
+	gcbool* d = (gcbool*)item;
+	bool val = d->val;
+	free(d);
+	return val;
 }
 
 char* gcstack_PopString(gcstack* gc)
 {
-    macro_err(gc == NULL);
-    
-    gcstack_item* item = gc->root->next;
-    if (item == NULL) return NULL;
-    
-    // Since we will need a pointer to return
-    // we can reuse the string instead of copying it.
-    // Therefore there is no call to 'gcstring_Delete'.
-    gcstack_Pop(gc, item);
-    gcstring* d = (gcstring*)item;
-    char* val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	gcstack_item* item = gc->root->next;
+	if (item == NULL) return NULL;
+	
+	// Since we will need a pointer to return
+	// we can reuse the string instead of copying it.
+	// Therefore there is no call to 'gcstring_Delete'.
+	gcstack_Pop(gc, item);
+	gcstring* d = (gcstring*)item;
+	char* val = d->val;
+	free(d);
+	return val;
 }
 
 double gcstack_PopDoubleWithItem(gcstack* gc, gcstack_item* item)
 {
-    macro_err(gc == NULL);
-    
-    if (item == NULL) return 0.0;
-    
-    gcstack_Pop(gc, item);
-    gcdouble* d = (gcdouble*)item;
-    double val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	if (item == NULL) return 0.0;
+	
+	gcstack_Pop(gc, item);
+	gcdouble* d = (gcdouble*)item;
+	double val = d->val;
+	free(d);
+	return val;
 }
 
 int gcstack_PopIntWithItem(gcstack* gc, gcstack_item* item)
 {
-    macro_err(gc == NULL);
-    
-    if (item == NULL) return -1;
-    
-    gcstack_Pop(gc, item);
-    gcint* d = (gcint*)item;
-    int val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	if (item == NULL) return -1;
+	
+	gcstack_Pop(gc, item);
+	gcint* d = (gcint*)item;
+	int val = d->val;
+	free(d);
+	return val;
 }
 
 
 bool gcstack_PopBoolWithItem(gcstack* gc, gcstack_item* item)
 {
-    macro_err(gc == NULL);
-    
-    if (item == NULL) return false;
-    
-    gcstack_Pop(gc, item);
-    gcbool* d = (gcbool*)item;
-    bool val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	if (item == NULL) return false;
+	
+	gcstack_Pop(gc, item);
+	gcbool* d = (gcbool*)item;
+	bool val = d->val;
+	free(d);
+	return val;
 }
 
 const char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
 {
-    macro_err(gc == NULL);
-    
-    if (item == NULL) return NULL;
-    
-    // Since we will need a pointer to return
-    // we can reuse the string instead of copying it.
-    // Therefore there is no call to 'gcstring_Delete'.
-    gcstack_Pop(gc, item);
-    gcstring* d = (gcstring*)item;
-    char* val = d->val;
-    free(d);
-    return val;
+	macro_err(gc == NULL);
+	
+	if (item == NULL) return NULL;
+	
+	// Since we will need a pointer to return
+	// we can reuse the string instead of copying it.
+	// Therefore there is no call to 'gcstring_Delete'.
+	gcstack_Pop(gc, item);
+	gcstring* d = (gcstring*)item;
+	char* val = d->val;
+	free(d);
+	return val;
 }
 
 /*
@@ -680,7 +680,7 @@ const char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
  Duration: 13.925738
  cl 22.522246, offset -0.477754
  ________________________________
-
+ 
  gcstack* st = gcstack_Init(gcstack_Alloc());
  gcstack_PushInt(st, 'S');
  gcstack_PushInt(st, 'v');
@@ -694,15 +694,15 @@ const char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
  free(st);
  */
 char* gcstack_PopIntsAsString(gcstack* gc) {
-    char* str = malloc(sizeof(char)*(gc->length+1));
-    gcstack_item* cursor = gc->root->next;
-    int index = gc->length-1;
-    for (; cursor != NULL; cursor = cursor->next) {
-        str[index] = ((gcint*)cursor)->val;
-        index--;
-    }
-    str[gc->length] = '\0';
-    gcstack_End(gc, NULL);
-    return str;
+	char* str = malloc(sizeof(char)*(gc->length+1));
+	gcstack_item* cursor = gc->root->next;
+	int index = gc->length-1;
+	for (; cursor != NULL; cursor = cursor->next) {
+		str[index] = ((gcint*)cursor)->val;
+		index--;
+	}
+	str[gc->length] = '\0';
+	gcstack_End(gc, NULL);
+	return str;
 }
 

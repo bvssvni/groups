@@ -53,10 +53,10 @@
 
 void property_Delete(void* p)
 {
-    macro_err(p == NULL);
-    
+	macro_err(p == NULL);
+	
 	property* prop = (property*)p;
-    
+	
 	if (prop->name != NULL)
 	{
 		free(prop->name);
@@ -71,8 +71,8 @@ property* property_AllocWithGC(gcstack* gc)
 
 property* property_InitWithNameAndId(property* prop, char const* name, int propId)
 {
-    macro_err(prop == NULL); macro_err(name == NULL);
-    
+	macro_err(prop == NULL); macro_err(name == NULL);
+	
 	int nameLength = strlen(name);
 	char* newName = malloc(sizeof(char)*nameLength);
 	prop->name = strcpy(newName, name);
@@ -82,10 +82,10 @@ property* property_InitWithNameAndId(property* prop, char const* name, int propI
 
 void groups_Delete(void* p)
 {
-    macro_err(p == NULL);
-    
+	macro_err(p == NULL);
+	
 	groups* g = (groups*)p;
-    
+	
 	// Free bitstream stuff.
 	gcstack* bitstreams = g->bitstreams;
 	if (bitstreams != NULL)
@@ -149,8 +149,8 @@ groups* groups_AllocWithGC(gcstack* gc)
 
 groups* groups_Init(groups* g)
 {
-    macro_err(g == NULL);
-    
+	macro_err(g == NULL);
+	
 	g->bitstreams = gcstack_Init(gcstack_Alloc());
 	g->m_bitstreamsReady = false;
 	g->m_bitstreamsArray = NULL;
@@ -236,8 +236,8 @@ void createBitstreamArray(groups* g)
 
 int groups_AddProperty(groups* g, const void* name, const void* propType)
 {
-    macro_err(g == NULL); macro_err(name == NULL); macro_err(propType == NULL);
-    
+	macro_err(g == NULL); macro_err(name == NULL); macro_err(propType == NULL);
+	
 	// We use the length of the bitstream stack to generate ids,
 	// because those bitstreams are set to empty instead of deleted.
 	int propIndex = g->bitstreams->length;
@@ -321,8 +321,8 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 
 int groups_GetProperty(groups* g, char const* name)
 {
-    macro_err(g == NULL); macro_err(name == NULL);
-    
+	macro_err(g == NULL); macro_err(name == NULL);
+	
 	int length = g->properties->length;
 	if (length == 0) return -1;
 	
@@ -340,26 +340,26 @@ int groups_GetProperty(groups* g, char const* name)
 
 const char** groups_GetPropertyNames(groups* g)
 {
-    macro_err(g == NULL);
-    
-    sortProperties(g);
-    
-    int length = g->properties->length;
-    const char** arr = malloc(sizeof(char*)*length);
-    gcstack_item* cursor = g->properties->root->next;
-    property* prop;
-    int k = 0;
-    for (; cursor != NULL; cursor = cursor->next)
-    {
-        prop = (property*)cursor;
-        arr[k++] = prop->name;
-    }
-    return arr;
+	macro_err(g == NULL);
+	
+	sortProperties(g);
+	
+	int length = g->properties->length;
+	const char** arr = malloc(sizeof(char*)*length);
+	gcstack_item* cursor = g->properties->root->next;
+	property* prop;
+	int k = 0;
+	for (; cursor != NULL; cursor = cursor->next)
+	{
+		prop = (property*)cursor;
+		arr[k++] = prop->name;
+	}
+	return arr;
 }
 
 bitstream* groups_getBitstream(groups* g, int propId)
 {
-    
+	
 	// Filter out the type information.
 	propId %= TYPE_STRIDE;
 	
@@ -376,32 +376,32 @@ bitstream* groups_getBitstream(groups* g, int propId)
 //
 const bitstream* groups_GetBitstream(groups* g, int propId)
 {
-    macro_err(g == NULL); macro_err(propId < 0);
-    
-    return groups_getBitstream(g, propId);
+	macro_err(g == NULL); macro_err(propId < 0);
+	
+	return groups_getBitstream(g, propId);
 }
 
 bitstream* groups_GetAll(groups* g) {
-    macro_err(g == NULL);
-    
-    int length = g->members->length;
-    bitstream* a = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 
-                                            2, (int[]){0, length});
-    bitstream* deleted = g->m_deletedMembers;
-    
-    // If there are no deleted members, then return the whole range.
-    if (deleted == NULL) return a;
-    
-    bitstream* b = bitstream_Except(NULL, a, deleted);
-    bitstream_Delete(a);
-    free(a);
-    return b;
+	macro_err(g == NULL);
+	
+	int length = g->members->length;
+	bitstream* a = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 
+						2, (int[]){0, length});
+	bitstream* deleted = g->m_deletedMembers;
+	
+	// If there are no deleted members, then return the whole range.
+	if (deleted == NULL) return a;
+	
+	bitstream* b = bitstream_Except(NULL, a, deleted);
+	bitstream_Delete(a);
+	free(a);
+	return b;
 }
 
 void groups_RemoveProperty(groups* g, int propId)
 {
-    macro_err(g == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(propId < 0);
+	
 	int index = propId % TYPE_STRIDE;
 	
 	// Delete content, but do not move from stack of bitstreams.
@@ -440,8 +440,8 @@ void groups_RemoveProperty(groups* g, int propId)
 
 bool groups_IsDefaultVariable(int propId, void* data)
 {
-    macro_err(propId < 0); macro_err(data == NULL);
-    
+	macro_err(propId < 0); macro_err(data == NULL);
+	
 	int type = propId/TYPE_STRIDE;
 	if (type == TYPE_DOUBLE) return false;
 	else if (type == TYPE_INT)
@@ -478,46 +478,46 @@ void createMemberArray(groups* g)
 
 int groups_AddMember(groups* g, hash_table* obj)
 {
-    macro_err(g == NULL); macro_err(obj == NULL);
-    
+	macro_err(g == NULL); macro_err(obj == NULL);
+	
 	int id = g->members->length;
 	hash_table* new;
-    
-    // When reading from file and id does not match,
-    // add 'deleted' members to match up with the id.
-    bool hasId = false;
-    int* oldIdPtr = (int*)hashTable_Get(obj, TMP_ID_PROPID);
-    int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
-    int newId = id;
-    while (oldId > newId) {
-        hash_table* hs = hashTable_AllocWithGC(g->members);
-        hs->layers = NULL;
-        hs->m_lastPrime = 0;
-        newId++;
-    }
-    if (newId - id > 0)
-    {
-        // Update the indices of deleted members to include the 'fakes' that has been added.
-        bitstream* addedIds = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 2, (int[]){id, newId});
-        bitstream* newDeleted = bitstream_Or(NULL, g->m_deletedMembers, addedIds);
-        bitstream* oldDeleted = g->m_deletedMembers;
-        g->m_deletedMembers = newDeleted;
-        bitstream_Delete(addedIds);
-        free(addedIds);
-        bitstream_Delete(oldDeleted);
-        free(oldDeleted);
-        hasId = true;
-    }
-    
-    id = newId;
-    
-    // Make sure it contains no id.
-    hashTable_Set(obj, TMP_ID_PROPID, NULL);
-    
-    // If the member came with fixed id, then don't reuse an old one.
+	
+	// When reading from file and id does not match,
+	// add 'deleted' members to match up with the id.
+	bool hasId = false;
+	int* oldIdPtr = (int*)hashTable_Get(obj, TMP_ID_PROPID);
+	int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
+	int newId = id;
+	while (oldId > newId) {
+		hash_table* hs = hashTable_AllocWithGC(g->members);
+		hs->layers = NULL;
+		hs->m_lastPrime = 0;
+		newId++;
+	}
+	if (newId - id > 0)
+	{
+		// Update the indices of deleted members to include the 'fakes' that has been added.
+		bitstream* addedIds = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 2, (int[]){id, newId});
+		bitstream* newDeleted = bitstream_Or(NULL, g->m_deletedMembers, addedIds);
+		bitstream* oldDeleted = g->m_deletedMembers;
+		g->m_deletedMembers = newDeleted;
+		bitstream_Delete(addedIds);
+		free(addedIds);
+		bitstream_Delete(oldDeleted);
+		free(oldDeleted);
+		hasId = true;
+	}
+	
+	id = newId;
+	
+	// Make sure it contains no id.
+	hashTable_Set(obj, TMP_ID_PROPID, NULL);
+	
+	// If the member came with fixed id, then don't reuse an old one.
 	if (!hasId && g->m_deletedMembers->length > 0)
 	{
-        // Reuse an existing position.
+		// Reuse an existing position.
 		createMemberArray(g);
 		id = bitstream_PopEnd(g->m_deletedMembers);
 		new = hashTable_InitWithMember(g->m_memberArray[id], obj);
@@ -530,32 +530,32 @@ int groups_AddMember(groups* g, hash_table* obj)
 	
 	// Reinitialize the input so one can continue using same object to insert data.
 	hashTable_Init(obj);
-    
+	
 	// Prepare bitstreams to be searched.
 	createBitstreamArray(g);
 	
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
-    int propId;
-    int index;
-    
-    bitstream* a;
+	int propId;
+	int index;
+	
+	bitstream* a;
 	bitstream* b;
 	bitstream* c;
 	b = bitstream_InitWithValues
 	(bitstream_AllocWithGC(gc), 2, (const int[]){id, id+1});
-    
-    macro_hashTable_foreach(new) {
-        propId = macro_hashTable_id(new);
-        index = propId%TYPE_STRIDE;
-        
-        a = g->m_bitstreamsArray[index];
-        if (a == NULL) continue;
-        
+	
+	macro_hashTable_foreach(new) {
+		propId = macro_hashTable_id(new);
+		index = propId%TYPE_STRIDE;
+		
+		a = g->m_bitstreamsArray[index];
+		if (a == NULL) continue;
+		
 		c = bitstream_Or(gc, a, b);
 		// Switch stacks so the new one is kept.
 		gcstack_Swap(c, a);
-    } macro_end_foreach(new)
+	} macro_end_foreach(new)
 	
 	gcstack_Delete(gc);
 	free(gc); 
@@ -571,8 +571,8 @@ int groups_AddMember(groups* g, hash_table* obj)
 //
 void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -581,7 +581,7 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-        hashTable_SetDouble(obj, propId, val);
+		hashTable_SetDouble(obj, propId, val);
 	} macro_end_foreach(a)
 	
 	// Double does not have a default value, so we need no condition here.
@@ -602,8 +602,8 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 //
 void groups_SetString(groups* g, const bitstream* a, int propId, const char* val)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -612,7 +612,7 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-        hashTable_SetString(obj, propId, val);
+		hashTable_SetString(obj, propId, val);
 	} macro_end_foreach(a)
 	
 	createBitstreamArray(g);
@@ -635,8 +635,8 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 
 void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -669,14 +669,14 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 
 void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
 	bool isDefault = 0 == val;
 	int i;
-    hash_table* obj;
+	hash_table* obj;
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
@@ -708,9 +708,9 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 //
 void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, const double* values)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-    macro_err(n < 0); macro_err(values == NULL);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+	macro_err(n < 0); macro_err(values == NULL);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -740,9 +740,9 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 void groups_SetStringArray
 (groups* g, const bitstream* a, int propId, int n, const char** values)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-    macro_err(n < 0); macro_err(values == NULL);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+	macro_err(n < 0); macro_err(values == NULL);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -773,7 +773,7 @@ void groups_SetStringArray
 	// It takes only one operation to update all.
 	int propIndex = propId%TYPE_STRIDE;
 	bitstream* b = g->m_bitstreamsArray[propIndex];
-
+	
 	bitstream* notDef = bitstream_InitWithIndices
 	(bitstream_AllocWithGC(gc), notDefaultIndicesSize, notDefaultIndices);
 	
@@ -797,9 +797,9 @@ void groups_SetStringArray
 void groups_SetIntArray
 (groups* g, const bitstream* a, int propId, int n, const int* values)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-    macro_err(n < 0); macro_err(values == NULL);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+	macro_err(n < 0); macro_err(values == NULL);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -852,9 +852,9 @@ void groups_SetIntArray
 void groups_SetBoolArray
 (groups* g, const bitstream* a, int propId, int n, const bool* values)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-    macro_err(n < 0); macro_err(values == NULL);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
+	macro_err(n < 0); macro_err(values == NULL);
+	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
@@ -908,8 +908,8 @@ void groups_SetBoolArray
 double* groups_GetDoubleArray
 (groups* g, const bitstream* a, int propId)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -923,7 +923,7 @@ double* groups_GetDoubleArray
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-        arr[k++] = *((double*)hashTable_Get(obj, propId));
+		arr[k++] = *((double*)hashTable_Get(obj, propId));
 	} macro_end_foreach(a)
 	
 	return arr;
@@ -933,8 +933,8 @@ double* groups_GetDoubleArray
 int* groups_GetIntArray
 (groups* g, const bitstream* a, int propId)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -948,7 +948,7 @@ int* groups_GetIntArray
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-        arr[k++] = *((int*)hashTable_Get(obj, propId));
+		arr[k++] = *((int*)hashTable_Get(obj, propId));
 	} macro_end_foreach(a)
 	
 	return arr;
@@ -957,8 +957,8 @@ int* groups_GetIntArray
 bool* groups_GetBoolArray
 (groups* g, const bitstream* a, int propId)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -972,7 +972,7 @@ bool* groups_GetBoolArray
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-        arr[k++] = *((bool*)hashTable_Get(obj, propId));
+		arr[k++] = *((bool*)hashTable_Get(obj, propId));
 	} macro_end_foreach(a)
 	
 	return arr;
@@ -981,8 +981,8 @@ bool* groups_GetBoolArray
 const char** groups_GetStringArray
 (groups* g, const bitstream* a, int propId)
 {
-    macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
@@ -996,7 +996,7 @@ const char** groups_GetStringArray
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-        arr[k++] = (const char*)hashTable_Get(obj, propId);
+		arr[k++] = (const char*)hashTable_Get(obj, propId);
 	} macro_end_foreach(a)
 	
 	return arr;
@@ -1004,8 +1004,8 @@ const char** groups_GetStringArray
 
 const char* groups_PropertyNameById(const groups* g, int propId)
 {
-    macro_err(g == NULL); macro_err(propId < 0);
-    
+	macro_err(g == NULL); macro_err(propId < 0);
+	
 	property* prop;
 	gcstack_item* cursor = g->properties->root->next;
 	for (; cursor != NULL; cursor = cursor->next)
@@ -1018,30 +1018,30 @@ const char* groups_PropertyNameById(const groups* g, int propId)
 
 void groups_PrintMember(const groups* g, const hash_table* obj)
 {
-    macro_err(g == NULL); macro_err(obj == NULL);
-    
-    int propId, type;
-    
-    macro_hashTable_foreach(obj) {
-            propId = macro_hashTable_id(obj);
-            type = propId/TYPE_STRIDE;
-            const char* name = groups_PropertyNameById(g, propId);
-            if (type == TYPE_DOUBLE)
-                printf("%s:%lg ", name, macro_hashTable_double(obj));
-            else if (type == TYPE_INT)
-                printf("%s:%i ", name, macro_hashTable_int(obj));
-            else if (type == TYPE_BOOL)
-                printf("%s:%i ", name, macro_hashTable_bool(obj));
-            else if (type == TYPE_STRING)
-                printf("%s:%s ", name, macro_hashTable_string(obj));
-    } macro_end_foreach(obj)
-    printf("\r\n");
+	macro_err(g == NULL); macro_err(obj == NULL);
+	
+	int propId, type;
+	
+	macro_hashTable_foreach(obj) {
+		propId = macro_hashTable_id(obj);
+		type = propId/TYPE_STRIDE;
+		const char* name = groups_PropertyNameById(g, propId);
+		if (type == TYPE_DOUBLE)
+			printf("%s:%lg ", name, macro_hashTable_double(obj));
+		else if (type == TYPE_INT)
+			printf("%s:%i ", name, macro_hashTable_int(obj));
+		else if (type == TYPE_BOOL)
+			printf("%s:%i ", name, macro_hashTable_bool(obj));
+		else if (type == TYPE_STRING)
+			printf("%s:%s ", name, macro_hashTable_string(obj));
+	} macro_end_foreach(obj)
+	printf("\r\n");
 }
 
 void groups_RemoveMember(groups* g, int index)
 {
-    macro_err(g == NULL); macro_err(index < 0);
-    
+	macro_err(g == NULL); macro_err(index < 0);
+	
 	createMemberArray(g);
 	
 	hash_table* obj = g->m_memberArray[index];
@@ -1052,15 +1052,15 @@ void groups_RemoveMember(groups* g, int index)
 	bitstream* b = bitstream_InitWithValues
 	(bitstream_AllocWithGC(gc), 2, (int[]){index,index+1});
 	bitstream* c;
-    macro_hashTable_foreach(obj) {
-        propId = macro_hashTable_id(obj);
-        a = groups_getBitstream(g, propId);
-        if (a == NULL) continue;
-        
+	macro_hashTable_foreach(obj) {
+		propId = macro_hashTable_id(obj);
+		a = groups_getBitstream(g, propId);
+		if (a == NULL) continue;
+		
 		c = bitstream_Except(gc, a, b);
 		gcstack_Swap(c, a);
-    } macro_end_foreach(obj)
-    
+	} macro_end_foreach(obj)
+	
 	g->m_bitstreamsReady = false;
 	g->m_membersReady = false;
 	
@@ -1080,8 +1080,8 @@ void groups_RemoveMember(groups* g, int index)
 
 void groups_RemoveMembers(groups* g, bitstream const* prop)
 {
-    macro_err(g == NULL); macro_err(prop == NULL);
-    
+	macro_err(g == NULL); macro_err(prop == NULL);
+	
 	createMemberArray(g);
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
@@ -1145,536 +1145,536 @@ bool groups_IsBool(int propId)
 }
 
 void groups_PrintStringToFile(FILE* f, const char* text) {
-    // Put quotation mark at the beginning.
-    fputc('"', f);
-    char ch;
-    for (const char* cursor = text; *cursor != '\0'; cursor++) {
-        ch = *cursor;
-        
-        // Handle escaped characters.
-        if (ch == '"') {
-            fputc('\\', f);
-            fputc('"', f);
-        }
-        else if (ch == '\t') {
-            fputc('\\', f);
-            fputc('t', f);
-        }
-        else if (ch == '\r') {
-            fputc('\\', f);
-            fputc('r', f);
-        }
-        else if (ch == '\n') {
-            fputc('\\', f);
-            fputc('n', f);
-        }
-        else if (ch == '\\') {
-            fputc('\\', f);
-            fputc('\\', f);
-        }
-        else if (ch == '/') {
-            fputc('\\', f);
-            fputc('/', f);
-        }
-        else if (ch == '\f') {
-            fputc('\\', f);
-            fputc('f', f);
-        }
-        else {
-            fputc(ch, f);
-        }
-    }
-    // Put quotation mark at the end.
-    fputc('"', f);
+	// Put quotation mark at the beginning.
+	fputc('"', f);
+	char ch;
+	for (const char* cursor = text; *cursor != '\0'; cursor++) {
+		ch = *cursor;
+		
+		// Handle escaped characters.
+		if (ch == '"') {
+			fputc('\\', f);
+			fputc('"', f);
+		}
+		else if (ch == '\t') {
+			fputc('\\', f);
+			fputc('t', f);
+		}
+		else if (ch == '\r') {
+			fputc('\\', f);
+			fputc('r', f);
+		}
+		else if (ch == '\n') {
+			fputc('\\', f);
+			fputc('n', f);
+		}
+		else if (ch == '\\') {
+			fputc('\\', f);
+			fputc('\\', f);
+		}
+		else if (ch == '/') {
+			fputc('\\', f);
+			fputc('/', f);
+		}
+		else if (ch == '\f') {
+			fputc('\\', f);
+			fputc('f', f);
+		}
+		else {
+			fputc(ch, f);
+		}
+	}
+	// Put quotation mark at the end.
+	fputc('"', f);
 }
 
 void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
 {
-    int propId, type;
-    bool first = true;
-    
-    macro_hashTable_foreach(obj) {
-        propId = macro_hashTable_id(obj);
-        type = propId/TYPE_STRIDE;
-        
-        // Write comma to separate the items in the document.
-        if (!first) fprintf(f, ", ");
-        first = false;
-        
-        const char* name = groups_PropertyNameById(g, propId);
-        if (type == TYPE_DOUBLE)
-            fprintf(f, "%s:%lg", name, macro_hashTable_double(obj));
-        else if (type == TYPE_INT)
-            fprintf(f, "%s:%i", name, macro_hashTable_int(obj));
-        else if (type == TYPE_BOOL)
-            fprintf(f, "%s:%i", name, macro_hashTable_bool(obj));
-        else if (type == TYPE_STRING) {
-            fprintf(f, "%s:", name);
-            groups_PrintStringToFile(f, macro_hashTable_string(obj));
-        }
-    } macro_end_foreach(obj)
+	int propId, type;
+	bool first = true;
+	
+	macro_hashTable_foreach(obj) {
+		propId = macro_hashTable_id(obj);
+		type = propId/TYPE_STRIDE;
+		
+		// Write comma to separate the items in the document.
+		if (!first) fprintf(f, ", ");
+		first = false;
+		
+		const char* name = groups_PropertyNameById(g, propId);
+		if (type == TYPE_DOUBLE)
+			fprintf(f, "%s:%lg", name, macro_hashTable_double(obj));
+		else if (type == TYPE_INT)
+			fprintf(f, "%s:%i", name, macro_hashTable_int(obj));
+		else if (type == TYPE_BOOL)
+			fprintf(f, "%s:%i", name, macro_hashTable_bool(obj));
+		else if (type == TYPE_STRING) {
+			fprintf(f, "%s:", name);
+			groups_PrintStringToFile(f, macro_hashTable_string(obj));
+		}
+	} macro_end_foreach(obj)
 }
 
 void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
 {
-    string name = prop->name;
-    int propId = prop->propId;
-    int type = propId/TYPE_STRIDE;
-    char* typeName = NULL;
-    
-    if (type == TYPE_DOUBLE)
-        typeName = "double";
-    else if (type == TYPE_INT)
-        typeName = "int";
-    else if (type == TYPE_BOOL)
-        typeName = "bool";
-    else if (type == TYPE_STRING)
-        typeName = "string";
-    fprintf(f, "%s:\"%s\"", name, typeName);
+	string name = prop->name;
+	int propId = prop->propId;
+	int type = propId/TYPE_STRIDE;
+	char* typeName = NULL;
+	
+	if (type == TYPE_DOUBLE)
+		typeName = "double";
+	else if (type == TYPE_INT)
+		typeName = "int";
+	else if (type == TYPE_BOOL)
+		typeName = "bool";
+	else if (type == TYPE_STRING)
+		typeName = "string";
+	fprintf(f, "%s:\"%s\"", name, typeName);
 }
 
 bool groups_SaveToFile(groups* g, string fileName)
 {
-    macro_err(g == NULL); macro_err(fileName == NULL);
-    
-    FILE* f = fopen(fileName, "w");
-    if (f == NULL)
-        return false;
-    
-    gcstack_item* cursor;
-    
-    // Print properties.
-    sortProperties(g);
-    
-    cursor = g->properties->root->next;
-    property* prop;
-    fprintf(f, "properties {\r\n");
-    for (; cursor != NULL; cursor = cursor->next)
-    {
-        prop = (property*)cursor;
-        groups_PrintPropertyToFile(f, g, prop);
-        if (cursor->next != NULL)
-            fprintf(f, ",\r\n");
-    }
-    fprintf(f, " }\r\n");
-    fprintf(f, "\r\n");
-    
-    // Print members.
-    cursor = g->members->root->next;
-    hash_table* member;
-    int id = 0;
-    int length = g->members->length;
-    for (; cursor != NULL; cursor = cursor->next)
-    {
-        ++id;
-        member = (hash_table*)cursor;
-        if (member->layers != NULL)
-        {
-            fprintf(f, "member {");
-            fprintf(f, "id:%i, ", length-id);
-            groups_PrintMemberToFile(f, g, member);
-            fprintf(f, "}\r\n");
-        }
-    }
-    
-    fclose(f);
-    
-    return true;
+	macro_err(g == NULL); macro_err(fileName == NULL);
+	
+	FILE* f = fopen(fileName, "w");
+	if (f == NULL)
+		return false;
+	
+	gcstack_item* cursor;
+	
+	// Print properties.
+	sortProperties(g);
+	
+	cursor = g->properties->root->next;
+	property* prop;
+	fprintf(f, "properties {\r\n");
+	for (; cursor != NULL; cursor = cursor->next)
+	{
+		prop = (property*)cursor;
+		groups_PrintPropertyToFile(f, g, prop);
+		if (cursor->next != NULL)
+			fprintf(f, ",\r\n");
+	}
+	fprintf(f, " }\r\n");
+	fprintf(f, "\r\n");
+	
+	// Print members.
+	cursor = g->members->root->next;
+	hash_table* member;
+	int id = 0;
+	int length = g->members->length;
+	for (; cursor != NULL; cursor = cursor->next)
+	{
+		++id;
+		member = (hash_table*)cursor;
+		if (member->layers != NULL)
+		{
+			fprintf(f, "member {");
+			fprintf(f, "id:%i, ", length-id);
+			groups_PrintMemberToFile(f, g, member);
+			fprintf(f, "}\r\n");
+		}
+	}
+	
+	fclose(f);
+	
+	return true;
 }
 
 void groups_AppendMembers(groups* g, gcstack* newMembers)
 {
-    macro_err(g == NULL); macro_err(newMembers == NULL);
-    
-    gcstack_item* cursor = newMembers->root->next;
-    for (; cursor != NULL; cursor = cursor->next)
-    {
-        groups_AddMember(g, (hash_table*)cursor);
-    }
+	macro_err(g == NULL); macro_err(newMembers == NULL);
+	
+	gcstack_item* cursor = newMembers->root->next;
+	for (; cursor != NULL; cursor = cursor->next)
+	{
+		groups_AddMember(g, (hash_table*)cursor);
+	}
 }
 
 
 bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
 {
-    macro_err(g == NULL); macro_err(fileName == NULL);
-    
-    // Get file size.
-    struct stat s;
-    if (stat(fileName, &s) != 0) {
-        return false;
-    }
-    int size = s.st_size;
-    
-    FILE* f = fopen(fileName, "r");
-    if (f == NULL)
-        return false;
-    
-    char* buff = malloc(sizeof(byte)*size);
-    fread(buff, sizeof(byte), size, f);
-    fclose(f);
-    
-    const int _skip_white_space = 0;
-    const int _read_properties = 1;
-    const int _read_start_paranthesis = 2;
-    const int _error = 3;
-    const int _read_name = 4;
-    const int _read_colon = 5;
-    const int _read_value = 6;
-    const int _read_string = 7;
-    const int _read_backslash_in_string = 8;
-    const int _add_after_reading_string = 9;
-    const int _read_comma_or_end_paranthesis = 10;
-    const int _read_member = 11;
-    
-    gcstack* memberStack = gcstack_Init(gcstack_Alloc());
-    
-    gcstack* gc = gcstack_Init(gcstack_Alloc());
-    gcstack_PushInt(gc, _read_member);
-    gcstack_PushInt(gc, _read_properties);
-    gcstack_PushInt(gc, _skip_white_space);
-    
-    string propText = "properties";
-    int propLength = strlen(propText);
-    int propIndex = 0;
-    
-    string memberText = "member";
-    int memberLength = strlen(memberText);
-    int memberIndex = 0;
-    
-    hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
-    
-    const char* message = NULL;
-    char* name = NULL;
-    char* text = NULL;
-    
-    char nameBuffer[255];
-    int nameBufferIndex = 0;
-    
-    gcstack* strStack = gcstack_Init(gcstack_Alloc());
-    
-    const int tag_properties = 1;
-    const int tag_member = 2;
-    int tag = 0;
-    bool isProperty, isMember, isId, isString;
-    
-    int valInt;
-    double valDouble;
-    int unicode, success;
-    
-    int buffPos = 0;
-    int ch;
-    int delta;
-    int line = 0;
-    int column = 0;
-    int state = gcstack_PopInt(gc);
-    for (ch = buff[buffPos++]; buffPos < size; ch = buff[buffPos++]) {
-        if (ch == '\n') line++;
-        if (ch == '\n') column = 0; else column++;
-    NEW_STATE:
-        switch (state) {
-            case _skip_white_space:
-                if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') continue;
-                if (verbose) printf("%i,%i: _skip_white_space\r\n", line, column);
-                state = gcstack_PopInt(gc);
-                goto NEW_STATE;
-                break;
-            case _error:
-                // Error takes one argument from the stack.
-                if (err != NULL)
-                    err(line, column, message);
-                else {
-                    printf("%i,%i: %s\r\n", line, column, message);
-                }
-                goto CLEAN_UP;
-                break;
-            case _read_properties:
-                // Checks character for character against expected keyword.
-                if (ch == propText[propIndex++]) continue;
-                if (propIndex < propLength) {
-                    message = "Expected 'properties'";
-                    state = _error;
-                    goto NEW_STATE;
-                }
-                if (verbose) printf("%i,%i: _read_properties\r\n", line, column);
-                tag = tag_properties;
-                gcstack_PushInt(gc, _read_name);
-                gcstack_PushInt(gc, _read_start_paranthesis);
-                state = _skip_white_space;
-                goto NEW_STATE;
-                break;
-            case _read_member:
-                // Checks character for character against expected keyword.
-                if (ch == memberText[memberIndex++]) continue;
-                if (memberIndex < memberLength) {
-                    message = "Expected 'member'";
-                    state = _error;
-                    goto NEW_STATE;
-                }
-                memberIndex = 0;
-                if (verbose) printf("%i,%i: _read_member\r\n", line, column);
-                tag = tag_member;
-                gcstack_PushInt(gc, _read_name);
-                gcstack_PushInt(gc, _read_start_paranthesis);
-                state = _skip_white_space;
-                goto NEW_STATE;
-                break;
-            case _read_start_paranthesis:
-                // Reads start paranthesis.
-                if (ch == '{') {
-                    // Always skip white space after start paranthesis.
-                    if (verbose) printf("%i,%i: _read_start_paranthesis\r\n", line, column);
-                    state = _skip_white_space;
-                    continue;
-                }
-                else {
-                    message = "Expected '{'";
-                    state = _error;
-                    goto NEW_STATE;
-                }
-                break;
-            case _read_colon:
-                if (ch == ':') {
-                    // Always skip white space after colon.
-                    if (verbose) printf("%i,%i: _read_colon\r\n", line, column);
-                    state = _skip_white_space;
-                    continue;
-                }
-                else {
-                    message = "Expected ':'";
-                    state = _error;
-                    goto NEW_STATE;
-                }
-                break;
-            case _read_name:
-                // Reads a name that contains only letters and alphanumeric characters.
-                if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
-                    nameBuffer[nameBufferIndex++] = ch;
-                    continue;
-                }
-                nameBuffer[nameBufferIndex++] = '\0';
-                if (verbose) printf("%i,%i: _read_name %s\r\n", line, column, nameBuffer);
-                if (name != NULL) free(name);
-                name = malloc(nameBufferIndex*sizeof(char));
-                strcpy(name, nameBuffer);
-                nameBufferIndex = 0;
-                gcstack_PushInt(gc, _read_value);
-                gcstack_PushInt(gc, _read_colon);
-                state = _skip_white_space;
-                goto NEW_STATE;
-                break;
-            case _read_value:
-                isString = (ch == '"');
-                isProperty = tag == tag_properties;
-                isMember = tag == tag_member;
-                isId = strcmp(name, "id") == 0;
-                
-                if (isProperty && !isString) {
-                    message = "Expected '\"'";
-                    state = _error;
-                    goto NEW_STATE;
-                }
-                
-                if (isId && isProperty) {
-                    message = "The 'id' keyword is reserved";
-                    state = _error;
-                    goto NEW_STATE;
-                }
-                
-                if (verbose) printf("%i,%i: _read_value %s\r\n", line, column, name);
-                
-                if (isString && isProperty) {
-                    state = _read_string;
-                    continue;
-                }
-                if (isId) {
-                    // Read the id, take a step back to include last read character.
-                    buffPos--; column--;
-                    delta = parsing_ScanInt(buff+buffPos, &valInt);
-                    buffPos += delta;
-                    column += delta;
-                    hashTable_SetInt(hs, TMP_ID_PROPID, valInt);
-                    if (verbose) printf("%i,%i: id %i\r\n", line, column, valInt);
-                }
-                else if (isMember) {
-                    int propId = groups_GetProperty(g, name);
-                    if (propId < 0) {
-                        message = "Property not found";
-                        state = _error;
-                        goto NEW_STATE;
-                    }
-                    else {
-                        // Read the types supported in this format.
-                        // Steps one character back to read to get the first character when reading.
-                        int type = propId/TYPE_STRIDE;
-                        if (type == TYPE_INT) {
-                            buffPos--; column--;
-                            delta = parsing_ScanInt(buff+buffPos, &valInt);
-                            buffPos += delta;
-                            column += delta;
-                            hashTable_SetInt(hs, propId, valInt);
-                            if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
-                        }
-                        else if (type == TYPE_DOUBLE) {
-                            buffPos--; column--;
-                            delta = parsing_ScanDouble(buff+buffPos, &valDouble);
-                            
-                            buffPos += delta;
-                            column += delta;
-                            hashTable_SetDouble(hs, propId, valDouble);
-                            if (verbose) printf("%i,%i: %s:%lg\r\n", line, column, name, valDouble);
-                        }
-                        else if (type == TYPE_BOOL) {
-                            buffPos--; column--;
-                            delta = parsing_ScanInt(buff+buffPos-1, &valInt)-1;
-                            buffPos += delta;
-                            column += delta;
-                            hashTable_SetBool(hs, propId, valInt);
-                            if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
-                        }
-                        else if (type == TYPE_STRING) {
-                            state = _read_string;
-                            continue;
-                        }
-                    }
-                }
-                
-                gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
-                state = _skip_white_space;
-                continue;
-                
-            case _read_backslash_in_string:
-                // Read special characters that are escaped by backspace.
-                if (ch == '"')
-                    gcstack_PushInt(strStack, ch);
-                else if (ch == 'r')
-                    gcstack_PushInt(strStack, '\r');
-                else if (ch == 'n')
-                    gcstack_PushInt(strStack, '\n');
-                else if (ch == '\\')
-                    gcstack_PushInt(strStack, '\\');
-                else if (ch == '/')
-                    gcstack_PushInt(strStack, '/');
-                else if (ch == 'b')
-                    gcstack_PushInt(strStack, '\b');
-                else if (ch == 'f')
-                    gcstack_PushInt(strStack, '\f');
-                else if (ch == 't')
-                    gcstack_PushInt(strStack, '\t');
-                else if (ch == 'u') {
-                    // A unicode letter consists of 4 bytes, but
-                    // first we need to convert from hexadecimals to byte form.
-                    // The least significant byte should be placed first,
-                    // because this is the order the unicode letter is detected.
-                    success = sscanf(buff+buffPos, "%x", &unicode);
-                    if (success) {
-                        gcstack_PushInt(strStack, (unicode >> 24) & 0xFF);
-                        gcstack_PushInt(strStack, (unicode >> 16) & 0xFF);
-                        gcstack_PushInt(strStack, (unicode >> 8) & 0xFF);
-                        gcstack_PushInt(strStack, unicode & 0xFF);
-                        column += 4;
-                        buffPos += 4;
-                    }
-                    else {
-                        message = "Unknown unicode format";
-                        state = _error;
-                        goto NEW_STATE;
-                    }
-                }
-                state = _read_string;
-                continue;
-                
-            case _read_string:
-                if (ch == '\\') {
-                    state = _read_backslash_in_string;
-                    continue;
-                }
-                if (ch != '"') {
-                    gcstack_PushInt(strStack, ch);
-                    continue;
-                }
-                if (text != NULL) free(text);
-                text = malloc((strStack->length+1)*sizeof(char));
-                text[strStack->length] = '\0';
-                while (strStack->length > 0)
-                    text[strStack->length] = gcstack_PopInt(strStack);
-                if (verbose) printf("%i, %i: _read_string %s\r\n", line, column, text);
-                state = _add_after_reading_string;
-                goto NEW_STATE;
-                break;
-                
-            case _read_comma_or_end_paranthesis:
-                if (ch == ',') {
-                    if (verbose) printf("%i,%i: _read_comma\r\n", line, column);
-                    gcstack_PushInt(gc, _read_name);
-                    state = _skip_white_space;
-                    continue;
-                }
-                else if (ch == '}') {
-                    // Clear the stack and read a new member.
-                    if (verbose) printf("%i,%i: _read_end_paranthesis\r\n", line, column);
-                    
-                    if (tag == tag_member) {
-                        // Put the member on the stack, because it is in reverse order.
-                        if (verbose) groups_PrintMember(g, hs);
-                        hashTable_InitWithMember(hashTable_AllocWithGC(memberStack), hs);
-                        hashTable_Init(hs);
-                        if (verbose) printf("%i,%i: added member\r\n", line, column);
-                    }
-                    
-                    while (gc->length > 0) {
-                        gcstack_PopInt(gc);
-                    }
-                    gcstack_PushInt(gc, _read_member);
-                    state = _skip_white_space;
-                    continue;
-                }
-                message = "Expected ',' or '}'";
-                state = _error;
-                goto NEW_STATE;
-                break;
-                
-            case _add_after_reading_string:
-                if (tag == tag_properties) {
-                    groups_AddProperty(g, name, text);
-                    if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
-                    gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
-                    state = _skip_white_space;
-                    continue;
-                }
-                else if (tag == tag_member) {
-                    int propId = groups_GetProperty(g, name);
-                    hashTable_SetString(hs, propId, text);
-                    if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
-                    gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
-                    state = _skip_white_space;
-                    continue;
-                }
-                break;
-                
-        }
-        break;
-    }
-    
-    // Add members to group.
-    groups_AppendMembers(g, memberStack);
-    
+	macro_err(g == NULL); macro_err(fileName == NULL);
+	
+	// Get file size.
+	struct stat s;
+	if (stat(fileName, &s) != 0) {
+		return false;
+	}
+	int size = s.st_size;
+	
+	FILE* f = fopen(fileName, "r");
+	if (f == NULL)
+		return false;
+	
+	char* buff = malloc(sizeof(byte)*size);
+	fread(buff, sizeof(byte), size, f);
+	fclose(f);
+	
+	const int _skip_white_space = 0;
+	const int _read_properties = 1;
+	const int _read_start_paranthesis = 2;
+	const int _error = 3;
+	const int _read_name = 4;
+	const int _read_colon = 5;
+	const int _read_value = 6;
+	const int _read_string = 7;
+	const int _read_backslash_in_string = 8;
+	const int _add_after_reading_string = 9;
+	const int _read_comma_or_end_paranthesis = 10;
+	const int _read_member = 11;
+	
+	gcstack* memberStack = gcstack_Init(gcstack_Alloc());
+	
+	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	gcstack_PushInt(gc, _read_member);
+	gcstack_PushInt(gc, _read_properties);
+	gcstack_PushInt(gc, _skip_white_space);
+	
+	string propText = "properties";
+	int propLength = strlen(propText);
+	int propIndex = 0;
+	
+	string memberText = "member";
+	int memberLength = strlen(memberText);
+	int memberIndex = 0;
+	
+	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+	
+	const char* message = NULL;
+	char* name = NULL;
+	char* text = NULL;
+	
+	char nameBuffer[255];
+	int nameBufferIndex = 0;
+	
+	gcstack* strStack = gcstack_Init(gcstack_Alloc());
+	
+	const int tag_properties = 1;
+	const int tag_member = 2;
+	int tag = 0;
+	bool isProperty, isMember, isId, isString;
+	
+	int valInt;
+	double valDouble;
+	int unicode, success;
+	
+	int buffPos = 0;
+	int ch;
+	int delta;
+	int line = 0;
+	int column = 0;
+	int state = gcstack_PopInt(gc);
+	for (ch = buff[buffPos++]; buffPos < size; ch = buff[buffPos++]) {
+		if (ch == '\n') line++;
+		if (ch == '\n') column = 0; else column++;
+	NEW_STATE:
+		switch (state) {
+			case _skip_white_space:
+				if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') continue;
+				if (verbose) printf("%i,%i: _skip_white_space\r\n", line, column);
+				state = gcstack_PopInt(gc);
+				goto NEW_STATE;
+				break;
+			case _error:
+				// Error takes one argument from the stack.
+				if (err != NULL)
+					err(line, column, message);
+				else {
+					printf("%i,%i: %s\r\n", line, column, message);
+				}
+				goto CLEAN_UP;
+				break;
+			case _read_properties:
+				// Checks character for character against expected keyword.
+				if (ch == propText[propIndex++]) continue;
+				if (propIndex < propLength) {
+					message = "Expected 'properties'";
+					state = _error;
+					goto NEW_STATE;
+				}
+				if (verbose) printf("%i,%i: _read_properties\r\n", line, column);
+				tag = tag_properties;
+				gcstack_PushInt(gc, _read_name);
+				gcstack_PushInt(gc, _read_start_paranthesis);
+				state = _skip_white_space;
+				goto NEW_STATE;
+				break;
+			case _read_member:
+				// Checks character for character against expected keyword.
+				if (ch == memberText[memberIndex++]) continue;
+				if (memberIndex < memberLength) {
+					message = "Expected 'member'";
+					state = _error;
+					goto NEW_STATE;
+				}
+				memberIndex = 0;
+				if (verbose) printf("%i,%i: _read_member\r\n", line, column);
+				tag = tag_member;
+				gcstack_PushInt(gc, _read_name);
+				gcstack_PushInt(gc, _read_start_paranthesis);
+				state = _skip_white_space;
+				goto NEW_STATE;
+				break;
+			case _read_start_paranthesis:
+				// Reads start paranthesis.
+				if (ch == '{') {
+					// Always skip white space after start paranthesis.
+					if (verbose) printf("%i,%i: _read_start_paranthesis\r\n", line, column);
+					state = _skip_white_space;
+					continue;
+				}
+				else {
+					message = "Expected '{'";
+					state = _error;
+					goto NEW_STATE;
+				}
+				break;
+			case _read_colon:
+				if (ch == ':') {
+					// Always skip white space after colon.
+					if (verbose) printf("%i,%i: _read_colon\r\n", line, column);
+					state = _skip_white_space;
+					continue;
+				}
+				else {
+					message = "Expected ':'";
+					state = _error;
+					goto NEW_STATE;
+				}
+				break;
+			case _read_name:
+				// Reads a name that contains only letters and alphanumeric characters.
+				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+					nameBuffer[nameBufferIndex++] = ch;
+					continue;
+				}
+				nameBuffer[nameBufferIndex++] = '\0';
+				if (verbose) printf("%i,%i: _read_name %s\r\n", line, column, nameBuffer);
+				if (name != NULL) free(name);
+				name = malloc(nameBufferIndex*sizeof(char));
+				strcpy(name, nameBuffer);
+				nameBufferIndex = 0;
+				gcstack_PushInt(gc, _read_value);
+				gcstack_PushInt(gc, _read_colon);
+				state = _skip_white_space;
+				goto NEW_STATE;
+				break;
+			case _read_value:
+				isString = (ch == '"');
+				isProperty = tag == tag_properties;
+				isMember = tag == tag_member;
+				isId = strcmp(name, "id") == 0;
+				
+				if (isProperty && !isString) {
+					message = "Expected '\"'";
+					state = _error;
+					goto NEW_STATE;
+				}
+				
+				if (isId && isProperty) {
+					message = "The 'id' keyword is reserved";
+					state = _error;
+					goto NEW_STATE;
+				}
+				
+				if (verbose) printf("%i,%i: _read_value %s\r\n", line, column, name);
+				
+				if (isString && isProperty) {
+					state = _read_string;
+					continue;
+				}
+				if (isId) {
+					// Read the id, take a step back to include last read character.
+					buffPos--; column--;
+					delta = parsing_ScanInt(buff+buffPos, &valInt);
+					buffPos += delta;
+					column += delta;
+					hashTable_SetInt(hs, TMP_ID_PROPID, valInt);
+					if (verbose) printf("%i,%i: id %i\r\n", line, column, valInt);
+				}
+				else if (isMember) {
+					int propId = groups_GetProperty(g, name);
+					if (propId < 0) {
+						message = "Property not found";
+						state = _error;
+						goto NEW_STATE;
+					}
+					else {
+						// Read the types supported in this format.
+						// Steps one character back to read to get the first character when reading.
+						int type = propId/TYPE_STRIDE;
+						if (type == TYPE_INT) {
+							buffPos--; column--;
+							delta = parsing_ScanInt(buff+buffPos, &valInt);
+							buffPos += delta;
+							column += delta;
+							hashTable_SetInt(hs, propId, valInt);
+							if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
+						}
+						else if (type == TYPE_DOUBLE) {
+							buffPos--; column--;
+							delta = parsing_ScanDouble(buff+buffPos, &valDouble);
+							
+							buffPos += delta;
+							column += delta;
+							hashTable_SetDouble(hs, propId, valDouble);
+							if (verbose) printf("%i,%i: %s:%lg\r\n", line, column, name, valDouble);
+						}
+						else if (type == TYPE_BOOL) {
+							buffPos--; column--;
+							delta = parsing_ScanInt(buff+buffPos-1, &valInt)-1;
+							buffPos += delta;
+							column += delta;
+							hashTable_SetBool(hs, propId, valInt);
+							if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
+						}
+						else if (type == TYPE_STRING) {
+							state = _read_string;
+							continue;
+						}
+					}
+				}
+				
+				gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
+				state = _skip_white_space;
+				continue;
+				
+			case _read_backslash_in_string:
+				// Read special characters that are escaped by backspace.
+				if (ch == '"')
+					gcstack_PushInt(strStack, ch);
+				else if (ch == 'r')
+					gcstack_PushInt(strStack, '\r');
+				else if (ch == 'n')
+					gcstack_PushInt(strStack, '\n');
+				else if (ch == '\\')
+					gcstack_PushInt(strStack, '\\');
+				else if (ch == '/')
+					gcstack_PushInt(strStack, '/');
+				else if (ch == 'b')
+					gcstack_PushInt(strStack, '\b');
+				else if (ch == 'f')
+					gcstack_PushInt(strStack, '\f');
+				else if (ch == 't')
+					gcstack_PushInt(strStack, '\t');
+				else if (ch == 'u') {
+					// A unicode letter consists of 4 bytes, but
+					// first we need to convert from hexadecimals to byte form.
+					// The least significant byte should be placed first,
+					// because this is the order the unicode letter is detected.
+					success = sscanf(buff+buffPos, "%x", &unicode);
+					if (success) {
+						gcstack_PushInt(strStack, (unicode >> 24) & 0xFF);
+						gcstack_PushInt(strStack, (unicode >> 16) & 0xFF);
+						gcstack_PushInt(strStack, (unicode >> 8) & 0xFF);
+						gcstack_PushInt(strStack, unicode & 0xFF);
+						column += 4;
+						buffPos += 4;
+					}
+					else {
+						message = "Unknown unicode format";
+						state = _error;
+						goto NEW_STATE;
+					}
+				}
+				state = _read_string;
+				continue;
+				
+			case _read_string:
+				if (ch == '\\') {
+					state = _read_backslash_in_string;
+					continue;
+				}
+				if (ch != '"') {
+					gcstack_PushInt(strStack, ch);
+					continue;
+				}
+				if (text != NULL) free(text);
+				text = malloc((strStack->length+1)*sizeof(char));
+				text[strStack->length] = '\0';
+				while (strStack->length > 0)
+					text[strStack->length] = gcstack_PopInt(strStack);
+				if (verbose) printf("%i, %i: _read_string %s\r\n", line, column, text);
+				state = _add_after_reading_string;
+				goto NEW_STATE;
+				break;
+				
+			case _read_comma_or_end_paranthesis:
+				if (ch == ',') {
+					if (verbose) printf("%i,%i: _read_comma\r\n", line, column);
+					gcstack_PushInt(gc, _read_name);
+					state = _skip_white_space;
+					continue;
+				}
+				else if (ch == '}') {
+					// Clear the stack and read a new member.
+					if (verbose) printf("%i,%i: _read_end_paranthesis\r\n", line, column);
+					
+					if (tag == tag_member) {
+						// Put the member on the stack, because it is in reverse order.
+						if (verbose) groups_PrintMember(g, hs);
+						hashTable_InitWithMember(hashTable_AllocWithGC(memberStack), hs);
+						hashTable_Init(hs);
+						if (verbose) printf("%i,%i: added member\r\n", line, column);
+					}
+					
+					while (gc->length > 0) {
+						gcstack_PopInt(gc);
+					}
+					gcstack_PushInt(gc, _read_member);
+					state = _skip_white_space;
+					continue;
+				}
+				message = "Expected ',' or '}'";
+				state = _error;
+				goto NEW_STATE;
+				break;
+				
+			case _add_after_reading_string:
+				if (tag == tag_properties) {
+					groups_AddProperty(g, name, text);
+					if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
+					gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
+					state = _skip_white_space;
+					continue;
+				}
+				else if (tag == tag_member) {
+					int propId = groups_GetProperty(g, name);
+					hashTable_SetString(hs, propId, text);
+					if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
+					gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
+					state = _skip_white_space;
+					continue;
+				}
+				break;
+				
+		}
+		break;
+	}
+	
+	// Add members to group.
+	groups_AppendMembers(g, memberStack);
+	
 CLEAN_UP:
-    hashTable_Delete(hs);
-    free(hs);
-    if (text != NULL) free(text);
-    if (name != NULL) free(name);
-    
-    gcstack_Delete(strStack);
-    free(strStack);
-    
-    gcstack_Delete(gc);
-    free(gc);
-    
-    gcstack_Delete(memberStack);
-    free(memberStack);
-    
-    free(buff);
-    
-    return true;
+	hashTable_Delete(hs);
+	free(hs);
+	if (text != NULL) free(text);
+	if (name != NULL) free(name);
+	
+	gcstack_Delete(strStack);
+	free(strStack);
+	
+	gcstack_Delete(gc);
+	free(gc);
+	
+	gcstack_Delete(memberStack);
+	free(memberStack);
+	
+	free(buff);
+	
+	return true;
 }
 

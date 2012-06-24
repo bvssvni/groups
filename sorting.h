@@ -32,80 +32,80 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
- 
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
-
+	
 #ifndef memgroups_sorting
 #define memgroups_sorting
-
-//
-//			Uses QuickSort to sort data pointed by an array.
-//
-//				arr		The array of pointers to the data to sort.
-//						The data must start with gcstac_item (not pointer)
-//						in the beginning of the struct.
-//
-//				beg		The first index to start sorting.
-//
-//				end		The index after the last position in 
-//						the array to sort.
-//						Typically you can just set this to the
-//						'length' of the array.
-//
-//				stride	The size of each block of data.
-//						This is used to swap the content of the
-//						of the data. The sorting algorithm
-//						does not swap pointers, so the data can be sorted
-//						in the buffer where they are stored.
-//						This means you can 'sort' to remove fragmentations.
-//
-//				t		A temporary buffer for swapping at 
-//						the size of the stride.
-//
-//				compare	The function to compare.
-//						Returns a < b	->		-1
-//								a > b	->		1
-//								a = b	->		0
-//
-void		sorting_Sort
-(
- void * arr[],
- int beg, 
- int end, 
- int stride, 
- void*t,
- int (*compare) (void const* a,void const* b)
-);
-
-//
-//			Searches a table of pointers for a variable.
-//			The table must be sorted.
-//
-//				n		The number of items in the array.
-//
-//				arr		The array of pointers.
-//
-//				name	A pointer to the data to search for.
-//
-//				compare	The function to compare.
-//						Returns a < b	->		-1
-//								a > b	->		1
-//								a = b	->		0
-//						This is used to detect whether we have found it.
-//
-int			sorting_SearchBinary
-(
- int n, 
- void const* arr[], 
- void const* data,
- int(*compare)(void const*a,void const*b)
-);
-
-
+	
+	//
+	//			Uses QuickSort to sort data pointed by an array.
+	//
+	//				arr		The array of pointers to the data to sort.
+	//						The data must start with gcstac_item (not pointer)
+	//						in the beginning of the struct.
+	//
+	//				beg		The first index to start sorting.
+	//
+	//				end		The index after the last position in 
+	//						the array to sort.
+	//						Typically you can just set this to the
+	//						'length' of the array.
+	//
+	//				stride	The size of each block of data.
+	//						This is used to swap the content of the
+	//						of the data. The sorting algorithm
+	//						does not swap pointers, so the data can be sorted
+	//						in the buffer where they are stored.
+	//						This means you can 'sort' to remove fragmentations.
+	//
+	//				t		A temporary buffer for swapping at 
+	//						the size of the stride.
+	//
+	//				compare	The function to compare.
+	//						Returns a < b	->		-1
+	//								a > b	->		1
+	//								a = b	->		0
+	//
+	void		sorting_Sort
+	(
+	 void * arr[],
+	 int beg, 
+	 int end, 
+	 int stride, 
+	 void*t,
+	 int (*compare) (void const* a,void const* b)
+	 );
+	
+	//
+	//			Searches a table of pointers for a variable.
+	//			The table must be sorted.
+	//
+	//				n		The number of items in the array.
+	//
+	//				arr		The array of pointers.
+	//
+	//				name	A pointer to the data to search for.
+	//
+	//				compare	The function to compare.
+	//						Returns a < b	->		-1
+	//								a > b	->		1
+	//								a = b	->		0
+	//						This is used to detect whether we have found it.
+	//
+	int			sorting_SearchBinary
+	(
+	 int n, 
+	 void const* arr[], 
+	 void const* data,
+	 int(*compare)(void const*a,void const*b)
+	 );
+	
+	
 #endif
-
+	
 #ifdef __cplusplus
 }
 #endif

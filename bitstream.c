@@ -48,32 +48,34 @@ int bitstream_references = 0;
 
 void bitstream_Delete(void* p)
 {
-    macro_err(p == NULL);
-    
+	macro_err(p == NULL);
+	
 	bitstream_references--;
 	// printf("%i\r\n", bitstream_references);
 	
 	bitstream* a = (bitstream*)p;
-    
+	
 	if (a->pointer != NULL)
 	{
 		free(a->pointer);
 		a->pointer = NULL;
 	}
-		
+	
 	a->length = 0;
 }
 
-bitstream* bitstream_AllocWithGC(gcstack* gc) {
+bitstream* bitstream_AllocWithGC(gcstack* gc) 
+{
 	return (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
 }
 
-bitstream* bitstream_InitWithSize(bitstream* a, int size) {
-    macro_err(a == NULL); macro_err(size < 0);
-    
+bitstream* bitstream_InitWithSize(bitstream* a, int size) 
+{
+	macro_err(a == NULL); macro_err(size < 0);
+	
 	bitstream_references++;
-    
-    a->pointer = NULL;
+	
+	a->pointer = NULL;
 	
 	if (size == 0)
 	{
@@ -83,9 +85,9 @@ bitstream* bitstream_InitWithSize(bitstream* a, int size) {
 	}
 	
 	a->length = size;
-    
-    if (size == 0) return a;
-    
+	
+	if (size == 0) return a;
+	
 	a->pointer = malloc(sizeof(int)*size);
 	for (int i = 0; i < size; i++)
 		a->pointer[i] = 0;
@@ -94,15 +96,15 @@ bitstream* bitstream_InitWithSize(bitstream* a, int size) {
 
 bitstream* bitstream_InitWithValues(bitstream* a, int size, int const vals[])
 {
-    macro_err(a == NULL); macro_err(size < 0); macro_err(vals == NULL);
-    
+	macro_err(a == NULL); macro_err(size < 0); macro_err(vals == NULL);
+	
 	bitstream_references++;
-    
-    a->pointer = NULL;
+	
+	a->pointer = NULL;
 	a->length = size;
-    
-    if (size == 0) return a;
-    
+	
+	if (size == 0) return a;
+	
 	a->pointer = malloc(sizeof(int)*size);
 	memcpy((void*)a->pointer, (void*)vals, size*sizeof(int));
 	return a;
@@ -168,17 +170,17 @@ int* createArrayFromIndices(int count, int size, int const vals[])
 
 bitstream* bitstream_InitWithIndices(bitstream* a, int size, int const vals[])
 {
-    macro_err(a == NULL); macro_err(size < 0); macro_err(vals == NULL);
-    
+	macro_err(a == NULL); macro_err(size < 0); macro_err(vals == NULL);
+	
 	bitstream_references++;
-    
-    a->pointer = NULL;
-    
-    if (size == 0) {
-        a->length = 0;
-        return a;
-    }
-    
+	
+	a->pointer = NULL;
+	
+	if (size == 0) {
+		a->length = 0;
+		return a;
+	}
+	
 	a->length = countWithIndices(size, vals);
 	a->pointer = createArrayFromIndices(a->length, size, vals);
 	return a;
@@ -256,15 +258,15 @@ int countDeltaString(int n, string* old, string* new)
 bitstream* bitstream_InitWithDeltaDouble
 (bitstream* a, int n, const double* oldValues, const double* newValues)
 {
-    macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
-    
-    a->pointer = NULL;
-    
-    if (n == 0) {
-        a->length = 0;
-        return a;
-    }
-    
+	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
+	
+	a->pointer = NULL;
+	
+	if (n == 0) {
+		a->length = 0;
+		return a;
+	}
+	
 	int count = countDeltaDouble(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -286,15 +288,15 @@ bitstream* bitstream_InitWithDeltaDouble
 bitstream* bitstream_InitWithDeltaInt
 (bitstream* a, int n, const int* oldValues, const int* newValues)
 {
-    macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
-    
-    a->pointer = NULL;
-    
-    if (n == 0) {
-        a->length = 0;
-        return a;
-    }
-    
+	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
+	
+	a->pointer = NULL;
+	
+	if (n == 0) {
+		a->length = 0;
+		return a;
+	}
+	
 	int count = countDeltaInt(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -316,15 +318,15 @@ bitstream* bitstream_InitWithDeltaInt
 bitstream* bitstream_InitWithDeltaBool
 (bitstream* a, int n, const bool* oldValues, const bool* newValues)
 {
-    macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
-    
-    a->pointer = NULL;
-    
-    if (n == 0) {
-        a->length = 0;
-        return a;
-    }
-    
+	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
+	
+	a->pointer = NULL;
+	
+	if (n == 0) {
+		a->length = 0;
+		return a;
+	}
+	
 	int count = countDeltaBool(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -346,15 +348,15 @@ bitstream* bitstream_InitWithDeltaBool
 bitstream* bitstream_InitWithDeltaString
 (bitstream* a, int n, const string* oldValues, const string* newValues)
 {
-    macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
-    
-    a->pointer = NULL;
-    
-    if (n == 0) {
-        a->length = 0;
-        return a;
-    }
-    
+	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); macro_err(newValues == NULL);
+	
+	a->pointer = NULL;
+	
+	if (n == 0) {
+		a->length = 0;
+		return a;
+	}
+	
 	int count = countDeltaString(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
@@ -375,48 +377,48 @@ bitstream* bitstream_InitWithDeltaString
 
 bitstream* bitstream_InitWithWordsInString(bitstream* a, string text, string spaceCharacters, string splitCharacters)
 {
-    macro_err(a == NULL); macro_err(text == NULL); macro_err(spaceCharacters == NULL); 
-    macro_err(splitCharacters == NULL);
-    
-    // Loop through and find all sections that does not contain splitting characters.
-    gcstack* words = gcstack_Init(gcstack_Alloc());
-    int k = 0;
-    bool wasSpace = true;
-    bool isSpace = false;
-    bool isSplit = false;
-    char* spaceCh = NULL;
-    char* splitCh = NULL;
-    for (char ch = text[0]; ch != '\0'; ch = text[++k])
-    {
-        spaceCh = strchr(spaceCharacters, ch);
-        splitCh = strchr(splitCharacters, ch);
-        isSplit = splitCh != NULL;
-        isSpace = spaceCh != NULL || isSplit;
-        
-        // Split characters are marked whether they follow another or not.
-        if (isSplit) gcstack_PushInt(words, k);
-        else if (!isSpace && wasSpace) gcstack_PushInt(words, k);
-        else if (isSpace && !wasSpace) gcstack_PushInt(words, k);
-        wasSpace = isSpace;
-    }
-    
-    // If there is no split character at the end, we have to use end of text.
-    if ((words->length % 2) != 0)
-        gcstack_PushInt(words, k);
-    
-    int* arr = gcstack_CreateIntArrayBackward(words);
-    bitstream_InitWithValues(a, words->length, arr);
-    free(arr);
-    gcstack_Delete(words);
-    free(words);
-    
-    return a;
+	macro_err(a == NULL); macro_err(text == NULL); macro_err(spaceCharacters == NULL); 
+	macro_err(splitCharacters == NULL);
+	
+	// Loop through and find all sections that does not contain splitting characters.
+	gcstack* words = gcstack_Init(gcstack_Alloc());
+	int k = 0;
+	bool wasSpace = true;
+	bool isSpace = false;
+	bool isSplit = false;
+	char* spaceCh = NULL;
+	char* splitCh = NULL;
+	for (char ch = text[0]; ch != '\0'; ch = text[++k])
+	{
+		spaceCh = strchr(spaceCharacters, ch);
+		splitCh = strchr(splitCharacters, ch);
+		isSplit = splitCh != NULL;
+		isSpace = spaceCh != NULL || isSplit;
+		
+		// Split characters are marked whether they follow another or not.
+		if (isSplit) gcstack_PushInt(words, k);
+		else if (!isSpace && wasSpace) gcstack_PushInt(words, k);
+		else if (isSpace && !wasSpace) gcstack_PushInt(words, k);
+		wasSpace = isSpace;
+	}
+	
+	// If there is no split character at the end, we have to use end of text.
+	if ((words->length % 2) != 0)
+		gcstack_PushInt(words, k);
+	
+	int* arr = gcstack_CreateIntArrayBackward(words);
+	bitstream_InitWithValues(a, words->length, arr);
+	free(arr);
+	gcstack_Delete(words);
+	free(words);
+	
+	return a;
 }
 
 void bitstream_Print(bitstream const*a)
 {
-    macro_err(a == NULL);
-    
+	macro_err(a == NULL);
+	
 	int length = a->length-1;
 	for (int i = 0; i < length; i += 2) {
 		int p1 = a->pointer[i];
@@ -427,9 +429,9 @@ void bitstream_Print(bitstream const*a)
 }
 
 bitstream* bitstream_DirectJoin(gcstack* gc, 
-								bitstream const* a, bitstream const* b) {
-    macro_err(a == NULL); macro_err(b == NULL);
-    
+				bitstream const* a, bitstream const* b) {
+	macro_err(a == NULL); macro_err(b == NULL);
+	
 	bitstream* arr = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
 	arr->length = a->length + b->length;
 	arr->pointer = malloc(sizeof(int)*arr->length);
@@ -441,8 +443,8 @@ bitstream* bitstream_DirectJoin(gcstack* gc,
 }
 
 bitstream* bitstream_Clone(gcstack* gc, bitstream const* a) {
-    macro_err(a == NULL);
-    
+	macro_err(a == NULL);
+	
 	bitstream* b = (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
 	b->length = a->length;
 	b->pointer = malloc(sizeof(int)*b->length);
@@ -503,8 +505,8 @@ int countAnd(bitstream const* a, bitstream const* b)
 
 bitstream* bitstream_And(gcstack* gc, bitstream const* a, bitstream const* b)
 {
-    macro_err(a == NULL); macro_err(b == NULL);
-    
+	macro_err(a == NULL); macro_err(b == NULL);
+	
 	int list = 0;
 	bitstream* arr = bitstream_InitWithSize
 	(bitstream_AllocWithGC(gc), countAnd(a, b));
@@ -620,8 +622,8 @@ int countOr(bitstream const* a, bitstream const* b)
 
 bitstream* bitstream_Or(gcstack* gc, bitstream const* a, bitstream const* b)
 {
-    macro_err(a == NULL); macro_err(b == NULL);
-    
+	macro_err(a == NULL); macro_err(b == NULL);
+	
 	int count = countOr(a,b);
 	
 	bitstream* list = bitstream_InitWithSize
@@ -717,8 +719,8 @@ int countInvert(bitstream* a, int inv)
 
 bitstream* bitstream_Invert(gcstack* gc, bitstream* a, int inv)
 {
-    macro_err(a == NULL);
-    
+	macro_err(a == NULL);
+	
 	bitstream* res = bitstream_InitWithSize
 	(bitstream_AllocWithGC(gc), countInvert(a, inv));
 	
@@ -743,7 +745,7 @@ bitstream* bitstream_Invert(gcstack* gc, bitstream* a, int inv)
 	{
 		res->pointer[resCount] = inv;
 	}
-		
+	
 	return res;
 }
 
@@ -802,8 +804,8 @@ int countExcept(bitstream const* a, bitstream const* b)
 
 bitstream* bitstream_Except(gcstack* gc, bitstream const* a, bitstream const* b)
 {
-    macro_err(a == NULL); macro_err(b == NULL);
-    
+	macro_err(a == NULL); macro_err(b == NULL);
+	
 	int a_length = a->length;
 	int b_length = b->length;
 	if (b_length == 0)
@@ -865,8 +867,8 @@ bitstream* bitstream_Except(gcstack* gc, bitstream const* a, bitstream const* b)
 
 int bitstream_Size(bitstream const* list)
 {
-    macro_err(list == NULL);
-    
+	macro_err(list == NULL);
+	
 	int listCount = list->length;
 	int sum = 0;
 	for (int i = 0; i < listCount; i+=2)
@@ -908,8 +910,8 @@ int bitstream_AbsSub(bitstream const* list)
 
 int bitstream_Abs(bitstream const* list, int maximum)
 {
-    macro_err(list == NULL);
-    
+	macro_err(list == NULL);
+	
 	if (list->length == 0)
 		return 0;
 	int abs = bitstream_AbsSub(list);
@@ -920,22 +922,22 @@ int bitstream_Abs(bitstream const* list, int maximum)
 
 int* bitstream_ArrayPointer(bitstream const* a)
 {
-    macro_err(a == NULL);
-    
+	macro_err(a == NULL);
+	
 	return a->pointer;
 }
 
 int bitstream_NumberOfBlocks(bitstream const* a)
 {
-    macro_err(a == NULL);
-    
+	macro_err(a == NULL);
+	
 	return a->length/2;
 }
 
 int bitstream_PopStart(bitstream* a)
 {
-    macro_err(a == NULL);
-    
+	macro_err(a == NULL);
+	
 	int length = a->length;
 	if (length < 2) return -1;
 	
@@ -956,8 +958,8 @@ int bitstream_PopStart(bitstream* a)
 
 int bitstream_PopEnd(bitstream* a)
 {
-    macro_err(a == NULL);
-    
+	macro_err(a == NULL);
+	
 	int length = a->length;
 	if (length < 2) return -1;
 	
@@ -973,30 +975,30 @@ int bitstream_PopEnd(bitstream* a)
 
 char** bitstream_GetWords(bitstream* a, string text)
 {
-    macro_err(a == NULL);
-    
-    if (text == NULL) return NULL;
-    
-    int length = a->length/2;
-    char** arr = malloc(sizeof(char*)*length);
-    
-    int start, end;
-    int wordLength;
-    char* str;
-    int i, j;
-    for (i = 0; i < length; i++) {
-        start = a->pointer[i*2];
-        end = a->pointer[i*2+1];
-        wordLength = end - start;
-        
-        str = malloc((wordLength+1)*sizeof(char));
-        for (j = 0; j < wordLength; j++)
-            str[j] = text[start+j];
-        str[wordLength] = '\0';
-        
-        arr[i] = str;
-    }
-    
-    return arr;
+	macro_err(a == NULL);
+	
+	if (text == NULL) return NULL;
+	
+	int length = a->length/2;
+	char** arr = malloc(sizeof(char*)*length);
+	
+	int start, end;
+	int wordLength;
+	char* str;
+	int i, j;
+	for (i = 0; i < length; i++) {
+		start = a->pointer[i*2];
+		end = a->pointer[i*2+1];
+		wordLength = end - start;
+		
+		str = malloc((wordLength+1)*sizeof(char));
+		for (j = 0; j < wordLength; j++)
+			str[j] = text[start+j];
+		str[wordLength] = '\0';
+		
+		arr[i] = str;
+	}
+	
+	return arr;
 }
 

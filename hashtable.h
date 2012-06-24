@@ -36,107 +36,107 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+	
 #ifndef memgroups_hashtable
 #define memgroups_hashtable
-    
+	
 #include "gcstack.h"
-    
-    typedef struct hash_layer {
-        gcstack_item gc;
-        int n;
-        int* indices;
-        void** data;
-    } hash_layer;
-
+	
+	typedef struct hash_layer {
+		gcstack_item gc;
+		int n;
+		int* indices;
+		void** data;
+	} hash_layer;
+	
 	typedef struct hash_table {
-        gcstack_item gc;
+		gcstack_item gc;
 		gcstack* layers;
 		int m_lastPrime;
 	} hash_table;
-
+	
 	//
-    //      HASH LAYERS
-    //
-    //      The sub structures of a hash table.
-    //
-    void hashLayer_Delete(void* p);
-    
-    hash_layer* hashLayer_AllocWithGC(gcstack* gc);
-    
-    hash_layer* hashLayer_InitWithSize(hash_layer* hashLayer, int n);
-    
-    int hashLayer_NextPrime(int prime);
-    
-    //
-    //      HASH TABLE
-    //
-    //      The structure used for storing by property id or hash key.
-    //
-    void hashTable_Delete(void* p);
-    
+	//      HASH LAYERS
+	//
+	//      The sub structures of a hash table.
+	//
+	void hashLayer_Delete(void* p);
+	
+	hash_layer* hashLayer_AllocWithGC(gcstack* gc);
+	
+	hash_layer* hashLayer_InitWithSize(hash_layer* hashLayer, int n);
+	
+	int hashLayer_NextPrime(int prime);
+	
+	//
+	//      HASH TABLE
+	//
+	//      The structure used for storing by property id or hash key.
+	//
+	void hashTable_Delete(void* p);
+	
 	hash_table* hashTable_AllocWithGC(gcstack* gc);
 	
 	hash_table* hashTable_Init(hash_table* hash);
 	
-    hash_table* hashTable_InitWithMember(hash_table* obj, hash_table* b);
-    
+	hash_table* hashTable_InitWithMember(hash_table* obj, hash_table* b);
 	
-    //
-    //      HASHING
-    //
-    //      Using hashing of strings, you can check for the existence of a string very fast.
-    //      This is a different way to use hash table than storing pointers by id.
-    //      It should not be mixed with other usages.
-    //
-    unsigned long hashTable_GenerateHashId
-    (const char *str);
-    
-    //
-    //      Sets a string, the id is a hash value of the string.
-    //      The string is used to check for per match.
-    //      Don't mix with      hashTable_Set
-    //
-    void                hashTable_SetStringHash
-    (hash_table* hash, char* value);
-    
-    //
-    //      Returns true if the hash table contains a string.
-    //      The values in the table are stored as string and it uses this for perfect matching.
-    //      Don't mix with       hashTable_Get
-    //
-    int                hashTable_ContainsStringHash
-    (hash_table* hash, const char* value);
-    
-    //
-    //      POINTER BY ID
-    //
-    //      Sets a pointer in the hash table by an id.
-    //      If you use a double data type, use hashTable_SetDouble.
-    //
-	void hashTable_Set
-    (hash_table* hash, int id, void* value);
-    
-    //
-    //      Returns a pointer that can not be changed because it can only be freed
-    //      by the hash table and if you need to change it you have to copy it.
+	
 	//
-    const void*         hashTable_Get       
-    (hash_table* hash, int id);
-    
+	//      HASHING
+	//
+	//      Using hashing of strings, you can check for the existence of a string very fast.
+	//      This is a different way to use hash table than storing pointers by id.
+	//      It should not be mixed with other usages.
+	//
+	unsigned long hashTable_GenerateHashId
+	(const char *str);
 	
-    void                hashTable_SetDouble 
-    (hash_table* obj, int propId, double val);
-    
-    void                hashTable_SetString 
-    (hash_table* obj, int propId, char const* val);
-    
-    void hashTable_SetInt
-    (hash_table* obj, int propId, int val);
-    
-    void hashTable_SetBool
-    (hash_table* obj, int propId, int val);
-    
+	//
+	//      Sets a string, the id is a hash value of the string.
+	//      The string is used to check for per match.
+	//      Don't mix with      hashTable_Set
+	//
+	void                hashTable_SetStringHash
+	(hash_table* hash, char* value);
+	
+	//
+	//      Returns true if the hash table contains a string.
+	//      The values in the table are stored as string and it uses this for perfect matching.
+	//      Don't mix with       hashTable_Get
+	//
+	int                hashTable_ContainsStringHash
+	(hash_table* hash, const char* value);
+	
+	//
+	//      POINTER BY ID
+	//
+	//      Sets a pointer in the hash table by an id.
+	//      If you use a double data type, use hashTable_SetDouble.
+	//
+	void hashTable_Set
+	(hash_table* hash, int id, void* value);
+	
+	//
+	//      Returns a pointer that can not be changed because it can only be freed
+	//      by the hash table and if you need to change it you have to copy it.
+	//
+	const void*         hashTable_Get       
+	(hash_table* hash, int id);
+	
+	
+	void                hashTable_SetDouble 
+	(hash_table* obj, int propId, double val);
+	
+	void                hashTable_SetString 
+	(hash_table* obj, int propId, char const* val);
+	
+	void hashTable_SetInt
+	(hash_table* obj, int propId, int val);
+	
+	void hashTable_SetBool
+	(hash_table* obj, int propId, int val);
+	
 #endif
 	
 #ifdef __cplusplus

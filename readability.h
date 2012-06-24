@@ -32,21 +32,21 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
- 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+	
 #ifndef MEMGROUPS_READABILITY
 #define MEMGROUPS_READABILITY
-    
-// This is to make the code easier to read and to import from C#.
+	
+	// This is to make the code easier to read and to import from C#.
 #define bool int
 #define true 1
 #define false 0
 #define string char const*
 #define byte unsigned char
-
+	
 #define TYPE_STRIDE 1000000
 #define TYPE_DOUBLE 1
 #define TYPE_STRING 2
@@ -56,43 +56,43 @@ extern "C" {
 #define TYPE_VARIABLE 100
 #define TYPE_ARRAY 200
 	
-//
-//		FOREACH MACROES
-//
-//		These need to be copied to your source file in order to work.
-//		They simplify the task of dealing with nested bitstreams.
-//
-//		foreach (bitstream) {
-//			if (_pos(bitstream) > 200)
-//				_break(bitstream);
-//      } end_foreach
-//
-//		// Iterating reverse:
-//		foreach_reverse (bitstream) {
-//		} end_foreach
-//
-//		// Nested loops:
-//		foreach (a) {
-//			foreach (b) {
-//				_break(a); // Jumps outside the loop.
-//			} end_foreach
-//		} end_foreach
-//
-//		To access the index of the array which the bitstream
-//		is referring to, use
-//
-//		int i = _pos(prop);
-//
-//		Tip: Declaring variables before the loop will increase performance.
-//
-
+	//
+	//		FOREACH MACROES
+	//
+	//		These need to be copied to your source file in order to work.
+	//		They simplify the task of dealing with nested bitstreams.
+	//
+	//		foreach (bitstream) {
+	//			if (_pos(bitstream) > 200)
+	//				_break(bitstream);
+	//      } end_foreach
+	//
+	//		// Iterating reverse:
+	//		foreach_reverse (bitstream) {
+	//		} end_foreach
+	//
+	//		// Nested loops:
+	//		foreach (a) {
+	//			foreach (b) {
+	//				_break(a); // Jumps outside the loop.
+	//			} end_foreach
+	//		} end_foreach
+	//
+	//		To access the index of the array which the bitstream
+	//		is referring to, use
+	//
+	//		int i = _pos(prop);
+	//
+	//		Tip: Declaring variables before the loop will increase performance.
+	//
+	
 #define macro_foreach_reverse(a) \
 int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; \
 for (_macro_i##a = a->length-2; _macro_i##a >= 0; _macro_i##a -= 2) { \
 _macro_start##a = a->pointer[_macro_i##a]; \
 _macro_end##a = a->pointer[_macro_i##a+1]; \
 for (_macro_j##a = _macro_end##a-1; _macro_j##a >= _macro_start##a; _macro_j##a--) {
-
+	
 #define macro_foreach(a) \
 int _macro_len##a = a->length-1; \
 int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; \
@@ -100,17 +100,17 @@ for (_macro_i##a = 0; _macro_i##a < _macro_len##a; _macro_i##a += 2) { \
 _macro_start##a = a->pointer[_macro_i##a]; \
 _macro_end##a = a->pointer[_macro_i##a+1]; \
 for (_macro_j##a = _macro_start##a; _macro_j##a < _macro_end##a; _macro_j##a++) {
-
+	
 #define macro_end_foreach(a) }}_macro_BREAK_BITSTREAM_##a:;
-
+	
 #define macro_break(a)     goto _macro_BREAK_BITSTREAM_##a
-
+	
 #define macro_pos(a)    _macro_j##a
- 
-    //
-    //      FOR EACH DESIGNED FOR HASH TABLE
-    //
- 
+	
+	//
+	//      FOR EACH DESIGNED FOR HASH TABLE
+	//
+	
 #define macro_hashTable_foreach(a) gcstack_item* _macro_cursor##a = a->layers->root->next; \
 hash_layer* _macro_layer##a; \
 int* _macro_indices##a; \
@@ -121,57 +121,57 @@ _macro_indices##a = _macro_layer##a->indices; \
 _macro_n##a = _macro_layer##a->n; \
 for (_macro_i##a = 0; _macro_i##a < _macro_n##a; _macro_i##a++) { \
 if (_macro_indices##a[_macro_i##a] == -1) continue;
-
+	
 #define macro_hashTable_id(a) _macro_indices##a[_macro_i##a]
 #define macro_hashTable_value(a) _macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_double(a) *(double*)_macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_int(a) *(int*)_macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_bool(a) *(bool*)_macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_string(a) (char*)_macro_layer##a->data[_macro_i##a]
-    
-    //
-    //      SIMPLIFIED ERROR HANDLING
-    //
-    //      Crashes thread or application and prints a detailed error message.
-    //      It also prints the condition under which the thread or application should crash.
-    //
+	
+	//
+	//      SIMPLIFIED ERROR HANDLING
+	//
+	//      Crashes thread or application and prints a detailed error message.
+	//      It also prints the condition under which the thread or application should crash.
+	//
 #define macro_err(cond) if (cond) errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
-
-    //
-    //      This macro is specially suited for expression errors.
-    //      It displays where in an expression an error happened.
-    //      At the moment, it supports only single-line expression.
-    //
+	
+	//
+	//      This macro is specially suited for expression errors.
+	//      It displays where in an expression an error happened.
+	//      At the moment, it supports only single-line expression.
+	//
 #define macro_errExp(message,pos,expr) errorhandling_CrashExpression(message, pos, expr)
-    
-    //
-    //      SIMPLIFIED STRING HANDLING
-    //
-    // PERFORMANCE COMPLEXITY LEVEL (CL)
-    // 2^X per 10 sec
-    // Jun 21 2012 17:37:16
-    // 268435456
-    // Leak 0
-    // Duration: 14.928422
-    // cl 27.421938, offset -0.578062
-    // ________________________________
-    // macro_string_concat(myName, "Alpha ", "Centuri");
-    //
-    //      This string concat macro is very fast.
-    //      It allocated on the stack so 'assignTo' does not need to be released.
-    //
+	
+	//
+	//      SIMPLIFIED STRING HANDLING
+	//
+	// PERFORMANCE COMPLEXITY LEVEL (CL)
+	// 2^X per 10 sec
+	// Jun 21 2012 17:37:16
+	// 268435456
+	// Leak 0
+	// Duration: 14.928422
+	// cl 27.421938, offset -0.578062
+	// ________________________________
+	// macro_string_concat(myName, "Alpha ", "Centuri");
+	//
+	//      This string concat macro is very fast.
+	//      It allocated on the stack so 'assignTo' does not need to be released.
+	//
 #define macro_string_concat(assignTo,string1,string2) \
-    const char* _macro_string1##assignTo = string1; \
-    const char* _macro_string2##assignTo = string2; \
-    int _macro_string1Length##assignTo = strlen(_macro_string1##assignTo); \
-    int _macro_string2Length##assignTo = strlen(_macro_string2##assignTo); \
-    char assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo+1]; \
-    memcpy(assignTo, _macro_string1##assignTo, _macro_string1Length##assignTo); \
-    memcpy(assignTo+_macro_string1Length##assignTo, _macro_string2##assignTo, _macro_string2Length##assignTo); \
-    assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo] = '\0'
-    
+const char* _macro_string1##assignTo = string1; \
+const char* _macro_string2##assignTo = string2; \
+int _macro_string1Length##assignTo = strlen(_macro_string1##assignTo); \
+int _macro_string2Length##assignTo = strlen(_macro_string2##assignTo); \
+char assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo+1]; \
+memcpy(assignTo, _macro_string1##assignTo, _macro_string1Length##assignTo); \
+memcpy(assignTo+_macro_string1Length##assignTo, _macro_string2##assignTo, _macro_string2Length##assignTo); \
+assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo] = '\0'
+	
 #endif
-    
+	
 #ifdef __cplusplus
 }
 #endif

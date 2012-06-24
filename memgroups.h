@@ -32,31 +32,31 @@
  of the authors and should not be interpreted as representing official policies, 
  either expressed or implied, of the FreeBSD Project.
  */
- 
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+	
 #ifndef memgroups
 #define memgroups
-    
+	
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
 #include <stdarg.h>
 #include <string.h>
-
+	
 #include "gcstack.h"
 #include "bitstream.h"
 #include "sorting.h"
 #include "groups.h"
 #include "hashtable.h"
 #include "errorhandling.h"
-
+	
 #endif
-    
+	
 #ifdef __cplusplus
 }
 
