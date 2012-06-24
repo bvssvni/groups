@@ -10,7 +10,6 @@
 #include <pthread.h>
 
 #include "memgroups.h"
-#include "property.h"
 
 // Some arbitrary number to check if it didn't crash properly.
 int DID_NOT_CRASH = 42;

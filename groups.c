@@ -42,7 +42,6 @@
 #include "gcstack.h"
 #include "bitstream.h"
 #include "sorting.h"
-#include "property.h"
 
 #include "errorhandling.h"
 #include "readability.h"
