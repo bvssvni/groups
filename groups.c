@@ -52,6 +52,35 @@
 
 #define TMP_ID_PROPID 123
 
+void property_Delete(void* p)
+{
+    macro_err(p == NULL);
+    
+	property* prop = (property*)p;
+    
+	if (prop->name != NULL)
+	{
+		free(prop->name);
+		prop->name = NULL;
+	}
+}
+
+property* property_AllocWithGC(gcstack* gc)
+{
+	return (property*)gcstack_malloc(gc, sizeof(property), property_Delete);
+}
+
+property* property_InitWithNameAndId(property* prop, char const* name, int propId)
+{
+    macro_err(prop == NULL); macro_err(name == NULL);
+    
+	int nameLength = strlen(name);
+	char* newName = malloc(sizeof(char)*nameLength);
+	prop->name = strcpy(newName, name);
+	prop->propId = propId;
+	return prop;
+}
+
 void groups_Delete(void* p)
 {
     macro_err(p == NULL);
@@ -310,14 +339,14 @@ int groups_GetProperty(groups* g, char const* name)
 	return prop->propId;
 }
 
-char** groups_GetPropertyNames(groups* g)
+const char** groups_GetPropertyNames(groups* g)
 {
     macro_err(g == NULL);
     
     sortProperties(g);
     
     int length = g->properties->length;
-    char** arr = malloc(sizeof(char*)*length);
+    const char** arr = malloc(sizeof(char*)*length);
     gcstack_item* cursor = g->properties->root->next;
     property* prop;
     int k = 0;
@@ -329,9 +358,8 @@ char** groups_GetPropertyNames(groups* g)
     return arr;
 }
 
-bitstream* groups_GetBitstream(groups* g, int propId)
+bitstream* groups_getBitstream(groups* g, int propId)
 {
-    macro_err(g == NULL); macro_err(propId < 0);
     
 	// Filter out the type information.
 	propId %= TYPE_STRIDE;
@@ -342,6 +370,16 @@ bitstream* groups_GetBitstream(groups* g, int propId)
 	// safely because it is not removed from the stack and got length 0.
 	// It means it will function as an empty set.
 	return g->m_bitstreamsArray[propId];
+}
+
+//
+//      Returns a read-only bitstream for use outside use.
+//
+const bitstream* groups_GetBitstream(groups* g, int propId)
+{
+    macro_err(g == NULL); macro_err(propId < 0);
+    
+    return groups_getBitstream(g, propId);
 }
 
 bitstream* groups_GetAll(groups* g) {
@@ -1017,7 +1055,7 @@ void groups_RemoveMember(groups* g, int index)
 	bitstream* c;
     macro_hashTable_foreach(obj) {
         propId = macro_hashTable_id(obj);
-        a = groups_GetBitstream(g, propId);
+        a = groups_getBitstream(g, propId);
         if (a == NULL) continue;
         
 		c = bitstream_Except(gc, a, b);

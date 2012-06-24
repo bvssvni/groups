@@ -335,7 +335,7 @@ void gcstack_PrintString(gcstack const* gc)
     printf("\r\n");
 }
 
-gcstack_item* gcstack_Start(gcstack const* gc)
+const gcstack_item* gcstack_Start(gcstack const* gc)
 {
     macro_err(gc == NULL);
     
@@ -368,7 +368,7 @@ void gcstack_EndLevel(gcstack* gc, int level)
 	gc->root->next = cursor;
 }
 
-void gcstack_End(gcstack* gc, gcstack_item* end)
+void gcstack_End(gcstack* gc, const gcstack_item* end)
 {
     macro_err(gc == NULL);
     
@@ -487,11 +487,9 @@ void gcstack_Pop(gcstack* gc, void* p)
 	gc->length--;
 }
 
-void gcstack_Push(gcstack* gc, void* p)
+void gcstack_Push(gcstack* gc, gcstack_item* item)
 {
-    macro_err(gc == NULL); macro_err(p == NULL);
-    
-	gcstack_item* item = (gcstack_item*)p;
+    macro_err(gc == NULL); macro_err(item == NULL);
 	
 	// Detach from old stack.
 	if (item->previous != NULL)
@@ -657,7 +655,7 @@ bool gcstack_PopBoolWithItem(gcstack* gc, gcstack_item* item)
     return val;
 }
 
-char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
+const char* gcstack_PopStringWithItem(gcstack* gc, gcstack_item* item)
 {
     macro_err(gc == NULL);
     

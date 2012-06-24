@@ -82,41 +82,50 @@ extern "C" {
         char* val;
     } gcstring;
 
+    //
+    // Garbage collector stack.
+    // This works as the container of a double-linked list.
+    // The root is a stat item on the top of the stack.
+    // The length is the depth of the stack according to counting.
+    //
+    typedef struct gcstack
+    {
+        int length;
+        gcstack_item* root;
+    } gcstack;
 
-// Garbage collector stack.
-// This works as the container of a double-linked list.
-// The root is a stat item on the top of the stack.
-// The length is the depth of the stack according to counting.
-typedef struct gcstack
-{
-	int length;
-	gcstack_item* root;
-} gcstack;
+    //
+    // This function is handy when you have one gc
+    // in an object that contains the members,
+    // you can swap one above the current level and one
+    // below so the old one gets deleted.
+    //
+    void gcstack_Swap
+    (void* a, void* b);
 
-// This function is handy when you have one gc
-// in an object that contains the members,
-// you can swap one above the current level and one
-// below so the old one gets deleted.
-void gcstack_Swap
-(void* a, void* b);
+    //
+    // Pops item from the stack, calls the free method and frees the pointer.
+    //
+    void gcstack_free
+    (gcstack* gc, void* p);
 
-// Pops item from the stack, calls the free method and frees the pointer.
-void gcstack_free
-(gcstack* gc, void* p);
+    gcstack* gcstack_Alloc
+    ();
 
-gcstack* gcstack_Alloc
-();
+    //
+    // Deletes the gcstack and all the data it refers to.
+    //
+    void gcstack_Delete
+    (gcstack* gc);
 
-// Deletes the gcstack and all the data it refers to.
-void gcstack_Delete
-(gcstack* gc);
+    //
+    // Initializes a garbage collected item.
+    //
+    gcstack_item* gcstack_malloc
+    (gcstack* gc, int size, void(*free)(void* p));
 
-// Initializes a garbage collected item.
-gcstack_item* gcstack_malloc
-(gcstack* gc, int size, void(*free)(void* p));
-
-gcstack* gcstack_Init
-(gcstack* gc);
+    gcstack* gcstack_Init
+    (gcstack* gc);
     
     //
     //      If you don't like to have items in reverse, you can reorder them.
@@ -130,14 +139,14 @@ gcstack* gcstack_Init
     void gcstack_ReverseToOtherStackWithLevel
     (gcstack* from, gcstack* to, int level);
 
-gcstack_item* gcstack_Start
-(gcstack const* gc);
+    const gcstack_item* gcstack_Start
+    (gcstack const* gc);
 
     //
     //      Destroys objects on the stack back to a certain pointer.
     //
     void gcstack_End
-    (gcstack* gc, gcstack_item* start);
+    (gcstack* gc, const gcstack_item* start);
 
     //
     //      Destroys objects on the stack back to a certain size.
@@ -145,19 +154,32 @@ gcstack_item* gcstack_Start
     void gcstack_EndLevel
     (gcstack* gc, int level);
     
-void gcstack_Pop
-(gcstack* gc, void* p);
+    void gcstack_Pop
+    (gcstack* gc, void* p);
 
-// Pushes an item on the stack.
-void gcstack_Push
-(gcstack* gc, void* p);
+    //
+    // Pushes an item on the stack.
+    //
+    void gcstack_Push
+    (gcstack* gc, gcstack_item* item);
     
-    // Pushes a double to the stack, using internal type for it.
-    // This makes it easier to use gcstack for numerical calculations.
-    gcstack_item*       gcstack_PushDouble      (gcstack* gc, double val);
-    gcstack_item*       gcstack_PushInt         (gcstack* gc, int val);
-    gcstack_item*       gcstack_PushBool        (gcstack* gc, int val);
-    gcstack_item*       gcstack_PushString      (gcstack* gc, const char* val);
+    //
+    //      SPECIAL TYPE PUSH AND POP
+    //
+    //      Pushes a double to the stack, using internal type for it.
+    //      This makes it easier to use gcstack for numerical calculations.
+    //
+    gcstack_item* gcstack_PushDouble
+    (gcstack* gc, double val);
+    
+    gcstack_item* gcstack_PushInt
+    (gcstack* gc, int val);
+    
+    gcstack_item* gcstack_PushBool
+    (gcstack* gc, int val);
+    
+    gcstack_item* gcstack_PushString
+    (gcstack* gc, const char* val);
 
     //
     //      Pops double from the stack.
@@ -183,7 +205,7 @@ void gcstack_Push
     int gcstack_PopBoolWithItem
     (gcstack* gc, gcstack_item* item);
     
-    char* gcstack_PopStringWithItem
+    const char* gcstack_PopStringWithItem
     (gcstack* gc, gcstack_item* item);
     
     //
@@ -214,6 +236,10 @@ void gcstack_Push
     const char** gcstack_CreateStringArray
     (gcstack const* gc);
 
+    //
+    //      BACKWARD ARRAYS
+    //
+    //      These arrays are in the order expected from a queue.
     //
     //      Create an array of items that are on the stack backward.
     //      This array can be sorted with sorting_Sort.

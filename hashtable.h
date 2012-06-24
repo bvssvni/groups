@@ -42,28 +42,38 @@ extern "C" {
     
 #include "gcstack.h"
     
-	typedef struct hash_layer {
-		gcstack_item gc;
-		int n;
-		int* indices;
+    typedef struct hash_layer {
+        gcstack_item gc;
+        int n;
+        int* indices;
         void** data;
-	} hash_layer;
-	
+    } hash_layer;
+
 	typedef struct hash_table {
         gcstack_item gc;
 		gcstack* layers;
 		int m_lastPrime;
 	} hash_table;
-	
-	void hashLayer_Delete(void* p);
-	
-	hash_layer* hashLayer_AllocWithGC(gcstack* gc);
-	
-	hash_layer* hashLayer_InitWithSize(hash_layer* hashLayer, int n);
-	
-	int hashLayer_NextPrime(int prime);
-	
-	void hashTable_Delete(void* p);
+
+	//
+    //      HASH LAYERS
+    //
+    //      The sub structures of a hash table.
+    //
+    void hashLayer_Delete(void* p);
+    
+    hash_layer* hashLayer_AllocWithGC(gcstack* gc);
+    
+    hash_layer* hashLayer_InitWithSize(hash_layer* hashLayer, int n);
+    
+    int hashLayer_NextPrime(int prime);
+    
+    //
+    //      HASH TABLE
+    //
+    //      The structure used for storing by property id or hash key.
+    //
+    void hashTable_Delete(void* p);
     
 	hash_table* hashTable_AllocWithGC(gcstack* gc);
 	

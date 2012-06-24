@@ -43,7 +43,31 @@ extern "C" {
 #include "gcstack.h"
 #include "bitstream.h"
 #include "hashtable.h"
-	
+    
+    //
+    //      PROPERTY STRUCTURE
+    //
+    //      This is a sub structure of the Groups structure.
+    //
+    typedef struct property property;
+    struct property {
+        gcstack_item gc;
+        char* name;
+        int propId;
+    };
+    
+    void property_Delete
+    (void* p);
+    
+    property* property_AllocWithGC
+    (gcstack* gc);
+    
+    property* property_InitWithNameAndId
+    (property* prop, char const* name, int propId);
+
+    //
+    //      GROUPS STRUCTURE
+    //
 	typedef struct groups {
 		// Allow struct to be garbage collected by gcstack.
 		gcstack_item gc;
@@ -113,7 +137,7 @@ extern "C" {
     //
     //      Returns an array of property names.
     //
-    char** groups_GetPropertyNames
+    const char** groups_GetPropertyNames
     (groups* g);
 	
 	//
@@ -127,7 +151,7 @@ extern "C" {
 	//		For example, if you delete an object and then try to update it,
 	//		that is no good.
 	//
-	bitstream* groups_GetBitstream
+	const bitstream* groups_GetBitstream
 	(groups* g, int propId);
     
     //

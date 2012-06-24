@@ -1074,21 +1074,6 @@ void* crash_hashTable_SetBool2(void* input)
     return &DID_NOT_CRASH;
 }
 
-void* crash_hashLayer_InitWithSize(void* input)
-{
-    hashLayer_InitWithSize(NULL, -1);
-    
-    return &DID_NOT_CRASH;
-}
-
-void* crash_hashLayer_InitWithSize2(void* input)
-{
-    gcstack* gc = (gcstack*)input;
-    hashLayer_InitWithSize(hashLayer_AllocWithGC(gc), -1);
-    
-    return &DID_NOT_CRASH;
-}
-
 void crashtest_Run() {
     crash_Test(crash_bitstream_Abs, "bitstream_Abs");
     crash_Test(crash_bitstream_ArrayPointer, "bitstream_ArrayPointer");
@@ -1220,8 +1205,6 @@ void crashtest_Run() {
     crash_Test(crash_hashTable_SetStringHash, "hashTable_SetStringHash");
     crash_Test(crash_hashTable_SetStringHash2, "hashTable_SetStringHash2");
     crash_Test(crash_property_Delete, "property_Delete");
-    crash_Test(crash_hashLayer_InitWithSize, "hashLayer_InitWithSize");
-    crash_Test(crash_hashLayer_InitWithSize2, "hashLayer_InitWithSize2");
  
 }
 
