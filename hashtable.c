@@ -69,7 +69,8 @@ void hashLayer_Delete(void* p)
 
 hash_layer* hashLayer_AllocWithGC(gcstack* gc)
 {
-	return (hash_layer*)gcstack_malloc(gc, sizeof(hash_layer), hashLayer_Delete);
+	return (hash_layer*)gcstack_malloc(gc, sizeof(hash_layer), 
+					   hashLayer_Delete);
 }
 
 hash_layer* hashLayer_InitWithSize(hash_layer* hashLayer, int n)
@@ -143,7 +144,8 @@ void hashTable_Delete(void* p)
 
 hash_table* hashTable_AllocWithGC(gcstack* gc)
 {
-	return (hash_table*)gcstack_malloc(gc, sizeof(hash_table), hashTable_Delete);
+	return (hash_table*)gcstack_malloc(gc, sizeof(hash_table), 
+					   hashTable_Delete);
 }
 
 hash_table* hashTable_Init(hash_table* hash)
@@ -153,7 +155,8 @@ hash_table* hashTable_Init(hash_table* hash)
 	hash->layers = gcstack_Init(gcstack_Alloc());
 	gcstack* layers = hash->layers;
 	hash->m_lastPrime = START_PRIME;
-	hashLayer_InitWithSize(hashLayer_AllocWithGC(layers), hash->m_lastPrime);
+	hashLayer_InitWithSize(hashLayer_AllocWithGC(layers), 
+			       hash->m_lastPrime);
 	return hash;
 }
 
@@ -350,7 +353,8 @@ bool hashTable_ContainsStringHash(hash_table* hash, const char* value)
 		exId = indices[pos];
 		
 		// Return if already set.
-		if (exId == id && strcmp(value, layer->data[pos]) == 0) return true;
+		if (exId == id && strcmp(value, layer->data[pos]) == 0) 
+			return true;
 	}
 	
 	return false;

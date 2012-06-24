@@ -85,8 +85,10 @@ extern "C" {
 	//
 	//      HASHING
 	//
-	//      Using hashing of strings, you can check for the existence of a string very fast.
-	//      This is a different way to use hash table than storing pointers by id.
+	//      Using hashing of strings, you can check for the existence of a 
+	//	string very fast.
+	//      This is a different way to use hash table than storing pointers 
+	//	by id.
 	//      It should not be mixed with other usages.
 	//
 	unsigned long hashTable_GenerateHashId
@@ -102,7 +104,8 @@ extern "C" {
 	
 	//
 	//      Returns true if the hash table contains a string.
-	//      The values in the table are stored as string and it uses this for perfect matching.
+	//      The values in the table are stored as string and it uses this 
+	//	for perfect matching.
 	//      Don't mix with       hashTable_Get
 	//
 	int                hashTable_ContainsStringHash
@@ -118,8 +121,10 @@ extern "C" {
 	(hash_table* hash, int id, void* value);
 	
 	//
-	//      Returns a pointer that can not be changed because it can only be freed
-	//      by the hash table and if you need to change it you have to copy it.
+	//      Returns a pointer that can not be changed because it can only be
+	//	freed
+	//      by the hash table and if you need to change it you have to copy 
+	//	it.
 	//
 	const void*         hashTable_Get       
 	(hash_table* hash, int id);

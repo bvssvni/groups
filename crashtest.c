@@ -719,7 +719,8 @@ void* crash_bitstream_InitWithDeltaDouble(void* input)
 void* crash_bitstream_InitWithDeltaDouble2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaDouble(bitstream_AllocWithGC(gc), -1, NULL, NULL);
+	bitstream_InitWithDeltaDouble(bitstream_AllocWithGC(gc), -1, NULL, 
+				      NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -788,7 +789,8 @@ void* crash_bitstream_InitWithDeltaString(void* input)
 void* crash_bitstream_InitWithDeltaString2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaString(bitstream_AllocWithGC(gc), -1, NULL, NULL);
+	bitstream_InitWithDeltaString(bitstream_AllocWithGC(gc), -1, NULL, 
+				      NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1082,26 +1084,43 @@ void crashtest_Run() {
 	crash_Test(crash_bitstream_Except, "bitstream_Except");
 	crash_Test(crash_bitstream_DirectJoin, "bitstream_DirectJoin");
 	crash_Test(crash_bitstream_DirectJoin2, "bitstream_DirectJoin2");
-	crash_Test(crash_bitstream_InitWithDeltaBool, "bitstream_InitWithDeltaBool");
-	crash_Test(crash_bitstream_InitWithDeltaBool2, "bitstream_InitWithDeltaBool2");
-	crash_Test(crash_bitstream_InitWithDeltaBool3, "bitstream_InitWithDeltaBool3");
-	crash_Test(crash_bitstream_InitWithDeltaDouble, "bitstream_InitWithDeltaDouble");
-	crash_Test(crash_bitstream_InitWithDeltaDouble2, "bitstream_InitWithDeltaDouble2");
-	crash_Test(crash_bitstream_InitWithDeltaDouble3, "bitstream_InitWithDeltaDouble3");
-	crash_Test(crash_bitstream_InitWithDeltaInt, "bitstream_InitWithDeltaInt");
-	crash_Test(crash_bitstream_InitWithDeltaInt2, "bitstream_InitWithDeltaInt2");
-	crash_Test(crash_bitstream_InitWithDeltaInt3, "bitstream_InitWithDeltaInt3");
-	crash_Test(crash_bitstream_InitWithDeltaString, "bitstream_InitWithDeltaString");
-	crash_Test(crash_bitstream_InitWithDeltaString2, "bitstream_InitWithDeltaString2");
-	crash_Test(crash_bitstream_InitWithDeltaString3, "bitstream_InitWithDeltaString");
-	crash_Test(crash_bitstream_InitWithIndices, "bitstream_InitWithIndices");
-	crash_Test(crash_bitstream_InitWithIndices2, "bitstream_InitWithIndices2");
-	crash_Test(crash_bitstream_InitWithIndices3, "bitstream_InitWithIndices3");
+	crash_Test(crash_bitstream_InitWithDeltaBool, 
+		   "bitstream_InitWithDeltaBool");
+	crash_Test(crash_bitstream_InitWithDeltaBool2, 
+		   "bitstream_InitWithDeltaBool2");
+	crash_Test(crash_bitstream_InitWithDeltaBool3, 
+		   "bitstream_InitWithDeltaBool3");
+	crash_Test(crash_bitstream_InitWithDeltaDouble, 
+		   "bitstream_InitWithDeltaDouble");
+	crash_Test(crash_bitstream_InitWithDeltaDouble2, 
+		   "bitstream_InitWithDeltaDouble2");
+	crash_Test(crash_bitstream_InitWithDeltaDouble3, 
+		   "bitstream_InitWithDeltaDouble3");
+	crash_Test(crash_bitstream_InitWithDeltaInt, 
+		   "bitstream_InitWithDeltaInt");
+	crash_Test(crash_bitstream_InitWithDeltaInt2, 
+		   "bitstream_InitWithDeltaInt2");
+	crash_Test(crash_bitstream_InitWithDeltaInt3, 
+		   "bitstream_InitWithDeltaInt3");
+	crash_Test(crash_bitstream_InitWithDeltaString, 
+		   "bitstream_InitWithDeltaString");
+	crash_Test(crash_bitstream_InitWithDeltaString2, 
+		   "bitstream_InitWithDeltaString2");
+	crash_Test(crash_bitstream_InitWithDeltaString3, 
+		   "bitstream_InitWithDeltaString");
+	crash_Test(crash_bitstream_InitWithIndices, 
+		   "bitstream_InitWithIndices");
+	crash_Test(crash_bitstream_InitWithIndices2, 
+		   "bitstream_InitWithIndices2");
+	crash_Test(crash_bitstream_InitWithIndices3, 
+		   "bitstream_InitWithIndices3");
 	crash_Test(crash_bitstream_InitWithSize, "bitstream_InitWithSize");
 	crash_Test(crash_bitstream_InitWithSize2, "bitstream_InitWithSize2");
 	crash_Test(crash_bitstream_InitWithValues, "bitstream_InitWithValues");
-	crash_Test(crash_bitstream_InitWithValues2, "bitstream_InitWithValues2");
-	crash_Test(crash_bitstream_InitWithValues3, "bitstream_InitWithValues3");
+	crash_Test(crash_bitstream_InitWithValues2, 
+		   "bitstream_InitWithValues2");
+	crash_Test(crash_bitstream_InitWithValues3, 
+		   "bitstream_InitWithValues3");
 	crash_Test(crash_bitstream_Invert, "bitstream_Invert");
 	crash_Test(crash_bitstream_NumberOfBlocks, "bitstream_NumberOfBlocks");
 	crash_Test(crash_bitstream_Or, "bitstream_Or");
@@ -1119,7 +1138,8 @@ void crashtest_Run() {
 	crash_Test(crash_groups_GetBitstream2, "groups_GetBitstream2");
 	crash_Test(crash_groups_Init, "groups_Init");
 	crash_Test(crash_groups_IsDefaultVariable, "groups_IsDefaultVariable");
-	crash_Test(crash_groups_IsDefaultVariable2, "groups_IsDefaultVariable2");
+	crash_Test(crash_groups_IsDefaultVariable2, 
+		   "groups_IsDefaultVariable2");
 	crash_Test(crash_gcstack_Delete, "gcstack_Delete");
 	crash_Test(crash_groups_RemoveProperty, "groups_RemoveProperty");
 	crash_Test(crash_groups_RemoveProperty2, "groups_RemovePoperty2");
@@ -1132,8 +1152,10 @@ void crashtest_Run() {
 	crash_Test(crash_groups_SetInt, "groups_SetInt");
 	crash_Test(crash_groups_SetInt2, "groups_SetInt2");
 	crash_Test(crash_groups_SetInt3, "groups_SetInt3");
-	crash_Test(crash_hashTable_ContainsStringHash, "hashTable_ContainsStringHash");
-	crash_Test(crash_hashTable_ContainsStringHash2, "hashTable_ContainsStringHash2");
+	crash_Test(crash_hashTable_ContainsStringHash, 
+		   "hashTable_ContainsStringHash");
+	crash_Test(crash_hashTable_ContainsStringHash2, 
+		   "hashTable_ContainsStringHash2");
 	crash_Test(crash_hashTable_Delete, "hashTable_Delete");
 	crash_Test(crash_hashTable_Get, "hashTable_Get");
 	crash_Test(crash_hashTable_Get2, "hashTable_Get2");
@@ -1141,7 +1163,8 @@ void crashtest_Run() {
 	crash_Test(crash_groups_GetProperty2, "groups_GetProperty2");
 	crash_Test(crash_hashTable_Init, "hashTable_Init");
 	crash_Test(crash_hashTable_InitWithMember, "hashTable_InitWithMember");
-	crash_Test(crash_hashTable_InitWithMember2, "hashTable_InitWithMember2");
+	crash_Test(crash_hashTable_InitWithMember2, 
+		   "hashTable_InitWithMember2");
 	crash_Test(crash_hashTable_Set, "hashTable_Set");
 	crash_Test(crash_hashTable_Set2, "hashTable_Set2");
 	crash_Test(crash_hashTable_SetBool, "hashTable_SetBool");

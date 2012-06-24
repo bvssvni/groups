@@ -1293,362 +1293,659 @@ void groups_AppendMembers(groups* g, gcstack* newMembers)
 	}
 }
 
+typedef struct read_from_file_settings {
+	gcstack* memberStack;
+	gcstack* stateStack;
+	gcstack* strStack;
+	char* buff;
+	string propText;
+	int propLength;
+	int propIndex;
+	string memberText;
+	int memberLength;
+	int memberIndex;
+	hash_table* hs;
+	string message;
+	char* name;
+	char* text;
+	char nameBuffer[255];
+	int nameBufferIndex;
+	int tag;
+	bool isProperty, isMember, isId, isString;
+	int valInt;
+	double valDouble;
+	int unicode, success;
+	int buffPos;
+	int ch;
+	int delta;
+	int line;
+	int column;
+	int state;
+	int propId;
+} read_from_file_settings;
 
-bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(int line, int column, const char* message))
+const int _skip_white_space = 0;
+const int _read_properties = 1;
+const int _read_start_paranthesis = 2;
+const int _error = 3;
+const int _read_name = 4;
+const int _read_colon = 5;
+const int _read_value = 6;
+const int _read_string = 7;
+const int _read_backslash_in_string = 8;
+const int _add_after_reading_string = 9;
+const int _read_comma_or_end_paranthesis = 10;
+const int _read_member = 11;
+
+const int tag_properties = 1;
+const int tag_member = 2;
+
+const int GROUPS_RFF_CONTINUE = 0;
+const int GROUPS_RFF_CLEAN_UP = 1;
+const int GROUPS_RFF_NEW_STATE = 2;
+
+const char* GROUPS_ERROR_EXPECTED_PROPERTIES = "Expected 'properties'";
+const char* GROUPS_ERROR_EXPECTED_MEMBER = "Expected 'member'";
+const char* GROUPS_ERROR_EXPECTED_START_CURLY_PARANTHESIS = "Expected '{'";
+const char* GROUPS_ERROR_EXPECTED_COLON = "Expected ':'";
+const char* GROUPS_ERROR_EXPECTED_DOUBLE_QUOTE = "Expected '\"'";
+const char* GROUPS_ERROR_ID_KEYWORD_RESERVED = "The 'id' keyword is reserved";
+const char* GROUPS_ERROR_PROPERTY_NOT_FOUND = "Property not found";
+const char* GROUPS_ERROR_UNKNOWN_UNICODE_FORMAT = "Unknown unicode format";
+const char* GROUPS_ERROR_EXPECTED_COMMA_OR_END_CURLY_PARANTHESIS =
+"Expected ',' or '}'";
+const char* GROUPS_ERROR_INVALID_TAG = 
+"Invalid tag, expected 'member' or property";
+
+//
+// This macro does the proper action by the return value from function.
+// I can not be handled differently since goto and continue are native
+// keywords in C and does not allow conditions. Normally I avoid macros
+// when possible, but in this case it will make the code easier to maintain.
+//
+#define macro_rff_action(a) \
+switch (a) { case GROUPS_RFF_CONTINUE: continue; \
+case GROUPS_RFF_CLEAN_UP: goto CLEAN_UP; \
+case GROUPS_RFF_NEW_STATE: goto NEW_STATE; }
+
+inline void groups_readFromFile_initSettings
+(read_from_file_settings* s, FILE* f, int fileSize);
+
+void groups_readFromFile_initSettings
+(read_from_file_settings* s, FILE* f, 
+				      int fileSize) 
+{
+	s->buff = malloc(sizeof(byte)*fileSize);
+	fread(s->buff, sizeof(byte), fileSize, f);
+	fclose(f);
+	
+	s->memberStack = gcstack_Init(gcstack_Alloc());
+	
+	s->stateStack = gcstack_Init(gcstack_Alloc());
+	gcstack_PushInt(s->stateStack, _read_member);
+	gcstack_PushInt(s->stateStack, _read_properties);
+	gcstack_PushInt(s->stateStack, _skip_white_space);
+	
+	s->propText = "properties";
+	s->propLength = strlen(s->propText);
+	s->propIndex = 0;
+	
+	s->memberText = "member";
+	s->memberLength = strlen(s->memberText);
+	s->memberIndex = 0;
+	
+	s->hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+	
+	s->message = NULL;
+	s->name = NULL;
+	s->text = NULL;
+	
+	s->nameBufferIndex = 0;
+	
+	s->strStack = gcstack_Init(gcstack_Alloc());
+	
+	s->tag = 0;
+	s->buffPos = 0;
+	s->line = 0;
+	s->column = 0;
+	s->state = gcstack_PopInt(s->stateStack);
+}
+
+inline void groups_readFromFile_deleteSettings(read_from_file_settings* s);
+
+void groups_readFromFile_deleteSettings(read_from_file_settings* s)
+{
+	hashTable_Delete(s->hs);
+	free(s->hs);
+	if (s->text != NULL) free(s->text);
+	if (s->name != NULL) free(s->name);
+	
+	gcstack_Delete(s->strStack);
+	free(s->strStack);
+	
+	gcstack_Delete(s->stateStack);
+	free(s->stateStack);
+	
+	gcstack_Delete(s->memberStack);
+	free(s->memberStack);
+	
+	free(s->buff);
+}
+
+inline int groups_readFromFile_skipWhiteSpace
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_skipWhiteSpace(read_from_file_settings* s, bool verbose)
+{
+	if (s->ch == ' ' || s->ch == '\r' || s->ch == '\t' || s->ch == '\n') 
+		return GROUPS_RFF_CONTINUE;
+	if (verbose) 
+		printf("%i,%i: _skip_white_space\r\n", s->line, s->column);
+	
+	s->state = gcstack_PopInt(s->stateStack);
+	
+	return GROUPS_RFF_NEW_STATE;
+}
+
+inline int groups_readFromFile_error
+(read_from_file_settings* s, 
+ void(*err)(int line, int column, const char* message));
+
+int groups_readFromFile_error
+(read_from_file_settings* s, 
+ void(*err)(int line, int column, const char* message))
+{
+	// Error takes one argument from the stack.
+	if (err != NULL) {
+		err(s->line, s->column, s->message);
+	} else {
+		printf("%i,%i: %s\r\n", s->line, s->column, s->message);
+	}
+	return GROUPS_RFF_CLEAN_UP;
+}
+
+inline int groups_readFromFile_readProperties
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readProperties
+(read_from_file_settings* s, bool verbose)
+{
+	// Checks character for character against 
+	// expected keyword.
+	if (s->ch == s->propText[s->propIndex++]) 
+		return GROUPS_RFF_CONTINUE;
+	
+	if (s->propIndex < s->propLength) {
+		s->message = GROUPS_ERROR_EXPECTED_PROPERTIES;
+		s->state = _error;
+		return GROUPS_RFF_NEW_STATE;
+	}
+	
+	if (verbose) 
+		printf("%i,%i: _read_properties\r\n", s->line, s->column);
+	
+	s->tag = tag_properties;
+	gcstack_PushInt(s->stateStack, _read_name);
+	gcstack_PushInt(s->stateStack, _read_start_paranthesis);
+	s->state = _skip_white_space;
+	return GROUPS_RFF_NEW_STATE;
+}
+
+inline int groups_readFromFile_readMember
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readMember
+(read_from_file_settings* s, bool verbose)
+{
+	// Checks character for character against 
+	// expected keyword.
+	if (s->ch == s->memberText[s->memberIndex++]) 
+		return GROUPS_RFF_CONTINUE;
+	if (s->memberIndex < s->memberLength) {
+		s->message = GROUPS_ERROR_EXPECTED_MEMBER;
+		s->state = _error;
+		return GROUPS_RFF_NEW_STATE;
+	}
+	s->memberIndex = 0;
+	if (verbose) 
+		printf("%i,%i: _read_member\r\n", s->line, s->column);
+	
+	s->tag = tag_member;
+	gcstack_PushInt(s->stateStack, _read_name);
+	gcstack_PushInt(s->stateStack, _read_start_paranthesis);
+	s->state = _skip_white_space;
+	return GROUPS_RFF_NEW_STATE;
+}
+
+inline int groups_readFromFile_readStartParanthesis
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readStartParanthesis
+(read_from_file_settings* s, bool verbose)
+{
+	// Reads start paranthesis.
+	if (s->ch == '{') {
+		// Always skip white space after start 
+		// paranthesis.
+		if (verbose) 
+			printf("%i,%i: _read_start_para"
+			       "nthesis\r\n", s->line, s->column);
+		
+		s->state = _skip_white_space;
+		return GROUPS_RFF_CONTINUE;
+	}
+	
+	s->message = GROUPS_ERROR_EXPECTED_START_CURLY_PARANTHESIS;
+	s->state = _error;
+	return GROUPS_RFF_NEW_STATE;
+}
+
+inline int groups_readFromFile_readColon
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readColon
+(read_from_file_settings* s, bool verbose)
+{
+	if (s->ch == ':') {
+		// Always skip white space after colon.
+		if (verbose) 
+			printf("%i,%i: _read_colon\r\n",
+			       s->line, s->column);
+		
+		s->state = _skip_white_space;
+		return GROUPS_RFF_CONTINUE;
+	}
+	
+	s->message = GROUPS_ERROR_EXPECTED_COLON;
+	s->state = _error;
+	return GROUPS_RFF_NEW_STATE;
+}
+
+inline int groups_readFromFile_readName
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readName
+(read_from_file_settings* s, bool verbose)
+{
+	// Reads a name that contains only letters and 
+	// alphanumeric characters.
+	if ((s->ch >= 'a' && s->ch <= 'z') || 
+	    (s->ch >= 'A' && s->ch <= 'Z') || 
+	    (s->ch >= '0' && s->ch <= '9')) {
+		s->nameBuffer[s->nameBufferIndex++] = s->ch;
+		return GROUPS_RFF_CONTINUE;
+	}
+	s->nameBuffer[s->nameBufferIndex++] = '\0';
+	if (verbose) 
+		printf("%i,%i: _read_name %s\r\n", 
+		       s->line, s->column, s->nameBuffer);
+	
+	if (s->name != NULL) 
+		free(s->name);
+	
+	s->name = malloc(s->nameBufferIndex*sizeof(char));
+	strcpy(s->name, s->nameBuffer);
+	s->nameBufferIndex = 0;
+	gcstack_PushInt(s->stateStack, _read_value);
+	gcstack_PushInt(s->stateStack, _read_colon);
+	s->state = _skip_white_space;
+	return GROUPS_RFF_NEW_STATE;
+}
+
+inline int groups_readFromFile_readValue
+(groups* g, read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readValue
+(groups* g, read_from_file_settings* s, bool verbose)
+{
+	s->isString = (s->ch == '"');
+	s->isProperty = s->tag == tag_properties;
+	s->isMember = s->tag == tag_member;
+	s->isId = strcmp(s->name, "id") == 0;
+	
+	if (s->isProperty && !s->isString) {
+		s->message = GROUPS_ERROR_EXPECTED_DOUBLE_QUOTE;
+		s->state = _error;
+		return GROUPS_RFF_NEW_STATE;
+	}
+	
+	if (s->isId && s->isProperty) {
+		s->message = GROUPS_ERROR_ID_KEYWORD_RESERVED;
+		s->state = _error;
+		return GROUPS_RFF_NEW_STATE;
+	}
+	
+	if (verbose) 
+		printf("%i,%i: _read_value %s\r\n", s->line, s->column, 
+		       s->name);
+	
+	if (s->isString && s->isProperty) {
+		s->state = _read_string;
+		return GROUPS_RFF_CONTINUE;
+	}
+	if (s->isId) {
+		// Read the id, take a step back to 
+		// include last read character.
+		s->buffPos--; s->column--;
+		s->delta = parsing_ScanInt(s->buff+s->buffPos, 
+					  &s->valInt);
+		s->buffPos += s->delta;
+		s->column += s->delta;
+		hashTable_SetInt(s->hs, TMP_ID_PROPID, 
+				 s->valInt);
+		if (verbose) 
+			printf("%i,%i: id %i\r\n", s->line, s->column, 
+			       s->valInt);
+	}
+	else if (s->isMember) {
+		s->propId = groups_GetProperty(g, s->name);
+		if (s->propId < 0) {
+			s->message = GROUPS_ERROR_PROPERTY_NOT_FOUND;
+			s->state = _error;
+			return GROUPS_RFF_NEW_STATE;
+		} else {
+			// Read the types supported in 
+			// this format.
+			// Steps one character back to 
+			// read to get the first 
+			// character when reading.
+			int type = s->propId/TYPE_STRIDE;
+			if (type == TYPE_INT) {
+				s->buffPos--; s->column--;
+				s->delta = parsing_ScanInt
+				(s->buff+s->buffPos, &s->valInt);
+				s->buffPos += s->delta;
+				s->column += s->delta;
+				hashTable_SetInt(s->hs, s->propId, s->valInt);
+				if (verbose) 
+					printf
+					("%i,%i: %s:%i\r\n", s->line, s->column,
+					 s->name, s->valInt);
+			}
+			else if (type == TYPE_DOUBLE) {
+				s->buffPos--; s->column--;
+				s->delta = parsing_ScanDouble
+				(s->buff+s->buffPos, &s->valDouble);
+				
+				s->buffPos += s->delta;
+				s->column += s->delta;
+				hashTable_SetDouble
+				(s->hs, s->propId, s->valDouble);
+				if (verbose) 
+					printf
+					("%i,%i: %s:%lg\r\n", s->line, 
+					 s->column, s->name, s->valDouble);
+			}
+			else if (type == TYPE_BOOL) {
+				s->buffPos--; s->column--;
+				s->delta = parsing_ScanInt
+				(s->buff+s->buffPos-1, &s->valInt)-1;
+				s->buffPos += s->delta;
+				s->column += s->delta;
+				hashTable_SetBool(s->hs, s->propId, s->valInt);
+				if (verbose) 
+					printf("%i,%i: %s:%i\r\n", s->line, 
+					       s->column, s->name, s->valInt);
+			}
+			else if (type == TYPE_STRING) {
+				s->state = _read_string;
+				return GROUPS_RFF_CONTINUE;
+			}
+		}
+	}
+	
+	gcstack_PushInt(s->stateStack, _read_comma_or_end_paranthesis);
+	s->state = _skip_white_space;
+	return GROUPS_RFF_CONTINUE;
+}
+
+inline int groups_readFromFile_ReadBackSlashInString
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_ReadBackSlashInString
+(read_from_file_settings* s, bool verbose)
+{
+	// Read special characters that are escaped by backspace.
+	if (s->ch == '"')
+		gcstack_PushInt(s->strStack, s->ch);
+	else if (s->ch == 'r')
+		gcstack_PushInt(s->strStack, '\r');
+	else if (s->ch == 'n')
+		gcstack_PushInt(s->strStack, '\n');
+	else if (s->ch == '\\')
+		gcstack_PushInt(s->strStack, '\\');
+	else if (s->ch == '/')
+		gcstack_PushInt(s->strStack, '/');
+	else if (s->ch == 'b')
+		gcstack_PushInt(s->strStack, '\b');
+	else if (s->ch == 'f')
+		gcstack_PushInt(s->strStack, '\f');
+	else if (s->ch == 't')
+		gcstack_PushInt(s->strStack, '\t');
+	else if (s->ch == 'u') {
+		// A unicode letter consists of 4 bytes, but
+		// first we need to convert from hexadecimals to byte form.
+		// The least significant byte should be placed first,
+		// because this is the order the unicode letter is detected.
+		s->success = sscanf(s->buff+s->buffPos, "%x", &s->unicode);
+		if (s->success) {
+			gcstack_PushInt(s->strStack, (s->unicode >> 24) & 0xFF);
+			gcstack_PushInt(s->strStack, (s->unicode >> 16) & 0xFF);
+			gcstack_PushInt(s->strStack, (s->unicode >> 8) & 0xFF);
+			gcstack_PushInt(s->strStack, s->unicode & 0xFF);
+			s->column += 4;
+			s->buffPos += 4;
+		}
+		else {
+			s->message = GROUPS_ERROR_UNKNOWN_UNICODE_FORMAT;
+			s->state = _error;
+			return GROUPS_RFF_NEW_STATE;
+		}
+	}
+	s->state = _read_string;
+	return GROUPS_RFF_CONTINUE;
+}
+
+inline int groups_readFromFile_readString
+(read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readString
+(read_from_file_settings* s, bool verbose)
+{
+	if (s->ch == '\\') {
+		s->state = _read_backslash_in_string;
+		return GROUPS_RFF_CONTINUE;
+	}
+	if (s->ch != '"') {
+		gcstack_PushInt(s->strStack, s->ch);
+		return GROUPS_RFF_CONTINUE;
+	}
+	
+	if (s->text != NULL) 
+		free(s->text);
+	
+	s->text = malloc((s->strStack->length+1)*sizeof(char));
+	s->text[s->strStack->length] = '\0';
+	while (s->strStack->length > 0)
+		s->text[s->strStack->length] = gcstack_PopInt(s->strStack);
+	
+	if (verbose) 
+		printf("%i, %i: _read_string %s\r\n", s->line, s->column, 
+		       s->text);
+	
+	s->state = _add_after_reading_string;
+	return GROUPS_RFF_NEW_STATE;	
+}
+
+inline int groups_readFromFile_readCommadOrEndParanthesis
+(groups* g, read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_readCommadOrEndParanthesis
+(groups* g, read_from_file_settings* s, bool verbose)
+{
+	if (s->ch == ',') {
+		if (verbose) 
+			printf("%i,%i: _read_comma\r\n", s->line, s->column);
+		
+		gcstack_PushInt(s->stateStack, _read_name);
+		s->state = _skip_white_space;
+		return GROUPS_RFF_CONTINUE;
+	}
+	else if (s->ch == '}') {
+		// Clear the stack and read a new member.
+		if (verbose) 
+			printf("%i,%i: _read_end_paranthesis\r\n", s->line, 
+			       s->column);
+		
+		if (s->tag == tag_member) {
+			// Put the member on the stack, because it is in 
+			// reverse order.
+			if (verbose) 
+				groups_PrintMember(g, s->hs);
+			
+			hashTable_InitWithMember
+			(hashTable_AllocWithGC(s->memberStack), s->hs);
+			hashTable_Init(s->hs);
+			if (verbose) 
+				printf
+				("%i,%i: added member\r\n", s->line, s->column);
+		}
+		
+		while (s->stateStack->length > 0) {
+			gcstack_PopInt(s->stateStack);
+		}
+		gcstack_PushInt(s->stateStack, _read_member);
+		s->state = _skip_white_space;
+		return GROUPS_RFF_CONTINUE;
+	}
+	s->message = GROUPS_ERROR_EXPECTED_COMMA_OR_END_CURLY_PARANTHESIS;
+	s->state = _error;
+	return GROUPS_RFF_NEW_STATE;
+}
+
+inline int groups_readFromFile_afterReadingString
+(groups* g, read_from_file_settings* s, bool verbose);
+
+int groups_readFromFile_afterReadingString
+(groups* g, read_from_file_settings* s, bool verbose)
+{
+	if (s->tag == tag_properties) {
+		groups_AddProperty(g, s->name, s->text);
+		if (verbose) 
+			printf
+			("%i,%i: _add %s:%s\r\n", s->line, s->column, s->name, 
+			 s->text);
+		gcstack_PushInt(s->stateStack, _read_comma_or_end_paranthesis);
+		s->state = _skip_white_space;
+		return GROUPS_RFF_CONTINUE;
+	} else if (s->tag == tag_member) {
+		int propId = groups_GetProperty(g, s->name);
+		hashTable_SetString(s->hs, propId, s->text);
+		if (verbose) 
+			printf("%i,%i: _add %s:%s\r\n", 
+			       s->line, s->column, s->name, s->text);
+		gcstack_PushInt(s->stateStack, _read_comma_or_end_paranthesis);
+		s->state = _skip_white_space;
+		return GROUPS_RFF_CONTINUE;
+	}
+	s->state = _error;
+	s->message = GROUPS_ERROR_INVALID_TAG;
+	return GROUPS_RFF_NEW_STATE;
+}
+
+bool groups_ReadFromFile(groups* g, string fileName, bool verbose, 
+			 void(*err)(int line, int column, const char* message))
 {
 	macro_err(g == NULL); macro_err(fileName == NULL);
 	
 	// Get file size.
-	struct stat s;
-	if (stat(fileName, &s) != 0) {
+	struct stat fileState;
+	if (stat(fileName, &fileState) != 0) {
 		return false;
 	}
-	int size = s.st_size;
+	int size = fileState.st_size;
 	
 	FILE* f = fopen(fileName, "r");
 	if (f == NULL)
 		return false;
 	
-	char* buff = malloc(sizeof(byte)*size);
-	fread(buff, sizeof(byte), size, f);
-	fclose(f);
+	// Make settings ready for reading.
+	read_from_file_settings s;
+	groups_readFromFile_initSettings(&s, f, size);
 	
-	const int _skip_white_space = 0;
-	const int _read_properties = 1;
-	const int _read_start_paranthesis = 2;
-	const int _error = 3;
-	const int _read_name = 4;
-	const int _read_colon = 5;
-	const int _read_value = 6;
-	const int _read_string = 7;
-	const int _read_backslash_in_string = 8;
-	const int _add_after_reading_string = 9;
-	const int _read_comma_or_end_paranthesis = 10;
-	const int _read_member = 11;
-	
-	gcstack* memberStack = gcstack_Init(gcstack_Alloc());
-	
-	gcstack* gc = gcstack_Init(gcstack_Alloc());
-	gcstack_PushInt(gc, _read_member);
-	gcstack_PushInt(gc, _read_properties);
-	gcstack_PushInt(gc, _skip_white_space);
-	
-	string propText = "properties";
-	int propLength = strlen(propText);
-	int propIndex = 0;
-	
-	string memberText = "member";
-	int memberLength = strlen(memberText);
-	int memberIndex = 0;
-	
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
-	
-	const char* message = NULL;
-	char* name = NULL;
-	char* text = NULL;
-	
-	char nameBuffer[255];
-	int nameBufferIndex = 0;
-	
-	gcstack* strStack = gcstack_Init(gcstack_Alloc());
-	
-	const int tag_properties = 1;
-	const int tag_member = 2;
-	int tag = 0;
-	bool isProperty, isMember, isId, isString;
-	
-	int valInt;
-	double valDouble;
-	int unicode, success;
-	
-	int buffPos = 0;
-	int ch;
-	int delta;
-	int line = 0;
-	int column = 0;
-	int state = gcstack_PopInt(gc);
-	for (ch = buff[buffPos++]; buffPos < size; ch = buff[buffPos++]) {
-		if (ch == '\n') line++;
-		if (ch == '\n') column = 0; else column++;
+	for (s.ch = s.buff[s.buffPos++]; 
+	     s.buffPos < size; 
+	     s.ch = s.buff[s.buffPos++]) 
+	{
+		if (s.ch == '\n') 
+			s.line++;
+		
+		if (s.ch == '\n') 
+			s.column = 0; 
+		else 
+			s.column++;
+		
 	NEW_STATE:
-		switch (state) {
+		switch (s.state) {
 			case _skip_white_space:
-				if (ch == ' ' || ch == '\r' || ch == '\t' || ch == '\n') continue;
-				if (verbose) printf("%i,%i: _skip_white_space\r\n", line, column);
-				state = gcstack_PopInt(gc);
-				goto NEW_STATE;
+				macro_rff_action
+				(groups_readFromFile_skipWhiteSpace
+				 (&s, verbose));
 				break;
 			case _error:
-				// Error takes one argument from the stack.
-				if (err != NULL)
-					err(line, column, message);
-				else {
-					printf("%i,%i: %s\r\n", line, column, message);
-				}
-				goto CLEAN_UP;
+				macro_rff_action
+				(groups_readFromFile_error
+				 (&s, err));
 				break;
 			case _read_properties:
-				// Checks character for character against expected keyword.
-				if (ch == propText[propIndex++]) continue;
-				if (propIndex < propLength) {
-					message = "Expected 'properties'";
-					state = _error;
-					goto NEW_STATE;
-				}
-				if (verbose) printf("%i,%i: _read_properties\r\n", line, column);
-				tag = tag_properties;
-				gcstack_PushInt(gc, _read_name);
-				gcstack_PushInt(gc, _read_start_paranthesis);
-				state = _skip_white_space;
-				goto NEW_STATE;
+				macro_rff_action
+				(groups_readFromFile_readProperties
+				 (&s, verbose));
 				break;
 			case _read_member:
-				// Checks character for character against expected keyword.
-				if (ch == memberText[memberIndex++]) continue;
-				if (memberIndex < memberLength) {
-					message = "Expected 'member'";
-					state = _error;
-					goto NEW_STATE;
-				}
-				memberIndex = 0;
-				if (verbose) printf("%i,%i: _read_member\r\n", line, column);
-				tag = tag_member;
-				gcstack_PushInt(gc, _read_name);
-				gcstack_PushInt(gc, _read_start_paranthesis);
-				state = _skip_white_space;
-				goto NEW_STATE;
+				macro_rff_action
+				(groups_readFromFile_readMember
+				 (&s, verbose));
 				break;
 			case _read_start_paranthesis:
-				// Reads start paranthesis.
-				if (ch == '{') {
-					// Always skip white space after start paranthesis.
-					if (verbose) printf("%i,%i: _read_start_paranthesis\r\n", line, column);
-					state = _skip_white_space;
-					continue;
-				}
-				else {
-					message = "Expected '{'";
-					state = _error;
-					goto NEW_STATE;
-				}
+				macro_rff_action
+				(groups_readFromFile_readStartParanthesis
+				 (&s, verbose));
 				break;
 			case _read_colon:
-				if (ch == ':') {
-					// Always skip white space after colon.
-					if (verbose) printf("%i,%i: _read_colon\r\n", line, column);
-					state = _skip_white_space;
-					continue;
-				}
-				else {
-					message = "Expected ':'";
-					state = _error;
-					goto NEW_STATE;
-				}
+				macro_rff_action
+				(groups_readFromFile_readColon
+				 (&s, verbose));
 				break;
 			case _read_name:
-				// Reads a name that contains only letters and alphanumeric characters.
-				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
-					nameBuffer[nameBufferIndex++] = ch;
-					continue;
-				}
-				nameBuffer[nameBufferIndex++] = '\0';
-				if (verbose) printf("%i,%i: _read_name %s\r\n", line, column, nameBuffer);
-				if (name != NULL) free(name);
-				name = malloc(nameBufferIndex*sizeof(char));
-				strcpy(name, nameBuffer);
-				nameBufferIndex = 0;
-				gcstack_PushInt(gc, _read_value);
-				gcstack_PushInt(gc, _read_colon);
-				state = _skip_white_space;
-				goto NEW_STATE;
+				macro_rff_action
+				(groups_readFromFile_readName
+				 (&s, verbose));
 				break;
 			case _read_value:
-				isString = (ch == '"');
-				isProperty = tag == tag_properties;
-				isMember = tag == tag_member;
-				isId = strcmp(name, "id") == 0;
-				
-				if (isProperty && !isString) {
-					message = "Expected '\"'";
-					state = _error;
-					goto NEW_STATE;
-				}
-				
-				if (isId && isProperty) {
-					message = "The 'id' keyword is reserved";
-					state = _error;
-					goto NEW_STATE;
-				}
-				
-				if (verbose) printf("%i,%i: _read_value %s\r\n", line, column, name);
-				
-				if (isString && isProperty) {
-					state = _read_string;
-					continue;
-				}
-				if (isId) {
-					// Read the id, take a step back to include last read character.
-					buffPos--; column--;
-					delta = parsing_ScanInt(buff+buffPos, &valInt);
-					buffPos += delta;
-					column += delta;
-					hashTable_SetInt(hs, TMP_ID_PROPID, valInt);
-					if (verbose) printf("%i,%i: id %i\r\n", line, column, valInt);
-				}
-				else if (isMember) {
-					int propId = groups_GetProperty(g, name);
-					if (propId < 0) {
-						message = "Property not found";
-						state = _error;
-						goto NEW_STATE;
-					}
-					else {
-						// Read the types supported in this format.
-						// Steps one character back to read to get the first character when reading.
-						int type = propId/TYPE_STRIDE;
-						if (type == TYPE_INT) {
-							buffPos--; column--;
-							delta = parsing_ScanInt(buff+buffPos, &valInt);
-							buffPos += delta;
-							column += delta;
-							hashTable_SetInt(hs, propId, valInt);
-							if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
-						}
-						else if (type == TYPE_DOUBLE) {
-							buffPos--; column--;
-							delta = parsing_ScanDouble(buff+buffPos, &valDouble);
-							
-							buffPos += delta;
-							column += delta;
-							hashTable_SetDouble(hs, propId, valDouble);
-							if (verbose) printf("%i,%i: %s:%lg\r\n", line, column, name, valDouble);
-						}
-						else if (type == TYPE_BOOL) {
-							buffPos--; column--;
-							delta = parsing_ScanInt(buff+buffPos-1, &valInt)-1;
-							buffPos += delta;
-							column += delta;
-							hashTable_SetBool(hs, propId, valInt);
-							if (verbose) printf("%i,%i: %s:%i\r\n", line, column, name, valInt);
-						}
-						else if (type == TYPE_STRING) {
-							state = _read_string;
-							continue;
-						}
-					}
-				}
-				
-				gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
-				state = _skip_white_space;
-				continue;
-				
+				macro_rff_action
+				(groups_readFromFile_readValue
+				 (g, &s, verbose));
+				break;
 			case _read_backslash_in_string:
-				// Read special characters that are escaped by backspace.
-				if (ch == '"')
-					gcstack_PushInt(strStack, ch);
-				else if (ch == 'r')
-					gcstack_PushInt(strStack, '\r');
-				else if (ch == 'n')
-					gcstack_PushInt(strStack, '\n');
-				else if (ch == '\\')
-					gcstack_PushInt(strStack, '\\');
-				else if (ch == '/')
-					gcstack_PushInt(strStack, '/');
-				else if (ch == 'b')
-					gcstack_PushInt(strStack, '\b');
-				else if (ch == 'f')
-					gcstack_PushInt(strStack, '\f');
-				else if (ch == 't')
-					gcstack_PushInt(strStack, '\t');
-				else if (ch == 'u') {
-					// A unicode letter consists of 4 bytes, but
-					// first we need to convert from hexadecimals to byte form.
-					// The least significant byte should be placed first,
-					// because this is the order the unicode letter is detected.
-					success = sscanf(buff+buffPos, "%x", &unicode);
-					if (success) {
-						gcstack_PushInt(strStack, (unicode >> 24) & 0xFF);
-						gcstack_PushInt(strStack, (unicode >> 16) & 0xFF);
-						gcstack_PushInt(strStack, (unicode >> 8) & 0xFF);
-						gcstack_PushInt(strStack, unicode & 0xFF);
-						column += 4;
-						buffPos += 4;
-					}
-					else {
-						message = "Unknown unicode format";
-						state = _error;
-						goto NEW_STATE;
-					}
-				}
-				state = _read_string;
-				continue;
-				
+				macro_rff_action
+				(groups_readFromFile_ReadBackSlashInString
+				 (&s, verbose));
+				break;
 			case _read_string:
-				if (ch == '\\') {
-					state = _read_backslash_in_string;
-					continue;
-				}
-				if (ch != '"') {
-					gcstack_PushInt(strStack, ch);
-					continue;
-				}
-				if (text != NULL) free(text);
-				text = malloc((strStack->length+1)*sizeof(char));
-				text[strStack->length] = '\0';
-				while (strStack->length > 0)
-					text[strStack->length] = gcstack_PopInt(strStack);
-				if (verbose) printf("%i, %i: _read_string %s\r\n", line, column, text);
-				state = _add_after_reading_string;
-				goto NEW_STATE;
+				macro_rff_action
+				(groups_readFromFile_readString
+				 (&s, verbose));
 				break;
-				
 			case _read_comma_or_end_paranthesis:
-				if (ch == ',') {
-					if (verbose) printf("%i,%i: _read_comma\r\n", line, column);
-					gcstack_PushInt(gc, _read_name);
-					state = _skip_white_space;
-					continue;
-				}
-				else if (ch == '}') {
-					// Clear the stack and read a new member.
-					if (verbose) printf("%i,%i: _read_end_paranthesis\r\n", line, column);
-					
-					if (tag == tag_member) {
-						// Put the member on the stack, because it is in reverse order.
-						if (verbose) groups_PrintMember(g, hs);
-						hashTable_InitWithMember(hashTable_AllocWithGC(memberStack), hs);
-						hashTable_Init(hs);
-						if (verbose) printf("%i,%i: added member\r\n", line, column);
-					}
-					
-					while (gc->length > 0) {
-						gcstack_PopInt(gc);
-					}
-					gcstack_PushInt(gc, _read_member);
-					state = _skip_white_space;
-					continue;
-				}
-				message = "Expected ',' or '}'";
-				state = _error;
-				goto NEW_STATE;
+				macro_rff_action
+				(groups_readFromFile_readCommadOrEndParanthesis
+				 (g, &s, verbose));
 				break;
-				
 			case _add_after_reading_string:
-				if (tag == tag_properties) {
-					groups_AddProperty(g, name, text);
-					if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
-					gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
-					state = _skip_white_space;
-					continue;
-				}
-				else if (tag == tag_member) {
-					int propId = groups_GetProperty(g, name);
-					hashTable_SetString(hs, propId, text);
-					if (verbose) printf("%i,%i: _add %s:%s\r\n", line, column, name, text);
-					gcstack_PushInt(gc, _read_comma_or_end_paranthesis);
-					state = _skip_white_space;
-					continue;
-				}
+				macro_rff_action
+				(groups_readFromFile_afterReadingString
+				 (g, &s, verbose));
 				break;
 				
 		}
@@ -1656,25 +1953,10 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose, void(*err)(in
 	}
 	
 	// Add members to group.
-	groups_AppendMembers(g, memberStack);
+	groups_AppendMembers(g, s.memberStack);
 	
 CLEAN_UP:
-	hashTable_Delete(hs);
-	free(hs);
-	if (text != NULL) free(text);
-	if (name != NULL) free(name);
-	
-	gcstack_Delete(strStack);
-	free(strStack);
-	
-	gcstack_Delete(gc);
-	free(gc);
-	
-	gcstack_Delete(memberStack);
-	free(memberStack);
-	
-	free(buff);
-	
+	groups_readFromFile_deleteSettings(&s);
 	return true;
 }
 
