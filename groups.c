@@ -51,7 +51,7 @@
 
 #define TMP_ID_PROPID 123
 
-void property_Delete(void* p)
+void property_Delete(void const* p)
 {
 	macro_err(p == NULL);
 	
@@ -80,7 +80,7 @@ property* property_InitWithNameAndId(property* prop, char const* name, int propI
 	return prop;
 }
 
-void groups_Delete(void* p)
+void groups_Delete(void const* p)
 {
 	macro_err(p == NULL);
 	

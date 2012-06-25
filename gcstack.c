@@ -409,7 +409,8 @@ void gcstack_free(gcstack* gc, void* p)
 	free(item);
 }
 
-gcstack_item* gcstack_malloc(gcstack* gc, int size, void(*freeSubPointers)(void* p))
+gcstack_item* gcstack_malloc
+(gcstack* gc, int size, void(*freeSubPointers)(void const* p))
 {
 	macro_err(size < 0);
 	
@@ -537,7 +538,7 @@ gcstack_item* gcstack_PushBool(gcstack* gc, bool val)
 	return (gcstack_item*)d;
 }
 
-void gcstring_Delete(void* p)
+void gcstring_Delete(void const* p)
 {
 	macro_err(p == NULL);
 	

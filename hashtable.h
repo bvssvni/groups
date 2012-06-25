@@ -60,7 +60,7 @@ extern "C" {
 	//
 	//      The sub structures of a hash table.
 	//
-	void hashLayer_Delete(void* p);
+	void hashLayer_Delete(void const* p);
 	
 	hash_layer* hashLayer_AllocWithGC(gcstack* gc);
 	
@@ -73,7 +73,7 @@ extern "C" {
 	//
 	//      The structure used for storing by property id or hash key.
 	//
-	void hashTable_Delete(void* p);
+	void hashTable_Delete(void const* p);
 	
 	hash_table* hashTable_AllocWithGC(gcstack* gc);
 	

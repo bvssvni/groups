@@ -45,7 +45,7 @@
 
 #define START_PRIME 5
 
-void hashLayer_Delete(void* p)
+void hashLayer_Delete(void const* p)
 {
 	macro_err(p == NULL);
 	
@@ -128,7 +128,7 @@ int hashLayer_NextPrime(int prime)
 	return prime+257;
 }
 
-void hashTable_Delete(void* p)
+void hashTable_Delete(void const* p)
 {
 	macro_err(p == NULL);
 	
