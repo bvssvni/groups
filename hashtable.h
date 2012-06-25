@@ -60,11 +60,11 @@ extern "C" {
 	//
 	//      The sub structures of a hash table.
 	//
-	void hashLayer_Delete(void const* p);
+	void hashLayer_Delete(void* const p);
 	
-	hash_layer* hashLayer_AllocWithGC(gcstack* gc);
+	hash_layer* hashLayer_AllocWithGC(gcstack* const gc);
 	
-	hash_layer* hashLayer_InitWithSize(hash_layer* hashLayer, int n);
+	hash_layer* hashLayer_InitWithSize(hash_layer* const hashLayer, int n);
 	
 	int hashLayer_NextPrime(int prime);
 	
@@ -73,13 +73,17 @@ extern "C" {
 	//
 	//      The structure used for storing by property id or hash key.
 	//
-	void hashTable_Delete(void const* p);
+	void hashTable_Delete
+	(void* const p);
 	
-	hash_table* hashTable_AllocWithGC(gcstack* gc);
+	hash_table* hashTable_AllocWithGC
+	(gcstack* const gc);
 	
-	hash_table* hashTable_Init(hash_table* hash);
+	hash_table* hashTable_Init
+	(hash_table* const hash);
 	
-	hash_table* hashTable_InitWithMember(hash_table* obj, hash_table* b);
+	hash_table* hashTable_InitWithMember
+	(hash_table* const obj, hash_table* const b);
 	
 	
 	//
@@ -92,7 +96,7 @@ extern "C" {
 	//      It should not be mixed with other usages.
 	//
 	unsigned long hashTable_GenerateHashId
-	(const char *str);
+	(const char * const str);
 	
 	//
 	//      Sets a string, the id is a hash value of the string.
@@ -100,7 +104,7 @@ extern "C" {
 	//      Don't mix with      hashTable_Set
 	//
 	void                hashTable_SetStringHash
-	(hash_table* hash, char* value);
+	(hash_table* const hash, char* const value);
 	
 	//
 	//      Returns true if the hash table contains a string.
@@ -109,7 +113,7 @@ extern "C" {
 	//      Don't mix with       hashTable_Get
 	//
 	int                hashTable_ContainsStringHash
-	(hash_table* hash, const char* value);
+	(hash_table* const hash, const char* const value);
 	
 	//
 	//      POINTER BY ID
@@ -118,7 +122,7 @@ extern "C" {
 	//      If you use a double data type, use hashTable_SetDouble.
 	//
 	void hashTable_Set
-	(hash_table* hash, int id, void* value);
+	(hash_table* const hash, int id, void* const value);
 	
 	//
 	//      Returns a pointer that can not be changed because it can only be
@@ -126,21 +130,21 @@ extern "C" {
 	//      by the hash table and if you need to change it you have to copy 
 	//	it.
 	//
-	const void*         hashTable_Get       
-	(hash_table* hash, int id);
+	const void* hashTable_Get       
+	(hash_table* const hash, int id);
 	
 	
-	void                hashTable_SetDouble 
-	(hash_table* obj, int propId, double val);
+	void hashTable_SetDouble 
+	(hash_table* const obj, int propId, double val);
 	
-	void                hashTable_SetString 
-	(hash_table* obj, int propId, char const* val);
+	void hashTable_SetString 
+	(hash_table* const obj, int propId, const char* val);
 	
 	void hashTable_SetInt
-	(hash_table* obj, int propId, int val);
+	(hash_table* const obj, int propId, int val);
 	
 	void hashTable_SetBool
-	(hash_table* obj, int propId, int val);
+	(hash_table* const obj, int propId, int val);
 	
 #endif
 	

@@ -163,7 +163,7 @@ extern "C" {
 	//			release the pointer after calling bitstream_Delete.
 	//
 	void		bitstream_Delete
-	(void const* p);
+	(void* const p);
 	
 	//
 	//			Prints out the bitstream to the console.

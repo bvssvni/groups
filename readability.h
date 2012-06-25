@@ -44,7 +44,7 @@ extern "C" {
 #define bool int
 #define true 1
 #define false 0
-#define string char const*
+#define string const char*
 #define byte unsigned char
 	
 #define TYPE_STRIDE 1000000

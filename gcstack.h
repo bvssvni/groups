@@ -50,7 +50,7 @@ extern "C" {
 	{
 		gcstack_item* previous;
 		gcstack_item* next;
-		void(*freeSubPointers)(void const* p);
+		void(*freeSubPointers)(void* const p);
 	};
 	
 	//
@@ -122,7 +122,7 @@ extern "C" {
 	// Initializes a garbage collected item.
 	//
 	gcstack_item* gcstack_malloc
-	(gcstack* gc, int size, void(*free)(void const* p));
+	(gcstack* gc, int size, void(*free)(void* const p));
 	
 	gcstack* gcstack_Init
 	(gcstack* gc);

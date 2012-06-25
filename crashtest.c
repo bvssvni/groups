@@ -14,7 +14,7 @@
 // Some arbitrary number to check if it didn't crash properly.
 int DID_NOT_CRASH = 42;
 
-void crash_Test(void*(*f)(void* input), const char* message)
+void crash_Test(void*(*f)(void* input), const char const* message)
 {
 	pthread_t thread;
 	

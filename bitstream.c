@@ -46,14 +46,14 @@
 
 int bitstream_references = 0;
 
-void bitstream_Delete(void const* p)
+void bitstream_Delete(void* const p)
 {
 	macro_err(p == NULL);
 	
 	bitstream_references--;
 	// printf("%i\r\n", bitstream_references);
 	
-	bitstream* a = (bitstream*)p;
+	bitstream* const a = (bitstream* const)p;
 	
 	if (a->pointer != NULL)
 	{

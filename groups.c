@@ -51,11 +51,11 @@
 
 #define TMP_ID_PROPID 123
 
-void property_Delete(void const* p)
+void property_Delete(void* const p)
 {
 	macro_err(p == NULL);
 	
-	property* prop = (property*)p;
+	property* const prop = (property* const)p;
 	
 	if (prop->name != NULL)
 	{
@@ -80,11 +80,11 @@ property* property_InitWithNameAndId(property* prop, char const* name, int propI
 	return prop;
 }
 
-void groups_Delete(void const* p)
+void groups_Delete(void* const p)
 {
 	macro_err(p == NULL);
 	
-	groups* g = (groups*)p;
+	groups* const g = (groups* const)p;
 	
 	// Free bitstream stuff.
 	gcstack* bitstreams = g->bitstreams;

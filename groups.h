@@ -57,7 +57,7 @@ extern "C" {
 	};
 	
 	void property_Delete
-	(void const* p);
+	(void* const p);
 	
 	property* property_AllocWithGC
 	(gcstack* gc);
@@ -94,7 +94,7 @@ extern "C" {
 	//		Deletes the data in Groups, but not the pointer to it.
 	//
 	void groups_Delete
-	(void const* p);
+	(void* const p);
 	
 	//
 	//		Groups supports stack-based garbage collection.
