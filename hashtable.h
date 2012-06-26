@@ -64,9 +64,10 @@ extern "C" {
 	
 	hash_layer* hashLayer_AllocWithGC(gcstack* const gc);
 	
-	hash_layer* hashLayer_InitWithSize(hash_layer* const hashLayer, int n);
+	hash_layer* hashLayer_InitWithSize
+	(hash_layer* const hashLayer, const int n);
 	
-	int hashLayer_NextPrime(int prime);
+	int hashLayer_NextPrime(const int prime);
 	
 	//
 	//      HASH TABLE
@@ -122,7 +123,7 @@ extern "C" {
 	//      If you use a double data type, use hashTable_SetDouble.
 	//
 	void hashTable_Set
-	(hash_table* const hash, int id, void* const value);
+	(hash_table* const hash, const int id, void* const value);
 	
 	//
 	//      Returns a pointer that can not be changed because it can only be
@@ -131,20 +132,20 @@ extern "C" {
 	//	it.
 	//
 	const void* hashTable_Get       
-	(hash_table* const hash, int id);
+	(hash_table* const hash, const int id);
 	
 	
 	void hashTable_SetDouble 
-	(hash_table* const obj, int propId, double val);
+	(hash_table* const obj, const int propId, const double val);
 	
 	void hashTable_SetString 
-	(hash_table* const obj, int propId, const char* val);
+	(hash_table* const obj, const int propId, const char* val);
 	
 	void hashTable_SetInt
-	(hash_table* const obj, int propId, int val);
+	(hash_table* const obj, const int propId, const int val);
 	
 	void hashTable_SetBool
-	(hash_table* const obj, int propId, int val);
+	(hash_table* const obj, const int propId, const int val);
 	
 #endif
 	

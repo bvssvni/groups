@@ -64,17 +64,18 @@ void property_Delete(void* const p)
 	}
 }
 
-property* property_AllocWithGC(gcstack* gc)
+property* property_AllocWithGC(gcstack* const gc)
 {
 	return (property*)gcstack_malloc(gc, sizeof(property), property_Delete);
 }
 
-property* property_InitWithNameAndId(property* prop, char const* name, int propId)
+property* property_InitWithNameAndId
+(property* const prop, const char* const name, const int propId)
 {
 	macro_err(prop == NULL); macro_err(name == NULL);
 	
-	int nameLength = strlen(name);
-	char* newName = malloc(sizeof(char)*nameLength);
+	const int nameLength = strlen(name);
+	char* const newName = malloc(sizeof(char)*nameLength);
 	prop->name = strcpy(newName, name);
 	prop->propId = propId;
 	return prop;
@@ -87,7 +88,7 @@ void groups_Delete(void* const p)
 	groups* const g = (groups* const)p;
 	
 	// Free bitstream stuff.
-	gcstack* bitstreams = g->bitstreams;
+	gcstack* const bitstreams = g->bitstreams;
 	if (bitstreams != NULL)
 	{
 		gcstack_Delete(bitstreams);
@@ -106,7 +107,7 @@ void groups_Delete(void* const p)
 	}
 	
 	// Free property stuff.
-	gcstack* properties = g->properties;
+	gcstack* const properties = g->properties;
 	if (properties != NULL)
 	{
 		gcstack_Delete(properties);
@@ -142,12 +143,12 @@ void groups_Delete(void* const p)
 	}
 }
 
-groups* groups_AllocWithGC(gcstack* gc)
+groups* groups_AllocWithGC(gcstack* const gc)
 {
 	return (groups*)gcstack_malloc(gc, sizeof(groups), groups_Delete);
 }
 
-groups* groups_Init(groups* g)
+groups* groups_Init(groups* const g)
 {
 	macro_err(g == NULL);
 	
@@ -172,31 +173,37 @@ groups* groups_Init(groups* g)
 // The first argument is string.
 // The second argument is property.
 //
-int compareStringVSProperty(const void* a, const void* b)
+int compareStringVSProperty(const void* const a, const void* const b)
 {
-	char const* str = (char const*)a;
+	const char* const str = (const char* const)a;
 	property const* prop = (property const*)b;
 	return strcmp(str, prop->name);
 }
 
-int compareProperties(void const* a, void const* b)
+int compareProperties
+(void const* const a, void const* const b)
 {
-	property const* aProp = (property const*)a;
-	property const* bProp = (property const*)b;
-	char const* aName = aProp->name;
-	char const* bName = bProp->name;
-	if (aName == NULL && bName == NULL) return 0;
-	else if (aName == NULL) return -1;
-	else if (bName == NULL) return 1;
+	const property* const aProp = (const property*)a;
+	const property* const bProp = (const property*)b;
+	const char* const aName = aProp->name;
+	const char* const bName = bProp->name;
+	
+	if (aName == NULL && bName == NULL) 
+		return 0;
+	else if (aName == NULL) 
+		return -1;
+	else if (bName == NULL) 
+		return 1;
 	return strcmp(aName, bName);
 }
 
 
-void sortProperties(groups* g)
+void sortProperties(groups* const g)
 {
-	if (g->m_propertiesReady) return;
+	if (g->m_propertiesReady) 
+		return;
 	
-	int length = g->properties->length;
+	const int length = g->properties->length;
 	
 	if (length == 0)
 	{
@@ -213,19 +220,23 @@ void sortProperties(groups* g)
 	property* t = malloc(sizeof(property));
 	
 	// Use QuickSort to sort the properties in right order.
-	sorting_Sort((void*)items, 0, length, sizeof(property), t, (void*)compareProperties);
+	sorting_Sort((void*)items, 0, length, sizeof(property), t, 
+		     compareProperties);
 	
 	free(t);
+	
 	if (g->m_sortedPropertyItems != NULL)
 		free(g->m_sortedPropertyItems);
+	
 	g->m_sortedPropertyItems = items;
 	
 	g->m_propertiesReady = true;
 }
 
-void createBitstreamArray(groups* g)
+void createBitstreamArray(groups* const g)
 {
-	if (g->m_bitstreamsReady) return;
+	if (g->m_bitstreamsReady) 
+		return;
 	
 	// Create array of pointers to each bitstream to match the stack.
 	if (g->m_bitstreamsArray != NULL)
@@ -234,9 +245,11 @@ void createBitstreamArray(groups* g)
 	g->m_bitstreamsReady = true;
 }
 
-int groups_AddProperty(groups* g, const void* name, const void* propType)
+int groups_AddProperty
+(groups* const g, const void* const name, const void* const propType)
 {
-	macro_err(g == NULL); macro_err(name == NULL); macro_err(propType == NULL);
+	macro_err(g == NULL); macro_err(name == NULL); 
+	macro_err(propType == NULL);
 	
 	// We use the length of the bitstream stack to generate ids,
 	// because those bitstreams are set to empty instead of deleted.
@@ -267,33 +280,36 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 	if (g->properties->length > 0)
 	{
 		sortProperties(g);
-		int length = g->bitstreams->length;
-		gcstack_item** items = g->m_sortedPropertyItems;
-		int index = sorting_SearchBinary
+		const int length = g->bitstreams->length;
+		gcstack_item** const items = g->m_sortedPropertyItems;
+		const int index = sorting_SearchBinary
 		(length, (void*)items, name, compareStringVSProperty);
 		
-		if (index >= 0)
-		{
-			property* prop = (property*)items[index];
-			int existingPropId = prop->propId;
-			
-			int oldType = existingPropId/TYPE_STRIDE;
-			
-			// We can not be sure how to check for compatibility with
-			// unknown data types, so we have to tell it's type collision.
-			if (oldType == TYPE_UNKNOWN) return -1;
-			
-			int newType = propId/TYPE_STRIDE;
-			if (oldType == newType)
-				// The same name and same type already exists.
-				// Since it is compatible, we can return the existing id.
-				return existingPropId;
-			
-			// The types are different, so we need to tell it is type collision here.
+		if (index < 0) 
+			goto IF_BREAK;
+		
+		const property* const prop = (property*)items[index];
+		const int existingPropId = prop->propId;
+		
+		const int oldType = existingPropId/TYPE_STRIDE;
+		
+		// We can not be sure how to check for compatibility with
+		// unknown data types, so we have to tell it's type collision.
+		if (oldType == TYPE_UNKNOWN) 
 			return -1;
-		}
+		
+		const int newType = propId/TYPE_STRIDE;
+		if (oldType == newType)
+			// The same name and same type already exists.
+			// Since it is compatible, we can return the existing 
+			// id.
+			return existingPropId;
+		
+		// The types are different, so we need to tell it is type 
+		// collision here.
+		return -1;
 	}
-	
+IF_BREAK:
 	
 	if (g->m_deletedBitstreams->length > 0)
 	{
@@ -319,35 +335,37 @@ int groups_AddProperty(groups* g, const void* name, const void* propType)
 }
 
 
-int groups_GetProperty(groups* g, char const* name)
+int groups_GetProperty(groups* const g, char const* const name)
 {
 	macro_err(g == NULL); macro_err(name == NULL);
 	
-	int length = g->properties->length;
+	const int length = g->properties->length;
 	if (length == 0) return -1;
 	
 	sortProperties(g);
-	gcstack_item** items = g->m_sortedPropertyItems;
+	gcstack_item** const items = g->m_sortedPropertyItems;
 	
-	int index = sorting_SearchBinary(length, (void*)items, name, compareStringVSProperty);
+	const int index = sorting_SearchBinary
+	(length, (void*)items, name, compareStringVSProperty);
 	
-	if (index < 0) return -1;
+	if (index < 0) 
+		return -1;
 	
 	// Return the property id.
-	property* prop = (property*)items[index];
+	const property* const prop = (property*)items[index];
 	return prop->propId;
 }
 
-const char** groups_GetPropertyNames(groups* g)
+const char** groups_GetPropertyNames(groups* const g)
 {
 	macro_err(g == NULL);
 	
 	sortProperties(g);
 	
-	int length = g->properties->length;
+	const int length = g->properties->length;
 	const char** arr = malloc(sizeof(char*)*length);
-	gcstack_item* cursor = g->properties->root->next;
-	property* prop;
+	const gcstack_item* cursor = g->properties->root->next;
+	const property* prop;
 	int k = 0;
 	for (; cursor != NULL; cursor = cursor->next)
 	{
@@ -357,52 +375,52 @@ const char** groups_GetPropertyNames(groups* g)
 	return arr;
 }
 
-bitstream* groups_getBitstream(groups* g, int propId)
+bitstream* groups_getBitstream(groups* const g, const int propId)
 {
-	
 	// Filter out the type information.
-	propId %= TYPE_STRIDE;
+	const int id = propId % TYPE_STRIDE;
 	
 	createBitstreamArray(g);
 	
 	// Even when the bitstream is deleted, we can return this
 	// safely because it is not removed from the stack and got length 0.
 	// It means it will function as an empty set.
-	return g->m_bitstreamsArray[propId];
+	return g->m_bitstreamsArray[id];
 }
 
 //
 //      Returns a read-only bitstream for use outside use.
 //
-const bitstream* groups_GetBitstream(groups* g, int propId)
+const bitstream* groups_GetBitstream
+(groups* const g, const int propId)
 {
 	macro_err(g == NULL); macro_err(propId < 0);
 	
 	return groups_getBitstream(g, propId);
 }
 
-bitstream* groups_GetAll(groups* g) {
+bitstream* groups_GetAll(groups* const g) {
 	macro_err(g == NULL);
 	
-	int length = g->members->length;
-	bitstream* a = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 
+	const int length = g->members->length;
+	bitstream* const a = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 
 						2, (int[]){0, length});
-	bitstream* deleted = g->m_deletedMembers;
+	bitstream* const deleted = g->m_deletedMembers;
 	
 	// If there are no deleted members, then return the whole range.
 	if (deleted == NULL) return a;
 	
-	bitstream* b = bitstream_Except(NULL, a, deleted);
+	bitstream* const b = bitstream_Except(NULL, a, deleted);
 	bitstream_Delete(a);
 	free(a);
 	return b;
 }
 
-void groups_RemoveProperty(groups* g, int propId)
+void groups_RemoveProperty(groups* const g, const int propId)
 {
 	macro_err(g == NULL); macro_err(propId < 0);
 	
-	int index = propId % TYPE_STRIDE;
+	const int index = propId % TYPE_STRIDE;
 	
 	// Delete content, but do not move from stack of bitstreams.
 	createBitstreamArray(g);
@@ -438,7 +456,8 @@ void groups_RemoveProperty(groups* g, int propId)
 	g->m_propertiesReady = false;
 }
 
-bool groups_IsDefaultVariable(int propId, void* data)
+bool groups_IsDefaultVariable
+(const int propId, void* const data)
 {
 	macro_err(propId < 0); macro_err(data == NULL);
 	
@@ -464,11 +483,11 @@ bool groups_IsDefaultVariable(int propId, void* data)
 	return false;
 }
 
-void createMemberArray(groups* g)
+void createMemberArray(groups* const g)
 {
 	if (g->m_membersReady) return;
 	
-	hash_table** items = (hash_table**)gcstack_CreateItemsArrayBackward(g->members);
+	hash_table** const items = (hash_table**)gcstack_CreateItemsArrayBackward(g->members);
 	if (g->m_memberArray != NULL)
 		free(g->m_memberArray);
 	g->m_memberArray = items;
@@ -476,7 +495,7 @@ void createMemberArray(groups* g)
 	g->m_membersReady = true;
 }
 
-int groups_AddMember(groups* g, hash_table* obj)
+int groups_AddMember(groups* const g, hash_table* const obj)
 {
 	macro_err(g == NULL); macro_err(obj == NULL);
 	
@@ -486,8 +505,8 @@ int groups_AddMember(groups* g, hash_table* obj)
 	// When reading from file and id does not match,
 	// add 'deleted' members to match up with the id.
 	bool hasId = false;
-	int* oldIdPtr = (int*)hashTable_Get(obj, TMP_ID_PROPID);
-	int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
+	const int* const oldIdPtr = (int*)hashTable_Get(obj, TMP_ID_PROPID);
+	const int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
 	int newId = id;
 	while (oldId > newId) {
 		hash_table* hs = hashTable_AllocWithGC(g->members);
@@ -569,7 +588,8 @@ int groups_AddMember(groups* g, hash_table* obj)
 //
 // This method sets all variables within a bitstream to a value.
 //
-void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
+void groups_SetDouble
+(groups* const g, const bitstream* const a, const int propId, const double val)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
@@ -589,7 +609,7 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 	
 	// Update the bitstream, cleaning up manually for saving one malloc call.
 	// It takes only one operation to update all.
-	int propIndex = propId%TYPE_STRIDE;
+	const int propIndex = propId%TYPE_STRIDE;
 	bitstream* b = g->m_bitstreamsArray[propIndex];
 	bitstream* c = bitstream_Or(NULL, b, a);
 	gcstack_Swap(c, b);
@@ -600,7 +620,9 @@ void groups_SetDouble(groups* g, const bitstream* a, int propId, double val)
 //
 // This method sets all variables within a bitstream to a value.
 //
-void groups_SetString(groups* g, const bitstream* a, int propId, const char* val)
+void groups_SetString
+(groups* const g, const bitstream* const a, const int propId, 
+ const char* const val)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
@@ -619,7 +641,7 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 	
 	// Update the bitstream, cleaning up manually for saving one malloc call.
 	// It takes only one operation to update all.
-	int propIndex = propId%TYPE_STRIDE;
+	const int propIndex = propId%TYPE_STRIDE;
 	bitstream* b = g->m_bitstreamsArray[propIndex];
 	
 	// If the string is NULL, then it is a default value
@@ -633,14 +655,15 @@ void groups_SetString(groups* g, const bitstream* a, int propId, const char* val
 	free(b);
 }
 
-void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
+void groups_SetInt
+(groups* const g, const bitstream* const a, const int propId, const int val)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
 	
-	bool isDefault = -1 == val;
+	const bool isDefault = -1 == val;
 	int i;
 	hash_table* obj;
 	macro_foreach (a) {
@@ -653,7 +676,7 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 	
 	// Update the bitstream, cleaning up manually for saving one malloc call.
 	// It takes only one operation to update all.
-	int propIndex = propId%TYPE_STRIDE;
+	const int propIndex = propId%TYPE_STRIDE;
 	bitstream* b = g->m_bitstreamsArray[propIndex];
 	
 	// If the string is NULL, then it is a default value
@@ -667,7 +690,8 @@ void groups_SetInt(groups* g, const bitstream* a, int propId, int val)
 	free(b);
 }
 
-void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
+void groups_SetBool
+(groups* const g, const bitstream* const a, const int propId, const bool val)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
@@ -706,7 +730,9 @@ void groups_SetBool(groups* g, const bitstream* a, int propId, bool val)
 // This method sets variables to an array of double values.
 // It is assumed that members are in the order you got them through the bitstream.
 //
-void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, const double* values)
+void groups_SetDoubleArray
+(groups* const g, const bitstream* const a, const int propId, const int n, 
+ const double* const values)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
 	macro_err(n < 0); macro_err(values == NULL);
@@ -738,7 +764,8 @@ void groups_SetDoubleArray(groups* g, const bitstream* a, int propId, int n, con
 }
 
 void groups_SetStringArray
-(groups* g, const bitstream* a, int propId, int n, const char** values)
+(groups* const g, const bitstream* const a, const int propId, const int n, 
+ const char** const values)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
 	macro_err(n < 0); macro_err(values == NULL);
@@ -766,7 +793,7 @@ void groups_SetStringArray
 	
 	createBitstreamArray(g);
 	
-	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	gcstack* const gc = gcstack_Init(gcstack_Alloc());
 	
 	// Update the bitstream, this time is is a bit messier
 	// so we use the gcstack for safety.
@@ -795,7 +822,8 @@ void groups_SetStringArray
 
 
 void groups_SetIntArray
-(groups* g, const bitstream* a, int propId, int n, const int* values)
+(groups* const g, const bitstream* const a, const int propId, const int n, 
+ const int* values)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
 	macro_err(n < 0); macro_err(values == NULL);
@@ -810,8 +838,8 @@ void groups_SetIntArray
 	// so we must create a buffer that takes only those who are not default.
 	// Later we convert it to a bitstream and use it for updating.
 	// The maximum size equals the array of values.
-	int* notDefaultIndices = malloc(n*sizeof(int));
-	int notDefaultIndicesSize = 0;
+	int* const notDefaultIndices = malloc(n*sizeof(int));
+	const int notDefaultIndicesSize = 0;
 	
 	// We need an index to read properly from the values.
 	int k = 0;
@@ -850,7 +878,8 @@ void groups_SetIntArray
 }
 
 void groups_SetBoolArray
-(groups* g, const bitstream* a, int propId, int n, const bool* values)
+(groups* const g, const bitstream* const a, const int propId, const int n, 
+ const bool* const values)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
 	macro_err(n < 0); macro_err(values == NULL);
@@ -865,8 +894,8 @@ void groups_SetBoolArray
 	// so we must create a buffer that takes only those who are not default.
 	// Later we convert it to a bitstream and use it for updating.
 	// The maximum size equals the array of values.
-	int* notDefaultIndices = malloc(n*sizeof(int));
-	int notDefaultIndicesSize = 0;
+	int* const notDefaultIndices = malloc(n*sizeof(int));
+	const int notDefaultIndicesSize = 0;
 	
 	// We need an index to read properly from the values.
 	int k = 0;
@@ -883,7 +912,7 @@ void groups_SetBoolArray
 	// Update the bitstream, this time is is a bit messier
 	// so we use the gcstack for safety.
 	// It takes only one operation to update all.
-	int propIndex = propId%TYPE_STRIDE;
+	const int propIndex = propId%TYPE_STRIDE;
 	bitstream* b = g->m_bitstreamsArray[propIndex];
 	
 	bitstream* notDef = bitstream_InitWithIndices
@@ -906,7 +935,7 @@ void groups_SetBoolArray
 
 
 double* groups_GetDoubleArray
-(groups* g, const bitstream* a, int propId)
+(groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
@@ -931,7 +960,7 @@ double* groups_GetDoubleArray
 
 
 int* groups_GetIntArray
-(groups* g, const bitstream* a, int propId)
+(groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
@@ -955,7 +984,7 @@ int* groups_GetIntArray
 }
 
 bool* groups_GetBoolArray
-(groups* g, const bitstream* a, int propId)
+(groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
@@ -979,7 +1008,7 @@ bool* groups_GetBoolArray
 }
 
 const char** groups_GetStringArray
-(groups* g, const bitstream* a, int propId)
+(groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
 	
@@ -1002,7 +1031,8 @@ const char** groups_GetStringArray
 	return arr;
 }
 
-const char* groups_PropertyNameById(const groups* g, int propId)
+const char* groups_PropertyNameById
+(const groups* const g, const int propId)
 {
 	macro_err(g == NULL); macro_err(propId < 0);
 	
@@ -1016,7 +1046,8 @@ const char* groups_PropertyNameById(const groups* g, int propId)
 	return NULL;
 }
 
-void groups_PrintMember(const groups* g, const hash_table* obj)
+void groups_PrintMember
+(const groups* const g, const hash_table* const obj)
 {
 	macro_err(g == NULL); macro_err(obj == NULL);
 	
@@ -1038,14 +1069,14 @@ void groups_PrintMember(const groups* g, const hash_table* obj)
 	printf("\r\n");
 }
 
-void groups_RemoveMember(groups* g, int index)
+void groups_RemoveMember(groups* const g, const int index)
 {
 	macro_err(g == NULL); macro_err(index < 0);
 	
 	createMemberArray(g);
 	
-	hash_table* obj = g->m_memberArray[index];
-	gcstack* gc = gcstack_Init(gcstack_Alloc());
+	hash_table* const obj = g->m_memberArray[index];
+	gcstack* const gc = gcstack_Init(gcstack_Alloc());
 	
 	int propId;
 	bitstream* a;
@@ -1078,7 +1109,7 @@ void groups_RemoveMember(groups* g, int index)
 	free(gc);
 }
 
-void groups_RemoveMembers(groups* g, bitstream const* prop)
+void groups_RemoveMembers(groups* const g, bitstream const* prop)
 {
 	macro_err(g == NULL); macro_err(prop == NULL);
 	
@@ -1109,8 +1140,8 @@ void groups_RemoveMembers(groups* g, bitstream const* prop)
 	g->m_membersReady = false;
 	
 	// Add the member to bitstream of deleted members for reuse of index.
-	bitstream* d = g->m_deletedMembers;
-	bitstream* e = bitstream_Or(gc, d, prop);
+	bitstream* const d = g->m_deletedMembers;
+	bitstream* const e = bitstream_Or(gc, d, prop);
 	gcstack_Swap(d, e);
 	g->m_deletedMembers = e;
 	
@@ -1119,32 +1150,32 @@ void groups_RemoveMembers(groups* g, bitstream const* prop)
 	free(gc);
 }
 
-bool groups_IsUnknown(int propId)
+bool groups_IsUnknown(const int propId)
 {
 	return propId/TYPE_STRIDE == TYPE_UNKNOWN;
 }
 
-bool groups_IsDouble(int propId)
+bool groups_IsDouble(const int propId)
 {
 	return propId/TYPE_STRIDE == TYPE_DOUBLE;
 }
 
-bool groups_IsInt(int propId)
+bool groups_IsInt(const int propId)
 {
 	return propId/TYPE_STRIDE == TYPE_INT;
 }
 
-bool groups_IsString(int propId)
+bool groups_IsString(const int propId)
 {
 	return propId/TYPE_STRIDE == TYPE_STRING;
 }
 
-bool groups_IsBool(int propId)
+bool groups_IsBool(const int propId)
 {
 	return propId/TYPE_STRIDE == TYPE_BOOL;
 }
 
-void groups_PrintStringToFile(FILE* f, const char* text) {
+void groups_PrintStringToFile(FILE* const f, const char* const text) {
 	// Put quotation mark at the beginning.
 	fputc('"', f);
 	char ch;
@@ -1188,7 +1219,8 @@ void groups_PrintStringToFile(FILE* f, const char* text) {
 	fputc('"', f);
 }
 
-void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
+void groups_PrintMemberToFile
+(FILE* const f, const groups* const g, const hash_table* const obj)
 {
 	int propId, type;
 	bool first = true;
@@ -1215,12 +1247,13 @@ void groups_PrintMemberToFile(FILE* f, const groups* g, const hash_table* obj)
 	} macro_end_foreach(obj)
 }
 
-void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
+void groups_PrintPropertyToFile
+(FILE* const f, const groups* const g, property* const prop)
 {
-	string name = prop->name;
-	int propId = prop->propId;
-	int type = propId/TYPE_STRIDE;
-	char* typeName = NULL;
+	const char* const name = prop->name;
+	const int propId = prop->propId;
+	const int type = propId/TYPE_STRIDE;
+	const char* typeName = NULL;
 	
 	if (type == TYPE_DOUBLE)
 		typeName = "double";
@@ -1233,7 +1266,7 @@ void groups_PrintPropertyToFile(FILE* f, const groups* g, property* prop)
 	fprintf(f, "%s:\"%s\"", name, typeName);
 }
 
-bool groups_SaveToFile(groups* g, string fileName)
+bool groups_SaveToFile(groups* const g, const char* const fileName)
 {
 	macro_err(g == NULL); macro_err(fileName == NULL);
 	
@@ -1241,7 +1274,7 @@ bool groups_SaveToFile(groups* g, string fileName)
 	if (f == NULL)
 		return false;
 	
-	gcstack_item* cursor;
+	const gcstack_item* cursor;
 	
 	// Print properties.
 	sortProperties(g);
@@ -1261,7 +1294,7 @@ bool groups_SaveToFile(groups* g, string fileName)
 	
 	// Print members.
 	cursor = g->members->root->next;
-	hash_table* member;
+	const hash_table* member;
 	int id = 0;
 	int length = g->members->length;
 	for (; cursor != NULL; cursor = cursor->next)
@@ -1282,7 +1315,7 @@ bool groups_SaveToFile(groups* g, string fileName)
 	return true;
 }
 
-void groups_AppendMembers(groups* g, gcstack* newMembers)
+void groups_AppendMembers(groups* const g, gcstack* const newMembers)
 {
 	macro_err(g == NULL); macro_err(newMembers == NULL);
 	
@@ -1344,17 +1377,17 @@ const int GROUPS_RFF_CONTINUE = 0;
 const int GROUPS_RFF_CLEAN_UP = 1;
 const int GROUPS_RFF_NEW_STATE = 2;
 
-const char* GROUPS_ERROR_EXPECTED_PROPERTIES = "Expected 'properties'";
-const char* GROUPS_ERROR_EXPECTED_MEMBER = "Expected 'member'";
-const char* GROUPS_ERROR_EXPECTED_START_CURLY_PARANTHESIS = "Expected '{'";
-const char* GROUPS_ERROR_EXPECTED_COLON = "Expected ':'";
-const char* GROUPS_ERROR_EXPECTED_DOUBLE_QUOTE = "Expected '\"'";
-const char* GROUPS_ERROR_ID_KEYWORD_RESERVED = "The 'id' keyword is reserved";
-const char* GROUPS_ERROR_PROPERTY_NOT_FOUND = "Property not found";
-const char* GROUPS_ERROR_UNKNOWN_UNICODE_FORMAT = "Unknown unicode format";
-const char* GROUPS_ERROR_EXPECTED_COMMA_OR_END_CURLY_PARANTHESIS =
+const char* const GROUPS_ERROR_EXPECTED_PROPERTIES = "Expected 'properties'";
+const char* const GROUPS_ERROR_EXPECTED_MEMBER = "Expected 'member'";
+const char* const GROUPS_ERROR_EXPECTED_START_CURLY_PARANTHESIS = "Expected '{'";
+const char* const GROUPS_ERROR_EXPECTED_COLON = "Expected ':'";
+const char* const GROUPS_ERROR_EXPECTED_DOUBLE_QUOTE = "Expected '\"'";
+const char* const GROUPS_ERROR_ID_KEYWORD_RESERVED = "The 'id' keyword is reserved";
+const char* const GROUPS_ERROR_PROPERTY_NOT_FOUND = "Property not found";
+const char* const GROUPS_ERROR_UNKNOWN_UNICODE_FORMAT = "Unknown unicode format";
+const char* const GROUPS_ERROR_EXPECTED_COMMA_OR_END_CURLY_PARANTHESIS =
 "Expected ',' or '}'";
-const char* GROUPS_ERROR_INVALID_TAG = 
+const char* const GROUPS_ERROR_INVALID_TAG = 
 "Invalid tag, expected 'member' or property";
 
 //
@@ -1369,11 +1402,11 @@ case GROUPS_RFF_CLEAN_UP: goto CLEAN_UP; \
 case GROUPS_RFF_NEW_STATE: goto NEW_STATE; }
 
 inline void groups_readFromFile_initSettings
-(read_from_file_settings* s, FILE* f, int fileSize);
+(read_from_file_settings* const s, FILE* const f, const int fileSize);
 
 void groups_readFromFile_initSettings
-(read_from_file_settings* s, FILE* f, 
-				      int fileSize) 
+(read_from_file_settings* const s, FILE* const f, 
+ const int fileSize) 
 {
 	s->buff = malloc(sizeof(byte)*fileSize);
 	fread(s->buff, sizeof(byte), fileSize, f);
@@ -1411,9 +1444,9 @@ void groups_readFromFile_initSettings
 	s->state = gcstack_PopInt(s->stateStack);
 }
 
-inline void groups_readFromFile_deleteSettings(read_from_file_settings* s);
+inline void groups_readFromFile_deleteSettings(read_from_file_settings* const s);
 
-void groups_readFromFile_deleteSettings(read_from_file_settings* s)
+void groups_readFromFile_deleteSettings(read_from_file_settings* const s)
 {
 	hashTable_Delete(s->hs);
 	free(s->hs);
@@ -1433,9 +1466,10 @@ void groups_readFromFile_deleteSettings(read_from_file_settings* s)
 }
 
 inline int groups_readFromFile_skipWhiteSpace
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, const bool verbose);
 
-int groups_readFromFile_skipWhiteSpace(read_from_file_settings* s, bool verbose)
+int groups_readFromFile_skipWhiteSpace
+(read_from_file_settings* const s, const bool verbose)
 {
 	if (s->ch == ' ' || s->ch == '\r' || s->ch == '\t' || s->ch == '\n') 
 		return GROUPS_RFF_CONTINUE;
@@ -1448,12 +1482,12 @@ int groups_readFromFile_skipWhiteSpace(read_from_file_settings* s, bool verbose)
 }
 
 inline int groups_readFromFile_error
-(read_from_file_settings* s, 
- void(*err)(int line, int column, const char* message));
+(const read_from_file_settings* const s, 
+ void(*const err)(int line, int column, const char* message));
 
 int groups_readFromFile_error
-(read_from_file_settings* s, 
- void(*err)(int line, int column, const char* message))
+(const read_from_file_settings* const s, 
+ void(* const err)(int line, int column, const char* message))
 {
 	// Error takes one argument from the stack.
 	if (err != NULL) {
@@ -1465,10 +1499,10 @@ int groups_readFromFile_error
 }
 
 inline int groups_readFromFile_readProperties
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readProperties
-(read_from_file_settings* s, bool verbose)
+(read_from_file_settings* const s, const bool verbose)
 {
 	// Checks character for character against 
 	// expected keyword.
@@ -1492,10 +1526,10 @@ int groups_readFromFile_readProperties
 }
 
 inline int groups_readFromFile_readMember
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readMember
-(read_from_file_settings* s, bool verbose)
+(read_from_file_settings* const s, const bool verbose)
 {
 	// Checks character for character against 
 	// expected keyword.
@@ -1518,10 +1552,10 @@ int groups_readFromFile_readMember
 }
 
 inline int groups_readFromFile_readStartParanthesis
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readStartParanthesis
-(read_from_file_settings* s, bool verbose)
+(read_from_file_settings* const s, const bool verbose)
 {
 	// Reads start paranthesis.
 	if (s->ch == '{') {
@@ -1541,10 +1575,10 @@ int groups_readFromFile_readStartParanthesis
 }
 
 inline int groups_readFromFile_readColon
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readColon
-(read_from_file_settings* s, bool verbose)
+(read_from_file_settings* const s, const bool verbose)
 {
 	if (s->ch == ':') {
 		// Always skip white space after colon.
@@ -1562,10 +1596,10 @@ int groups_readFromFile_readColon
 }
 
 inline int groups_readFromFile_readName
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readName
-(read_from_file_settings* s, bool verbose)
+(read_from_file_settings* const s, const bool verbose)
 {
 	// Reads a name that contains only letters and 
 	// alphanumeric characters.
@@ -1593,10 +1627,10 @@ int groups_readFromFile_readName
 }
 
 inline int groups_readFromFile_readValue
-(groups* g, read_from_file_settings* s, bool verbose);
+(groups* const g, read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readValue
-(groups* g, read_from_file_settings* s, bool verbose)
+(groups* const g, read_from_file_settings* const s, const bool verbose)
 {
 	s->isString = (s->ch == '"');
 	s->isProperty = s->tag == tag_properties;
@@ -1649,7 +1683,7 @@ int groups_readFromFile_readValue
 			// Steps one character back to 
 			// read to get the first 
 			// character when reading.
-			int type = s->propId/TYPE_STRIDE;
+			const int type = s->propId/TYPE_STRIDE;
 			if (type == TYPE_INT) {
 				s->buffPos--; s->column--;
 				s->delta = parsing_ScanInt
@@ -1700,10 +1734,10 @@ int groups_readFromFile_readValue
 }
 
 inline int groups_readFromFile_ReadBackSlashInString
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_ReadBackSlashInString
-(read_from_file_settings* s, bool verbose)
+(read_from_file_settings* const s, const bool verbose)
 {
 	// Read special characters that are escaped by backspace.
 	if (s->ch == '"')
@@ -1747,10 +1781,10 @@ int groups_readFromFile_ReadBackSlashInString
 }
 
 inline int groups_readFromFile_readString
-(read_from_file_settings* s, bool verbose);
+(read_from_file_settings* const s, bool const verbose);
 
 int groups_readFromFile_readString
-(read_from_file_settings* s, bool verbose)
+(read_from_file_settings* const s, bool const verbose)
 {
 	if (s->ch == '\\') {
 		s->state = _read_backslash_in_string;
@@ -1778,10 +1812,10 @@ int groups_readFromFile_readString
 }
 
 inline int groups_readFromFile_readCommadOrEndParanthesis
-(groups* g, read_from_file_settings* s, bool verbose);
+(groups* const g, read_from_file_settings* const s, bool const verbose);
 
 int groups_readFromFile_readCommadOrEndParanthesis
-(groups* g, read_from_file_settings* s, bool verbose)
+(groups* const g, read_from_file_settings* const s, const bool verbose)
 {
 	if (s->ch == ',') {
 		if (verbose) 
@@ -1824,10 +1858,10 @@ int groups_readFromFile_readCommadOrEndParanthesis
 }
 
 inline int groups_readFromFile_afterReadingString
-(groups* g, read_from_file_settings* s, bool verbose);
+(groups* const g, read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_afterReadingString
-(groups* g, read_from_file_settings* s, bool verbose)
+(groups* const g, read_from_file_settings* const s, const bool verbose)
 {
 	if (s->tag == tag_properties) {
 		groups_AddProperty(g, s->name, s->text);
@@ -1853,8 +1887,8 @@ int groups_readFromFile_afterReadingString
 	return GROUPS_RFF_NEW_STATE;
 }
 
-bool groups_ReadFromFile(groups* g, string fileName, bool verbose, 
-			 void(*err)(int line, int column, const char* message))
+bool groups_ReadFromFile(groups* const g, const char* const fileName, const bool verbose, 
+			 void(* const err)(int line, int column, const char* message))
 {
 	macro_err(g == NULL); macro_err(fileName == NULL);
 	
@@ -1865,7 +1899,7 @@ bool groups_ReadFromFile(groups* g, string fileName, bool verbose,
 	}
 	int size = fileState.st_size;
 	
-	FILE* f = fopen(fileName, "r");
+	FILE* const f = fopen(fileName, "r");
 	if (f == NULL)
 		return false;
 	
