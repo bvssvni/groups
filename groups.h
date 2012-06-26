@@ -60,10 +60,10 @@ extern "C" {
 	(void* const p);
 	
 	property* property_AllocWithGC
-	(gcstack* gc);
+	(gcstack* const gc);
 	
 	property* property_InitWithNameAndId
-	(property* prop, char const* name, int propId);
+	(property* const prop, char const* name, const int propId);
 	
 	//
 	//      GROUPS STRUCTURE
@@ -100,13 +100,13 @@ extern "C" {
 	//		Groups supports stack-based garbage collection.
 	//
 	groups* groups_AllocWithGC
-	(gcstack* gc);
+	(gcstack* const gc);
 	
 	//
 	//		Initialized Groups with empty dataset.
 	//
 	groups* groups_Init
-	(groups* g);
+	(groups* const g);
 	
 	//
 	//		Use this method to add properties to Groups.
@@ -118,41 +118,41 @@ extern "C" {
 	//		You need to specify name and type.
 	//		Supported types:
 	//
-	//			TYPE		DEFAULT (FALSE)		NOTES
-	//			bool		0					int as native type
-	//			int			-1					Used for relations
-	//			double		has no default		Used for numbers
-	//			string		NULL				const char*
+	//	TYPE		DEFAULT (FALSE)		NOTES
+	//	bool		0			int as native type
+	//	int		-1			Used for relations
+	//	double		has no default		Used for numbers
+	//	string		NULL			const char*
 	//
 	int groups_AddProperty
-	(groups* g, const void* name, const void* propType);
+	(groups* const g, const void* const name, const void* const propType);
 	
 	//
 	//		Returns a property id by name.
 	//		This algorithm has O(log N) worst case.
 	//
 	int groups_GetProperty
-	(groups* g, char const* name);
+	(groups* const g, const char* const name);
 	
 	//
 	//      Returns an array of property names.
 	//
 	const char** groups_GetPropertyNames
-	(groups* g);
+	(groups* const g);
 	
 	//
-	//		Bitstream is the object you use to group objects fast.
-	//		Each property has it's own bitstream, but it changes
-	//		each time you change a variable or remove members.
-	//		The bitstream you get is guaranteed not to change,
-	//		but you need to make sure that when you update
-	//		that Groups is in a state compatible with your update.
+	//	Bitstream is the object you use to group objects fast.
+	//	Each property has it's own bitstream, but it changes
+	//	each time you change a variable or remove members.
+	//	The bitstream you get is guaranteed not to change,
+	//	but you need to make sure that when you update
+	//	that Groups is in a state compatible with your update.
 	//
-	//		For example, if you delete an object and then try to update it,
-	//		that is no good.
+	//	For example, if you delete an object and then try to update it,
+	//	that is no good.
 	//
 	const bitstream* groups_GetBitstream
-	(groups* g, int propId);
+	(groups* const g, const int propId);
 	
 	//
 	//      This method returns a bitstream containing all members.
@@ -160,7 +160,7 @@ extern "C" {
 	//      and subtracts the deleted members with exclude.
 	//
 	bitstream* groups_GetAll
-	(groups* g);
+	(groups* const g);
 	
 	//
 	// Removes the bitstream, but not the data itself from the members.
@@ -168,7 +168,7 @@ extern "C" {
 	// monitored and kept as bitstream.
 	//
 	void groups_RemoveProperty
-	(groups* g, int propId);
+	(groups* const g, const int propId);
 	
 	//
 	// Finds property name by id.
@@ -176,7 +176,7 @@ extern "C" {
 	// the struct instead.
 	//
 	const char* groups_PropertyNameById
-	(const groups* g, int propId);
+	(const groups* const g, const int propId);
 	
 	//
 	// IMPORTANT!
@@ -187,32 +187,36 @@ extern "C" {
 	// because when Groups resets the data, you need no worries about memory leaks.
 	//
 	int groups_AddMember
-	(groups* g, hash_table* obj);
+	(groups* const g, hash_table* const obj);
 	
 	//
 	// Removes a member from Groups and recycles it for reuse.
 	//
 	void groups_RemoveMember
-	(groups* g, int index);
+	(groups* const g, const int index);
 	
 	//
 	// Removes members by a bitstream. This is way faster than removing each one.
 	// Try using bitstreams whenever you can, it makes your code easier to reuse.
 	//
 	void groups_RemoveMembers
-	(groups* g, bitstream const* a);
+	(groups* const g, const bitstream* const a);
 	
 	void groups_SetDouble
-	(groups* g, const bitstream* a, int propId, double val);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const double val);
 	
 	void groups_SetString
-	(groups* g, const bitstream* a, int propId, const char* val);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const char* const val);
 	
 	void groups_SetInt
-	(groups* g, const bitstream* a, int propId, int val);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int val);
 	
 	void groups_SetBool
-	(groups* g, const bitstream* a, int propId, int val);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int val);
 	
 	//
 	// Sets an array of doubles.
@@ -221,7 +225,8 @@ extern "C" {
 	// it doesn't need to check.
 	//
 	void groups_SetDoubleArray
-	(groups* g, const bitstream* a, int propId, int n, const double* values);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int n, const double* const values);
 	
 	//
 	// The values need to be in the same order as when extracted.
@@ -229,7 +234,8 @@ extern "C" {
 	// This is to reduce usage of memory.
 	//
 	void groups_SetStringArray
-	(groups* g, const bitstream* a, int propId, int n, const char** values);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int n, const char** const values);
 	
 	//
 	// The values need to be in the same order as when extracted.
@@ -237,7 +243,8 @@ extern "C" {
 	// This is to reduce usage of memory.
 	//
 	void groups_SetIntArray
-	(groups* g, const bitstream* a, int propId, int n, const int* values);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int n, const int* const values);
 	
 	//
 	// The values need to be in the same order as when extracted.
@@ -245,19 +252,20 @@ extern "C" {
 	// This is to reduce usage of memory.
 	//
 	void groups_SetBoolArray
-	(groups* g, const bitstream* a, int propId, int n, const int* values);
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int n, const int* const values);
 	
 	double* groups_GetDoubleArray
-	(groups* g, const bitstream* a, int propId);
+	(groups* const g, const bitstream* const a, const int propId);
 	
 	int* groups_GetIntArray
-	(groups* g, const bitstream* a, int propId);
+	(groups* const g, const bitstream* const a, const int propId);
 	
 	int* groups_GetBoolArray
-	(groups* g, const bitstream* a, int propId);
+	(groups* const g, const bitstream* const a, const int propId);
 	
 	const char** groups_GetStringArray
-	(groups* g, const bitstream* a, int propId);
+	(groups* const g, const bitstream* const a, const int propId);
 	
 	//
 	// Prints a member to the console window with property names and values.
@@ -265,43 +273,43 @@ extern "C" {
 	// has to be a Groups present to print it.
 	//
 	void groups_PrintMember
-	(const groups* g, const hash_table* obj);
+	(const groups* const g, const hash_table* const obj);
 	
 	//
 	// Returns true if the variable got default value.
 	//
 	int groups_IsDefaultVariable
-	(int propId, void* data);
+	(const int propId, void* const data);
 	
 	//
 	// Returns true if the property is of an unknown data type.
 	//
 	int groups_IsUnknown
-	(int propId);
+	(const int propId);
 	
 	int groups_IsDouble
-	(int propId);
+	(const int propId);
 	
 	int groups_IsInt
-	(int propId);
+	(const int propId);
 	
 	int groups_IsString
-	(int propId);
+	(const int propId);
 	
 	int groups_IsBool
-	(int propId);
+	(const int propId);
 	
 	// Saves data to file in JSON format.
 	int        groups_SaveToFile
-	(groups* g, const char* fileName);
+	(groups* const g, const char* const fileName);
 	
 	// Reads data from a file in JSON format.
 	int groups_ReadFromFile
 	(
 	 groups* g, 
 	 const char* fileName, 
-	 int verbose, 
-	 void(*err)(int line, int column, const char* message)
+	 const int verbose, 
+	 void(* const err)(const int line, const int column, const char* const message)
 	 );
 	
 #endif

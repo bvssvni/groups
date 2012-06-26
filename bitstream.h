@@ -43,40 +43,40 @@ extern "C" {
 #include "gcstack.h"
 	
 	//
-	//		Bitstream is a mathematical object that contains one
-	//		block for each section in a collection that satisfy a condition.
-	//		Bitstreams are useful to calculate intersections (AND)
-	//		unions (OR) or subtraction (EXCEPT).
+	//	Bitstream is a mathematical object that contains one
+	//	block for each section in a collection that satisfy a condition.
+	//	Bitstreams are useful to calculate intersections (AND)
+	//	unions (OR) or subtraction (EXCEPT).
 	//
-	//		While these operations are similar to those used in if-blocks
-	//		and loops in programming, the difference is that Boolean algebra
-	//		for one bit has no practical consequences for NOT operations.
-	//		In the real world, a single NOT operation without another
-	//		following operation gives no meaning.
-	//		For example "I live in not-Switzerland."
-	//		Instead, we use A*!B which correspond to EXCEPT.
-	//		"I want to travel everywhere, except Switzerland".
-	//		EXCEPT is always in context to something, therefore
-	//		it is written as '-' in pseudo code.
-	//		Bitstreams can be inverted, but it is not recommended
-	//		as it is not safe. For example, if you have a bitstream that
-	//		pointer to memory, and you try to access items in the inverted
-	//		memory, you might overwrite data other places.
+	//	While these operations are similar to those used in if-blocks
+	//	and loops in programming, the difference is that Boolean algebra
+	//	for one bit has no practical consequences for NOT operations.
+	//	In the real world, a single NOT operation without another
+	//	following operation gives no meaning.
+	//	For example "I live in not-Switzerland."
+	//	Instead, we use A*!B which correspond to EXCEPT.
+	//	"I want to travel everywhere, except Switzerland".
+	//	EXCEPT is always in context to something, therefore
+	//	it is written as '-' in pseudo code.
+	//	Bitstreams can be inverted, but it is not recommended
+	//	as it is not safe. For example, if you have a bitstream that
+	//	pointer to memory, and you try to access items in the inverted
+	//	memory, you might overwrite data other places.
 	//
-	//		Here are the operators:
+	//	Here are the operators:
 	//
-	//		Pseudo-code		Boolean		Precedence		Notes
-	//		+				OR			0
-	//		-				EXCEPT		-1				A - B = A*!B
-	//		*				AND			2
-	//		!				NOT			3				Try use except when possible
+	//	Ps.code	Boolean	Prec.	Notes
+	//	+	OR	0
+	//	-	EXCEPT	-1	A - B = A*!B
+	//	*	AND	2
+	//	!	NOT	3	Try use except when possible
 	//
-	//		EXCEPT is execute on every term at same level,
+	//	EXCEPT is execute on every term at same level,
 	//	
-	//		A + B - C = A*!C + B*!C
+	//	A + B - C = A*!C + B*!C
 	//
 	
-	typedef		struct bitstream	bitstream;
+	typedef	struct bitstream bitstream;
 	
 	struct bitstream {
 		gcstack_item gc;
@@ -85,37 +85,37 @@ extern "C" {
 	};
 	
 	//
-	//			Allocates on a garbage collector stack.
-	//			This technique makes it easier to write safe code.
+	//	Allocates on a garbage collector stack.
+	//	This technique makes it easier to write safe code.
 	//
-	bitstream*	bitstream_AllocWithGC
-	(gcstack* gc);
+	bitstream* bitstream_AllocWithGC
+	(gcstack* const gc);
 	
 	//
-	//			Initializes with room for a number of int values.
-	//			If you have an array of 40 items, you need only
-	//			40 numbers in the worst case in the bitstream.
-	//			You can use bitstream->pointer to set the elements manually.
-	//			Each odd term (%2=1) marks the shift from false to true,
-	//			while even term (%2=0) marks the shift from true to false.
+	//	Initializes with room for a number of int values.
+	//	If you have an array of 40 items, you need only
+	//	40 numbers in the worst case in the bitstream.
+	//	You can use bitstream->pointer to set the elements manually.
+	//	Each odd term (%2=1) marks the shift from false to true,
+	//	while even term (%2=0) marks the shift from true to false.
 	//
-	bitstream*	bitstream_InitWithSize
-	(bitstream* a, int size);
+	bitstream* bitstream_InitWithSize
+	(bitstream* const a, const int size);
 	
 	//
-	//			Initializes with values.
+	//	Initializes with values.
 	//
-	bitstream*	bitstream_InitWithValues
-	(bitstream* a, int size, int const vals[]);
+	bitstream* bitstream_InitWithValues
+	(bitstream* const a, const int size, const int* const vals);
 	
 	//
-	//			Sometimes you have an array of indices and you want to create
-	//			a bitstream from it. The indices that increment with 1 will
-	//			be merged into same block in the bitstream.
-	//          The indices have to be sorted (monetonized).
+	//	Sometimes you have an array of indices and you want to create
+	//	a bitstream from it. The indices that increment with 1 will
+	//	be merged into same block in the bitstream.
+	//      The indices have to be sorted (monetonized).
 	//
 	bitstream* bitstream_InitWithIndices
-	(bitstream* a, int size, int const vals[]);
+	(bitstream* const a, const int size, const int* const vals);
 	
 	//
 	//      DELTA CHANGES
@@ -126,16 +126,20 @@ extern "C" {
 	//
 	
 	bitstream* bitstream_InitWithDeltaDouble
-	(bitstream* a, int n, const double* oldValues, const double* newValues);
+	(bitstream* const a, const int n, const double* const oldValues, 
+	 const double* const newValues);
 	
 	bitstream* bitstream_InitWithDeltaInt
-	(bitstream* a, int n, const int* oldValues, const int* newValues);
+	(bitstream* const a, const int n, const int* const oldValues, 
+	 const int* const newValues);
 	
 	bitstream* bitstream_InitWithDeltaBool
-	(bitstream* a, int n, const int* oldValues, const int* newValues);
+	(bitstream* const a, const int n, const int* const oldValues, 
+	 const int* const newValues);
 	
 	bitstream* bitstream_InitWithDeltaString
-	(bitstream* a, int n, const char** oldValues, const char** newValues);
+	(bitstream* const a, const int n, const char** const oldValues, 
+	 const char** const newValues);
 	
 	//
 	//      TEXT PROCESSING
@@ -145,139 +149,144 @@ extern "C" {
 	//      Split characters are not ignores when neighbor to a previous one, for example 'a,,b,c'.
 	//
 	bitstream* bitstream_InitWithWordsInString
-	(bitstream* a, const char* text, const char* spaceCharacters, const char* splitCharacters);
+	(bitstream* const a, const char* const text, 
+	 const char* const spaceCharacters, const char* const splitCharacters);
 	
 	//
 	//      Returns an array of strings by extracting word locations within a text.
 	//
 	char** bitstream_GetWords
-	(bitstream* a, const char* text);
+	(bitstream* const a, const char* const text);
 	
 	//
-	//			Cleans up the structure within a bistream.
-	//			Frees up the pointer that is pointing to the data.
-	//			The argument must be void* because that is the standard
-	//			of garbage collected items.
+	//	Cleans up the structure within a bistream.
+	//	Frees up the pointer that is pointing to the data.
+	//	The argument must be void* because that is the standard
+	//	of garbage collected items.
 	//
-	//			You can reuse a bitstream for another if you do not
-	//			release the pointer after calling bitstream_Delete.
+	//	You can reuse a bitstream for another if you do not
+	//	release the pointer after calling bitstream_Delete.
 	//
-	void		bitstream_Delete
+	void bitstream_Delete
 	(void* const p);
 	
 	//
-	//			Prints out the bitstream to the console.
-	//			A bitstream is logically divided into blocks
-	//			a=>b means the block starts at a and ends right before b.
+	//	Prints out the bitstream to the console.
+	//	A bitstream is logically divided into blocks
+	//	a=>b means the block starts at a and ends right before b.
 	//
-	void		bitstream_Print
-	(bitstream const* a);
+	void bitstream_Print
+	(const bitstream* const a);
 	
 	//
-	//			If you know all indices in a is less than b,
-	//			then using DirectJoin is a faster operation than Or.
+	//	If you know all indices in a is less than b,
+	//	then using DirectJoin is a faster operation than Or.
 	//
-	bitstream*	bitstream_DirectJoin
-	(gcstack* gc, bitstream const* a, bitstream const* b);
+	bitstream* bitstream_DirectJoin
+	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
-	//			Creates a copy of the bitstream.
+	//	Creates a copy of the bitstream.
 	//
-	bitstream*	bitstream_Clone
-	(gcstack* gc, bitstream const* a);
+	bitstream* bitstream_Clone
+	(gcstack* const gc, const bitstream* const a);
 	
 	//
-	//			Performs an Boolean 'And' operation between two bitstreams.
-	//			This equal the intersection of amounts in a Venn diagram.
-	//			The algorithm first does a simulation of the computation
-	//			to figure out the needed size, then it does the actual job.
-	//			The simulation algorithm is hidden in the .c file as 'countAnd'.
+	//	Performs an Boolean 'And' operation between two bitstreams.
+	//	This equal the intersection of amounts in a Venn diagram.
+	//	The algorithm first does a simulation of the computation
+	//	to figure out the needed size, then it does the actual job.
+	//	The simulation algorithm is hidden in the .c file as 'countAnd'.
 	//
-	bitstream*	bitstream_And
-	(gcstack*, bitstream const* a, bitstream const* b);
+	bitstream* bitstream_And
+	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
-	//			Performs a Boolean 'Or' operation between two bitstreams.
-	//			This equals the sum of two amounts in a Venn diagram.
-	//			The algorithm first does a simulation of the computation
-	//			to figure out the needed size, then it does the actual job.
-	//			The simulation algorithm is hidden in the .c file as 'countOr'.
+	//	Performs a Boolean 'Or' operation between two bitstreams.
+	//	This equals the sum of two amounts in a Venn diagram.
+	//	The algorithm first does a simulation of the computation
+	//	to figure out the needed size, then it does the actual job.
+	//	The simulation algorithm is hidden in the .c file as 'countOr'.
 	//
-	bitstream*	bitstream_Or
-	(gcstack*, bitstream const* a, bitstream const* b);
+	bitstream* bitstream_Or
+	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
-	//			Performs a Boolean 'Except' operation between two bitstreams.
-	//			It is like to cut of amounts or like when you eat a cookie.
-	//			If 'a' is the cookie, then 'b' is the teeth marks after chewing.
-	//			Instead of doing two operations, one NOT and one AND,
-	//			this algorithm is exact copy of 'And' except for changing a flag.
-	//			The algorihtm first does a simulation of the computation
-	//			to figure out the needed size, then it does the actual job.
-	//			The simulation algorithm is hidden in the .c file as 'countExcept'.
+	//	Performs a Boolean 'Except' operation between two bitstreams.
+	//	It is like to cut of amounts or like when you eat a cookie.
+	//	If 'a' is the cookie, then 'b' is the teeth marks after chewing.
+	//	Instead of doing two operations, one NOT and one AND,
+	//	this algorithm is exact copy of 'And' except for changing a flag.
+	//	The algorihtm first does a simulation of the computation
+	//	to figure out the needed size, then it does the actual job.
+	//	The simulation algorithm is hidden in the .c file as 'countExcept'.
 	//
-	bitstream*	bitstream_Except
-	(gcstack*, bitstream const* a, bitstream const* b);
+	bitstream* bitstream_Except
+	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
-	//			Performs an invert at a specified location in the bitstreams.
-	//			Because bitstream are infinite in both directions,
-	//			it is not possible to describe an inverted bitstream
-	//			without adding or removing a number.
-	//			Bitstreams that have odd length is inverted and infinite,
-	//			while those with even length is finite.
-	//			(bitstream is direct proof that there is infinite infinites).
-	//			The algorithm first does a simulation fo the computation
-	//			to figure out the needed size, then it does the actual job.
-	//			The simulation algorithm is hidden in the .c file as 'countInvert'.
+	//	Performs an invert at a specified location in the bitstreams.
+	//	Because bitstream are infinite in both directions,
+	//	it is not possible to describe an inverted bitstream
+	//	without adding or removing a number.
+	//	Bitstreams that have odd length is inverted and infinite,
+	//	while those with even length is finite.
+	//	(bitstream is direct proof that there is infinite infinites).
+	//	The algorithm first does a simulation fo the computation
+	//	to figure out the needed size, then it does the actual job.
+	//	The simulation algorithm is hidden in the .c file as 'countInvert'.
 	//
-	bitstream*	bitstream_Invert
-	(gcstack* gc, bitstream* a, int inv);
+	bitstream* bitstream_Invert
+	(gcstack* const gc, bitstream* const a, const int inv);
 	
 	//
-	//			Computes the area or size the bitstream covered with
-	//			true values. You can only use this if you have even length
-	//			of the bitstream, use 'bitstream_Abs' instead if you need
-	//			to support bitstreams ending in infinity.
+	//	Computes the area or size the bitstream covered with
+	//	true values. You can only use this if you have even length
+	//	of the bitstream, use 'bitstream_Abs' instead if you need
+	//	to support bitstreams ending in infinity.
 	//
-	int			bitstream_Size
-	(bitstream const* list);
+	int bitstream_Size
+	(const bitstream* const list);
 	
 	//
-	//			Computes the area or size of the bitstream covered with
-	//			true values. This sets a maximum limit in case the
-	//			bitstream is inverted. If you prefer to receive
-	//			negative value if the bitstream is infinite,
-	//			then you can use 'bitstream_AbsSub' in the .c file.
-	//			For usual applications it is enough with this method.
+	//	Computes the area or size of the bitstream covered with
+	//	true values. This sets a maximum limit in case the
+	//	bitstream is inverted. If you prefer to receive
+	//	negative value if the bitstream is infinite,
+	//	then you can use 'bitstream_AbsSub' in the .c file.
+	//	For usual applications it is enough with this method.
 	//
-	int			bitstream_Abs
-	(bitstream const* list, int maximum);
+	int bitstream_Abs
+	(const bitstream* const list, const int maximum);
 	
 	//
-	//			Returns the pointer at beginning of bitstream.
+	//	Returns the pointer at beginning of bitstream.
 	//
-	int* 		bitstream_ArrayPointer(bitstream const* a);
+	int* bitstream_ArrayPointer
+	(const bitstream* const a);
 	
 	//
-	//			Returns the amoutn of blocks in the bitstream.
+	//	Returns the amoutn of blocks in the bitstream.
 	//
-	int			bitstream_NumberOfBlocks(bitstream const* a);
+	int bitstream_NumberOfBlocks
+	(const bitstream* const a);
 	
 	//
-	//			Removes and returns an index from the beginning of the bitstream.
-	//			It is fast within a single block, but require extra operations
-	//			at the end of each block.
-	//			Don't use it on inverted bitstreams.
+	//	Removes and returns an index from the beginning of the 
+	//	bitstream. It is fast within a single block, but require extra 
+	//	operations at the end of each block.
+	//	Don't use it on inverted bitstreams.
 	//
-	int			bitstream_PopStart(bitstream* a);
+	int bitstream_PopStart
+	(bitstream* const a);
 	
 	//
-	//			Removes and returns an index from the end of the bitstream.
-	//			This is faster than PopStart, because no need to move data.
-	//			Don't use it on inverted bitstreams.
+	//	Removes and returns an index from the end of the bitstream.
+	//	This is faster than PopStart, because no need to move data.
+	//	Don't use it on inverted bitstreams.
 	//
-	int			bitstream_PopEnd(bitstream* a);
+	int bitstream_PopEnd
+	(bitstream* const a);
 	
 #endif
 	
