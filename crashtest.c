@@ -31,7 +31,7 @@ void crash_Test(void*(*f)(void* input), const char const* message)
 	
 	if (res == &DID_NOT_CRASH)
 	{
-		printf("%s DID_NOT_CRASH!!!\r\n", message);
+		printf("\r\nDID NOT CRASH: %s\r\n", message);
         	pthread_exit(NULL);
 	}
 }
@@ -911,6 +911,26 @@ void* crash_gcstack_Delete(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_gcstack_PopStringWithItem(void* input)
+{
+	gcstack_PopStringWithItem(NULL, NULL);
+	
+	return &DID_NOT_CRASH;
+}
+
+void* crash_gcstack_PopStringWithItem2(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	
+	// Create a stack and push it on the stack for cleaning up.
+	gcstack* st = gcstack_Init(gcstack_Alloc());
+	gcstack_PushPointer(gc, st, gcstack_Delete);
+	
+	gcstack_PopStringWithItem(st, NULL);
+	
+	return &DID_NOT_CRASH;
+}
+
 void* crash_property_Delete(void* input)
 {
 	property_Delete(NULL);
@@ -1228,6 +1248,11 @@ void crashtest_Run() {
 	crash_Test(crash_hashTable_SetStringHash2, "hashTable_SetStringHash2");
 	crash_Test(crash_property_Delete, "property_Delete");
 	
+	////////////////////////////////////////////////////////////////////////
+	crash_Test
+	(crash_gcstack_PopStringWithItem, "crash_gcstack_PopStringWithItem");
+	crash_Test
+	(crash_gcstack_PopStringWithItem2, "crash_gcstack_PopStringWithItem2");
 }
 
 

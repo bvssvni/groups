@@ -72,7 +72,8 @@
 
 //	The reasons this function takes bytes as arguments is because
 //	it copies the bytes when swapping.
-void swapData(byte*t, byte*a, byte*b, int stride)
+void swapData
+(byte* const t, byte* const a, byte* const b, const int stride)
 {
 	memcpy(t, a, stride);
 	memcpy(a, b, stride);
@@ -84,13 +85,14 @@ void swapData(byte*t, byte*a, byte*b, int stride)
 	gcstack_Swap(a, b);
 }
 
-void sorting_Sort(void* arr[], 
-		  int beg, int end, int stride, void*t,
-		  int(*compare)(void const* a, void const* b))
+void sorting_Sort
+(void** const arr, const int beg, const int end, const int stride, 
+ void* const t, int(*const compare)(const void* a, const void* b))
 {
-	if (end <= beg + 1) return;
+	if (end <= beg + 1) 
+		return;
 	
-	void const* piv = arr[beg];
+	const void* const piv = arr[beg];
 	int l = beg + 1, r = end;
 	while (l < r)
 	{

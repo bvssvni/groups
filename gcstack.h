@@ -83,10 +83,10 @@ extern "C" {
 	} gcstring;
 	
 	//
-	// Garbage collector stack.
-	// This works as the container of a double-linked list.
-	// The root is a stat item on the top of the stack.
-	// The length is the depth of the stack according to counting.
+	// 	Garbage collector stack.
+	// 	This works as the container of a double-linked list.
+	// 	The root is a stat item on the top of the stack.
+	// 	The length is the depth of the stack according to counting.
 	//
 	typedef struct gcstack
 	{
@@ -95,16 +95,17 @@ extern "C" {
 	} gcstack;
 	
 	//
-	// This function is handy when you have one gc
-	// in an object that contains the members,
-	// you can swap one above the current level and one
-	// below so the old one gets deleted.
+	// 	This function is handy when you have one gc
+	// 	in an object that contains the members,
+	// 	you can swap one above the current level and one
+	// 	below so the old one gets deleted.
 	//
 	void gcstack_Swap
 	(void* a, void* b);
 	
 	//
-	// Pops item from the stack, calls the free method and frees the pointer.
+	// 	Pops item from the stack, calls the free method and frees the 
+	// 	pointer.
 	//
 	void gcstack_free
 	(gcstack* gc, void* p);
@@ -113,13 +114,13 @@ extern "C" {
 	();
 	
 	//
-	// Deletes the gcstack and all the data it refers to.
+	// 	Deletes the gcstack and all the data it refers to.
 	//
 	void gcstack_Delete
-	(gcstack* gc);
+	(void* const gc);
 	
 	//
-	// Initializes a garbage collected item.
+	// 	Initializes a garbage collected item.
 	//
 	gcstack_item* gcstack_malloc
 	(gcstack* gc, int size, void(*free)(void* const p));
@@ -128,7 +129,8 @@ extern "C" {
 	(gcstack* gc);
 	
 	//
-	//      If you don't like to have items in reverse, you can reorder them.
+	//      If you don't like to have items in reverse, you can reorder 
+	//	them.
 	//
 	void gcstack_ReverseWithLevel
 	(gcstack* gc, int level);
@@ -158,10 +160,17 @@ extern "C" {
 	(gcstack* gc, void* p);
 	
 	//
-	// Pushes an item on the stack.
+	// 	Pushes an item on the stack.
 	//
 	void gcstack_Push
 	(gcstack* gc, gcstack_item* item);
+	
+	//
+	// 	Puses a pointer on the stack.
+	//	The pointer will be released on gcstack_Delete.
+	//
+	void gcstack_PushPointer
+	(gcstack* gc, void* p, void (*cleanUp)(void* const p));
 	
 	//
 	//      SPECIAL TYPE PUSH AND POP
@@ -182,8 +191,9 @@ extern "C" {
 	(gcstack* gc, const char* val);
 	
 	//
-	//      Pops double from the stack.
+	//      POP VALUE FROM TOP OF STACK
 	//
+	
 	double gcstack_PopDouble
 	(gcstack* gc);
 	
@@ -195,6 +205,10 @@ extern "C" {
 	
 	char* gcstack_PopString
 	(gcstack* gc);
+	
+	//
+	//	POP VALUE AT ANY LOCATION IN STACK
+	//
 	
 	double gcstack_PopDoubleWithItem
 	(gcstack* gc, gcstack_item* item);
@@ -277,7 +291,9 @@ extern "C" {
 	(gcstack const* gc);
 	
 	//
-	//      Takes all int values on the stack and constructs a string from it.
+	//      Takes all int values on the stack and constructs a string 
+	//	from it. It pops the characters in backward order to make
+	//	the string become right.
 	//
 	char* gcstack_PopIntsAsString
 	(gcstack* gc);
