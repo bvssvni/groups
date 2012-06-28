@@ -39,17 +39,18 @@
 
 #include "parsing.h"
 
-int parsing_ScanfSizeOf(const char* text, int type) {
+int parsing_ScanfSizeOf(const char* text, const int type) {
 	macro_err(text == NULL);
 	
-	bool acceptNumeric = true;
-	bool acceptDot = type == TYPE_DOUBLE || type == TYPE_STRING;
-	bool acceptDoubleQuote = false;
-	bool acceptWhiteSpace = type == TYPE_STRING;
-	bool acceptComma = false;
-	bool acceptParanthesis = type == TYPE_STRING;
+	const bool acceptNumeric = true;
+	const bool acceptDot = type == TYPE_DOUBLE || type == TYPE_STRING;
+	const bool acceptDoubleQuote = false;
+	const bool acceptWhiteSpace = type == TYPE_STRING;
+	const bool acceptComma = false;
+	const bool acceptParanthesis = type == TYPE_STRING;
 	
-	bool isNumeric, isDot, isDoubleQuote, isWhiteSpace, isComma, isParanthesis;
+	bool isNumeric, isDot, isDoubleQuote, isWhiteSpace, isComma, 
+	isParanthesis;
 	
 	int i = 0;
 	for (i = 0; text[i] != '\0'; i++) {
@@ -57,47 +58,75 @@ int parsing_ScanfSizeOf(const char* text, int type) {
 		isNumeric = text[i] >= '0' && text[i] <= '9';
 		isDot = text[i] == '.';
 		isDoubleQuote = text[i] == '"';
-		isWhiteSpace = text[i] == ' ' || text[i] == '\r' || text[i] == '\n' || text[i] == '\t';
+		
+		isWhiteSpace = text[i] == ' ' || text[i] == '\r' || 
+		text[i] == '\n' || text[i] == '\t';
+		
 		isComma = text[i] == ',';
-		isParanthesis = text[i] == '}' || text[i] == '{' || text[i] == ']' || text[i] == '[' ||
+		
+		isParanthesis = text[i] == '}' || text[i] == '{' || 
+		text[i] == ']' || text[i] == '[' ||
 		text[i] == ')' || text[i] == '(';
 		
-		if (isNumeric && !acceptNumeric) break;
-		if (isDot && !acceptDot) break;
-		if (isDoubleQuote && !acceptDoubleQuote) break;
-		if (isWhiteSpace && !acceptWhiteSpace) break;
-		if (isComma && !acceptComma) break;
-		if (isParanthesis && !acceptParanthesis) break;
+		// Return 0 if there is an int data type ending with '.'
+		// In such cases, a double should be read instead.
+		if (isDot && type == TYPE_INT) 
+			return 0;
+		
+		if (isNumeric && !acceptNumeric) 
+			break;
+		
+		if (isDot && !acceptDot) 
+			break;
+		
+		if (isDoubleQuote && !acceptDoubleQuote) 
+			break;
+		
+		if (isWhiteSpace && !acceptWhiteSpace) 
+			break;
+		
+		if (isComma && !acceptComma) 
+			break;
+		
+		if (isParanthesis && !acceptParanthesis) 
+			break;
 	}
 	
 	return i;
 }
 
-int parsing_ScanDouble(const char* text, double* output)
+int parsing_ScanDouble(const char* const text, double* const output)
 {
 	macro_err(text == NULL); macro_err(output == NULL);
 	
-	int s = parsing_ScanfSizeOf(text, TYPE_DOUBLE);
-	if (s == 0) return 0;
-	int n = sscanf(text, "%lg", output);
+	const int s = parsing_ScanfSizeOf(text, TYPE_DOUBLE);
+	
+	if (s == 0) 
+		return 0;
+	
+	const int n = sscanf(text, "%lg", output);
 	return n*s;
 }
 
-int parsing_ScanInt(const char* text, int* output)
+int parsing_ScanInt(const char* const text, int* const output)
 {
 	macro_err(text == NULL); macro_err(output == NULL);
 	
-	int s = parsing_ScanfSizeOf(text, TYPE_INT);
-	if (s == 0) return 0;
-	int n = sscanf(text, "%i", output);
-	return n*s;
+	const int s = parsing_ScanfSizeOf(text, TYPE_INT);
+	if (s == 0) 
+		return 0;
+	
+	// The sscanf function does not return number of read characters,
+	// but only 1 if one or more character is read.
+	const int n = sscanf(text, "%i", output);
+	return n *s ;
 }
 
 #define _isWhiteSpace(a) (a == ' ' || a == '\r' || a == '\n' || a == '\t')
 #define _isLetter(a) ((a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z'))
 #define _isNumeric(a) (a >= '0' && a <= '9')
 
-int parsing_SkipWhiteSpace(const char* text)
+int parsing_SkipWhiteSpace(const char* const text)
 {
 	macro_err(text == NULL);
 	
@@ -106,9 +135,12 @@ int parsing_SkipWhiteSpace(const char* text)
 	for (i = 0; text[i] != '\0'; i++)
 	{
 		ch = text[i];
-		if (_isWhiteSpace(ch)) continue;
+		if (_isWhiteSpace(ch)) 
+			continue;
+		
 		break;
 	}
+	
 	return i;
 }
 
