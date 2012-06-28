@@ -132,10 +132,36 @@ if (_macro_indices##a[_macro_i##a] == -1) continue;
 	//
 	//      SIMPLIFIED ERROR HANDLING
 	//
-	//      Crashes thread or application and prints a detailed error message.
-	//      It also prints the condition under which the thread or application should crash.
+	//      Crashes thread or application and prints a detailed error 
+	//	message. It also prints the condition under which the thread or 
+	//	application should crash.
 	//
-#define macro_err(cond) if (cond) errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
+#define macro_err(cond) if (cond) \
+errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
+	
+	//
+	//	UNIT TESTING
+	//
+	//
+	//	This macro prints out a proper message if the arguments
+	//	are not the same and kills the thread/application if that is the
+	//	case.
+	//
+#define macro_test_string(a, b) \
+if (strcmp(a, b) != 0) { \
+printf("|%s| expected |%s|\r\n", a, b); \
+macro_err(strcmp(a, b) != 0); \
+}
+	//
+	//	This macro prints out a proper message if the int arguments
+	//	are not equal and kills the thread/application if that is the
+	//	case.
+	//
+#define macro_test_int(a, b) \
+if (a != b) { \
+printf("|%i| expected |%i|\r\n", a, b); \
+macro_err(a != b); \
+}
 	
 	//
 	//      This macro is specially suited for expression errors.

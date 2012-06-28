@@ -112,13 +112,15 @@ int parsing_SkipWhiteSpace(const char* text)
 	return i;
 }
 
-int parsing_ReadCharacter(const char* text, char ch) {
+int parsing_ReadCharacter(const char* const text, const char ch) {
 	macro_err(text == NULL);
+	
 	return text[0] == ch ? 1 : 0;
 }
 
 char* parsing_ReadVariableName
-(const char* text, const char* breakAtCharacters, int* delta) {
+(const char* const text, const char* const breakAtCharacters, int* const delta) 
+{
 	
 	if (_isNumeric(text[0])) {
 		*delta = 0;
@@ -139,9 +141,7 @@ char* parsing_ReadVariableName
 	}
 	
 	char* output = malloc(sizeof(char)*(i+1));
-	for (int j = 0; j < i; j++) {
-		output[j] = text[j];
-	}
+	memcpy(output, text, i*sizeof(char));
 	output[i] = '\0';
 	
 	*delta = i;
@@ -149,7 +149,8 @@ char* parsing_ReadVariableName
 }
 
 char* parsing_ReadEscapedString
-(const char* text, int* delta) {
+(const char* const text, int* const delta) {
+	// If the first letter is not starting with '"', return NULL.
 	if (text[0] != '\"') {
 		*delta = 0; return NULL;
 	}
@@ -157,16 +158,19 @@ char* parsing_ReadEscapedString
 	char ch;
 	int i;
 	
+	// Count the number of characters in text.
 	for (i = 1; text[i] != '\0'; i++) {
 		ch = text[i];
-		if (ch == '\"') break;
+		if (ch == '\"') 
+			break;
 	}
 	
-	char* output = malloc(sizeof(char)*(i+1));
-	for (int j = 0; j < i; j++) {
-		output[j] = text[j];
-	}
-	output[i] = '\0';
+	// Copy characters from text.
+	char* const output = malloc(sizeof(char)*i);
+	memcpy(output, text+1, (i-1)*sizeof(char));
+	
+	// Add end character at end of string.
+	output[i-1] = '\0';
 	
 	*delta = i+1;
 	return output;

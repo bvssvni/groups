@@ -61,7 +61,8 @@ void bitstream_Delete(void* const p)
 
 bitstream* bitstream_AllocWithGC(gcstack* const gc) 
 {
-	return (bitstream*)gcstack_malloc(gc, sizeof(bitstream), bitstream_Delete);
+	return (bitstream*)gcstack_malloc
+	(gc, sizeof(bitstream), bitstream_Delete);
 }
 
 bitstream* bitstream_InitWithSize(bitstream* const a, const int size) 
@@ -79,11 +80,18 @@ bitstream* bitstream_InitWithSize(bitstream* const a, const int size)
 	
 	a->length = size;
 	
-	if (size == 0) return a;
+	if (size == 0) 
+		return a;
 	
-	a->pointer = malloc(sizeof(int)*size);
+	const int bytes = sizeof(int)*size;
+	a->pointer = malloc(bytes);
+	memset(a->pointer, 0, bytes);
+	
+	/*/
 	for (int i = 0; i < size; i++)
 		a->pointer[i] = 0;
+	//*/
+	
 	return a;
 }
 
@@ -822,6 +830,69 @@ int countExcept(const bitstream* const a, const bitstream* const b)
 	return list;
 }
 
+void bitstream_ExceptTmp
+(const bitstream* const a, const bitstream* const b, bitstream* const tmp)
+{
+	macro_err(a == NULL); macro_err(b == NULL);
+	
+	const int a_length = a->length;
+	const int b_length = b->length;
+	if (b_length == 0) {
+		tmp->length = a_length;
+		tmp->pointer = malloc(sizeof(int)*a_length);
+		memcpy(tmp->pointer, a->pointer, sizeof(int)*a_length);
+		return;
+	}
+	
+	int list = 0;
+	
+	bitstream_InitWithSize(tmp, countExcept(a, b));
+	
+	if (a_length == 0 || b_length == 0)
+		return;
+	
+	int i = 0, j = 0;
+	bool ba = false;
+	bool bb = true;
+	bool oldB = false;
+	int pa;
+	int pb;
+	while (i < a_length || j < b_length)
+	{
+		pa = a->pointer[i>=a_length?a_length-1:i];
+		pb = b->pointer[j>=b_length?b_length-1:j];
+		
+		if (pa == pb)
+		{
+			ba = !ba;
+			bb = !bb;
+			if ((ba && bb) != oldB)
+			{
+				tmp->pointer[list++] = pa;
+			}
+			i++;
+			j++;
+		}
+		else if ((pa < pb || j >= b_length) && i < a_length)
+		{
+			ba = !ba;
+			if ((ba && bb) != oldB)
+				tmp->pointer[list++] = pa;
+			i++;
+		}
+		else if (j < b_length)
+		{
+			bb = !bb;
+			if ((ba && bb) != oldB)
+				tmp->pointer[list++] = pb;
+			j++;
+		}
+		else
+			break;
+		
+		oldB = ba && bb;
+	}
+}
 
 bitstream* bitstream_Except
 (gcstack* const gc, const bitstream* const a, const bitstream* const b)

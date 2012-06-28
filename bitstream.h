@@ -225,6 +225,15 @@ extern "C" {
 	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
+	//	Performs a Boolean 'Except' operation between two bitstreams.
+	//	It differs from 'bitstream_Except' by the way that the struct
+	//	used to contain the values must be passed to the function.
+	//
+	void bitstream_ExceptTmp
+	(const bitstream* const a, 
+	 const bitstream* const b, bitstream* const tmp);
+	
+	//
 	//	Performs an invert at a specified location in the bitstreams.
 	//	Because bitstream are infinite in both directions,
 	//	it is not possible to describe an inverted bitstream
