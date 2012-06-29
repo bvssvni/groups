@@ -14,6 +14,9 @@
 // Some arbitrary number to check if it didn't crash properly.
 int DID_NOT_CRASH = 42;
 
+#define macro_crash(a) \
+crash_Test(a, #a)
+
 void crash_Test(void*(*f)(void* input), const char const* message)
 {
 	pthread_t thread;
@@ -1096,163 +1099,138 @@ void* crash_hashTable_SetBool2(void* input)
 }
 
 void crashtest_Run() {
-	crash_Test(crash_bitstream_Abs, "bitstream_Abs");
-	crash_Test(crash_bitstream_ArrayPointer, "bitstream_ArrayPointer");
-	crash_Test(crash_bitstream_And, "bitstream_And");
-	crash_Test(crash_bitstream_Clone, "bitstream_Clone");
-	crash_Test(crash_bitstream_Delete, "bitstream_Delete");
-	crash_Test(crash_bitstream_Except, "bitstream_Except");
-	crash_Test(crash_bitstream_DirectJoin, "bitstream_DirectJoin");
-	crash_Test(crash_bitstream_DirectJoin2, "bitstream_DirectJoin2");
-	crash_Test(crash_bitstream_InitWithDeltaBool, 
-		   "bitstream_InitWithDeltaBool");
-	crash_Test(crash_bitstream_InitWithDeltaBool2, 
-		   "bitstream_InitWithDeltaBool2");
-	crash_Test(crash_bitstream_InitWithDeltaBool3, 
-		   "bitstream_InitWithDeltaBool3");
-	crash_Test(crash_bitstream_InitWithDeltaDouble, 
-		   "bitstream_InitWithDeltaDouble");
-	crash_Test(crash_bitstream_InitWithDeltaDouble2, 
-		   "bitstream_InitWithDeltaDouble2");
-	crash_Test(crash_bitstream_InitWithDeltaDouble3, 
-		   "bitstream_InitWithDeltaDouble3");
-	crash_Test(crash_bitstream_InitWithDeltaInt, 
-		   "bitstream_InitWithDeltaInt");
-	crash_Test(crash_bitstream_InitWithDeltaInt2, 
-		   "bitstream_InitWithDeltaInt2");
-	crash_Test(crash_bitstream_InitWithDeltaInt3, 
-		   "bitstream_InitWithDeltaInt3");
-	crash_Test(crash_bitstream_InitWithDeltaString, 
-		   "bitstream_InitWithDeltaString");
-	crash_Test(crash_bitstream_InitWithDeltaString2, 
-		   "bitstream_InitWithDeltaString2");
-	crash_Test(crash_bitstream_InitWithDeltaString3, 
-		   "bitstream_InitWithDeltaString");
-	crash_Test(crash_bitstream_InitWithIndices, 
-		   "bitstream_InitWithIndices");
-	crash_Test(crash_bitstream_InitWithIndices2, 
-		   "bitstream_InitWithIndices2");
-	crash_Test(crash_bitstream_InitWithIndices3, 
-		   "bitstream_InitWithIndices3");
-	crash_Test(crash_bitstream_InitWithSize, "bitstream_InitWithSize");
-	crash_Test(crash_bitstream_InitWithSize2, "bitstream_InitWithSize2");
-	crash_Test(crash_bitstream_InitWithValues, "bitstream_InitWithValues");
-	crash_Test(crash_bitstream_InitWithValues2, 
-		   "bitstream_InitWithValues2");
-	crash_Test(crash_bitstream_InitWithValues3, 
-		   "bitstream_InitWithValues3");
-	crash_Test(crash_bitstream_Invert, "bitstream_Invert");
-	crash_Test(crash_bitstream_NumberOfBlocks, "bitstream_NumberOfBlocks");
-	crash_Test(crash_bitstream_Or, "bitstream_Or");
-	crash_Test(crash_bitstream_PopEnd, "bitstream_PopEnd");
-	crash_Test(crash_bitstream_PopStart, "bitstream_PopStart");
-	crash_Test(crash_bitstream_Print, "crash_bitstream_Print");
-	crash_Test(crash_bitstream_Size, "bitstream_Size");
-	crash_Test(crash_groups_AddMember, "groups_AddMember");
-	crash_Test(crash_groups_AddMember2, "groups_AddMember2");
-	crash_Test(crash_groups_AddProperty, "groups_AddProperty");
-	crash_Test(crash_groups_AddProperty2, "groups_AddProperty2");
-	crash_Test(crash_groups_AddProperty3, "groups_AddProperty3");
-	crash_Test(crash_groups_Delete, "groups_Delete");
-	crash_Test(crash_groups_GetBitstream, "groups_GetBitstream");
-	crash_Test(crash_groups_GetBitstream2, "groups_GetBitstream2");
-	crash_Test(crash_groups_Init, "groups_Init");
-	crash_Test(crash_groups_IsDefaultVariable, "groups_IsDefaultVariable");
-	crash_Test(crash_groups_IsDefaultVariable2, 
-		   "groups_IsDefaultVariable2");
-	crash_Test(crash_gcstack_Delete, "gcstack_Delete");
-	crash_Test(crash_groups_RemoveProperty, "groups_RemoveProperty");
-	crash_Test(crash_groups_RemoveProperty2, "groups_RemovePoperty2");
-	crash_Test(crash_groups_SetBool, "groups_SetBool");
-	crash_Test(crash_groups_SetBool2, "groups_SetBool2");
-	crash_Test(crash_groups_SetBool3, "groups_SetBool3");
-	crash_Test(crash_groups_SetDouble, "groups_SetDouble");
-	crash_Test(crash_groups_SetDouble2, "groups_SetDouble2");
-	crash_Test(crash_groups_SetDouble3, "groups_SetDouble3");
-	crash_Test(crash_groups_SetInt, "groups_SetInt");
-	crash_Test(crash_groups_SetInt2, "groups_SetInt2");
-	crash_Test(crash_groups_SetInt3, "groups_SetInt3");
-	crash_Test(crash_hashTable_ContainsStringHash, 
-		   "hashTable_ContainsStringHash");
-	crash_Test(crash_hashTable_ContainsStringHash2, 
-		   "hashTable_ContainsStringHash2");
-	crash_Test(crash_hashTable_Delete, "hashTable_Delete");
-	crash_Test(crash_hashTable_Get, "hashTable_Get");
-	crash_Test(crash_hashTable_Get2, "hashTable_Get2");
-	crash_Test(crash_groups_GetProperty, "groups_GetProperty");
-	crash_Test(crash_groups_GetProperty2, "groups_GetProperty2");
-	crash_Test(crash_hashTable_Init, "hashTable_Init");
-	crash_Test(crash_hashTable_InitWithMember, "hashTable_InitWithMember");
-	crash_Test(crash_hashTable_InitWithMember2, 
-		   "hashTable_InitWithMember2");
-	crash_Test(crash_hashTable_Set, "hashTable_Set");
-	crash_Test(crash_hashTable_Set2, "hashTable_Set2");
-	crash_Test(crash_hashTable_SetBool, "hashTable_SetBool");
-	crash_Test(crash_hashTable_SetBool2, "hashTable_SetBool2");
-	crash_Test(crash_hashTable_SetDouble, "hashTable_SetDouble");
-	crash_Test(crash_hashTable_SetDouble2, "hashTable_SetDouble2");
-	
-	crash_Test(crash_groups_GetBoolArray, "groups_GetBoolArray");
-	crash_Test(crash_groups_GetBoolArray2, "groups_GetBoolArray2");
-	crash_Test(crash_groups_GetBoolArray3, "groups_GetBoolArray3");
-	crash_Test(crash_groups_GetDoubleArray, "groups_GetDoubleArray");
-	crash_Test(crash_groups_GetDoubleArray2, "groups_GetDoubleArray2");
-	crash_Test(crash_groups_GetDoubleArray3, "groups_GetDoubleArray3");
-	crash_Test(crash_groups_GetIntArray, "groups_GetIntArray");
-	crash_Test(crash_groups_GetIntArray2, "groups_GetIntArray2");
-	crash_Test(crash_groups_GetIntArray3, "groups_GetIntArray3");
-	crash_Test(crash_groups_GetStringArray, "groups_GetStringArray");
-	crash_Test(crash_groups_GetStringArray2, "groups_GetStringArray2");
-	crash_Test(crash_groups_GetStringArray3, "groups_GetStringArray3");
-	crash_Test(crash_groups_PrintMember, "groups_PrintMember");
-	crash_Test(crash_groups_PrintMember2, "groups_PrintMember2");
-	crash_Test(crash_groups_PropertyNameById, "groups_PropertyNameById");
-	crash_Test(crash_groups_PropertyNameById2, "groups_PropertyNameById2");
-	crash_Test(crash_groups_ReadFromFile, "groups_ReadFromFile");
-	crash_Test(crash_groups_ReadFromFile2, "groups_ReadFromFile2");
-	crash_Test(crash_groups_RemoveMember, "groups_RemoveMember");
-	crash_Test(crash_groups_RemoveMember2, "groups_RemoveMember2");
-	crash_Test(crash_groups_RemoveMembers, "groups_RemoveMembers");
-	crash_Test(crash_groups_RemoveMembers2, "groups_RemoveMembers2");
-	crash_Test(crash_groups_SaveToFile, "groups_SaveToFile");
-	crash_Test(crash_groups_SaveToFile2, "groups_SaveToFile2");
-	crash_Test(crash_groups_SetBoolArray, "groups_SetBoolArray");
-	crash_Test(crash_groups_SetBoolArray2, "groups_SetBoolArray2");
-	crash_Test(crash_groups_SetBoolArray3, "groups_SetBoolArray3");
-	crash_Test(crash_groups_SetBoolArray4, "groups_SetBoolArray4");
-	crash_Test(crash_groups_SetBoolArray5, "groups_SetBoolArray5");
-	crash_Test(crash_groups_SetDoubleArray, "groups_SetDoubleArray");
-	crash_Test(crash_groups_SetDoubleArray2, "groups_SetDoubleArray2");
-	crash_Test(crash_groups_SetDoubleArray3, "groups_SetDoubleArray3");
-	crash_Test(crash_groups_SetDoubleArray4, "groups_SetDoubleArray4");
-	crash_Test(crash_groups_SetDoubleArray5, "groups_SetDoubleArray5");
-	crash_Test(crash_groups_SetIntArray, "groups_SetIntArray");
-	crash_Test(crash_groups_SetIntArray2, "groups_SetIntArray2");
-	crash_Test(crash_groups_SetIntArray3, "groups_SetIntArray3");
-	crash_Test(crash_groups_SetIntArray4, "groups_SetIntArray4");
-	crash_Test(crash_groups_SetIntArray5, "groups_SetIntArray5");
-	crash_Test(crash_groups_SetStringArray, "groups_SetStringArray");
-	crash_Test(crash_groups_SetStringArray2, "groups_SetStringArray2");
-	crash_Test(crash_groups_SetStringArray3, "groups_SetStringArray3");
-	crash_Test(crash_groups_SetStringArray4, "groups_SetStringArray4");
-	crash_Test(crash_groups_SetStringArray5, "groups_SetStringArray5");
-	crash_Test(crash_groups_SetString, "groups_SetString");
-	crash_Test(crash_groups_SetString2, "groups_SetString2");
-	crash_Test(crash_groups_SetString3, "groups_SetString3");
-	
-	crash_Test(crash_hashTable_SetInt, "crash_hashTable_SetInt");
-	crash_Test(crash_hashTable_SetInt2, "crash_hashTable_SetInt2");
-	crash_Test(crash_hashTable_SetString, "hashTable_SetString");
-	crash_Test(crash_hashTable_SetString2, "hashTable_SetString2");
-	crash_Test(crash_hashTable_SetStringHash, "hashTable_SetStringHash");
-	crash_Test(crash_hashTable_SetStringHash2, "hashTable_SetStringHash2");
-	crash_Test(crash_property_Delete, "property_Delete");
+	macro_crash(crash_bitstream_Abs);
+	macro_crash(crash_bitstream_ArrayPointer);
+	macro_crash(crash_bitstream_And);
+	macro_crash(crash_bitstream_Clone);
+	macro_crash(crash_bitstream_Delete);
+	macro_crash(crash_bitstream_Except);
+	macro_crash(crash_bitstream_DirectJoin);
+	macro_crash(crash_bitstream_DirectJoin2);
+	macro_crash(crash_bitstream_InitWithDeltaBool);
+	macro_crash(crash_bitstream_InitWithDeltaBool2);
+	macro_crash(crash_bitstream_InitWithDeltaBool3);
+	macro_crash(crash_bitstream_InitWithDeltaDouble);
+	macro_crash(crash_bitstream_InitWithDeltaDouble2);
+	macro_crash(crash_bitstream_InitWithDeltaDouble3);
+	macro_crash(crash_bitstream_InitWithDeltaInt);
+	macro_crash(crash_bitstream_InitWithDeltaInt2);
+	macro_crash(crash_bitstream_InitWithDeltaInt3);
+	macro_crash(crash_bitstream_InitWithDeltaString);
+	macro_crash(crash_bitstream_InitWithDeltaString2);
+	macro_crash(crash_bitstream_InitWithDeltaString3);
+	macro_crash(crash_bitstream_InitWithIndices);
+	macro_crash(crash_bitstream_InitWithIndices2);
+	macro_crash(crash_bitstream_InitWithIndices3);
+	macro_crash(crash_bitstream_InitWithSize);
+	macro_crash(crash_bitstream_InitWithSize2);
+	macro_crash(crash_bitstream_InitWithValues);
+	macro_crash(crash_bitstream_InitWithValues2);
+	macro_crash(crash_bitstream_InitWithValues3);
+	macro_crash(crash_bitstream_Invert);
+	macro_crash(crash_bitstream_NumberOfBlocks);
+	macro_crash(crash_bitstream_Or);
+	macro_crash(crash_bitstream_PopEnd);
+	macro_crash(crash_bitstream_PopStart);
+	macro_crash(crash_bitstream_Print);
+	macro_crash(crash_bitstream_Size);
+	macro_crash(crash_groups_AddMember);
+	macro_crash(crash_groups_AddMember2);
+	macro_crash(crash_groups_AddProperty);
+	macro_crash(crash_groups_AddProperty2);
+	macro_crash(crash_groups_AddProperty3);
+	macro_crash(crash_groups_Delete);
+	macro_crash(crash_groups_GetBitstream);
+	macro_crash(crash_groups_GetBitstream2);
+	macro_crash(crash_groups_Init);
+	macro_crash(crash_groups_IsDefaultVariable);
+	macro_crash(crash_groups_IsDefaultVariable2);
+	macro_crash(crash_gcstack_Delete);
+	macro_crash(crash_groups_RemoveProperty);
+	macro_crash(crash_groups_RemoveProperty2);
+	macro_crash(crash_groups_SetBool);
+	macro_crash(crash_groups_SetBool2);
+	macro_crash(crash_groups_SetBool3);
+	macro_crash(crash_groups_SetDouble);
+	macro_crash(crash_groups_SetDouble2);
+	macro_crash(crash_groups_SetDouble3);
+	macro_crash(crash_groups_SetInt);
+	macro_crash(crash_groups_SetInt2);
+	macro_crash(crash_groups_SetInt3);
+	macro_crash(crash_hashTable_ContainsStringHash);
+	macro_crash(crash_hashTable_ContainsStringHash2);
+	macro_crash(crash_hashTable_Delete);
+	macro_crash(crash_hashTable_Get);
+	macro_crash(crash_hashTable_Get2);
+	macro_crash(crash_groups_GetProperty);
+	macro_crash(crash_groups_GetProperty2);
+	macro_crash(crash_hashTable_Init);
+	macro_crash(crash_hashTable_InitWithMember);
+	macro_crash(crash_hashTable_InitWithMember2);
+	macro_crash(crash_hashTable_Set);
+	macro_crash(crash_hashTable_Set2);
+	macro_crash(crash_hashTable_SetBool);
+	macro_crash(crash_hashTable_SetBool2);
+	macro_crash(crash_hashTable_SetDouble);
+	macro_crash(crash_hashTable_SetDouble2);
+	macro_crash(crash_groups_GetBoolArray);
+	macro_crash(crash_groups_GetBoolArray2);
+	macro_crash(crash_groups_GetBoolArray3);
+	macro_crash(crash_groups_GetDoubleArray);
+	macro_crash(crash_groups_GetDoubleArray2);
+	macro_crash(crash_groups_GetDoubleArray3);
+	macro_crash(crash_groups_GetIntArray);
+	macro_crash(crash_groups_GetIntArray2);
+	macro_crash(crash_groups_GetIntArray3);
+	macro_crash(crash_groups_GetStringArray);
+	macro_crash(crash_groups_GetStringArray2);
+	macro_crash(crash_groups_GetStringArray3);
+	macro_crash(crash_groups_PrintMember);
+	macro_crash(crash_groups_PrintMember2);
+	macro_crash(crash_groups_PropertyNameById);
+	macro_crash(crash_groups_PropertyNameById2);
+	macro_crash(crash_groups_ReadFromFile);
+	macro_crash(crash_groups_ReadFromFile2);
+	macro_crash(crash_groups_RemoveMember);
+	macro_crash(crash_groups_RemoveMember2);
+	macro_crash(crash_groups_RemoveMembers);
+	macro_crash(crash_groups_RemoveMembers2);
+	macro_crash(crash_groups_SaveToFile);
+	macro_crash(crash_groups_SaveToFile2);
+	macro_crash(crash_groups_SetBoolArray);
+	macro_crash(crash_groups_SetBoolArray2);
+	macro_crash(crash_groups_SetBoolArray3);
+	macro_crash(crash_groups_SetBoolArray4);
+	macro_crash(crash_groups_SetBoolArray5);
+	macro_crash(crash_groups_SetDoubleArray);
+	macro_crash(crash_groups_SetDoubleArray2);
+	macro_crash(crash_groups_SetDoubleArray3);
+	macro_crash(crash_groups_SetDoubleArray4);
+	macro_crash(crash_groups_SetDoubleArray5);
+	macro_crash(crash_groups_SetIntArray);
+	macro_crash(crash_groups_SetIntArray2);
+	macro_crash(crash_groups_SetIntArray3);
+	macro_crash(crash_groups_SetIntArray4);
+	macro_crash(crash_groups_SetIntArray5);
+	macro_crash(crash_groups_SetStringArray);
+	macro_crash(crash_groups_SetStringArray2);
+	macro_crash(crash_groups_SetStringArray3);
+	macro_crash(crash_groups_SetStringArray4);
+	macro_crash(crash_groups_SetStringArray5);
+	macro_crash(crash_groups_SetString);
+	macro_crash(crash_groups_SetString2);
+	macro_crash(crash_groups_SetString3);
+	macro_crash(crash_hashTable_SetInt);
+	macro_crash(crash_hashTable_SetInt2);
+	macro_crash(crash_hashTable_SetString);
+	macro_crash(crash_hashTable_SetString2);
+	macro_crash(crash_hashTable_SetStringHash);
+	macro_crash(crash_hashTable_SetStringHash2);
+	macro_crash(crash_property_Delete);
 	
 	////////////////////////////////////////////////////////////////////////
-	crash_Test
-	(crash_gcstack_PopStringWithItem, "crash_gcstack_PopStringWithItem");
-	crash_Test
-	(crash_gcstack_PopStringWithItem2, "crash_gcstack_PopStringWithItem2");
+	macro_crash(crash_gcstack_PopStringWithItem);
+	macro_crash(crash_gcstack_PopStringWithItem2);
 }
 
 
