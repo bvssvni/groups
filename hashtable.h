@@ -40,19 +40,25 @@ extern "C" {
 #ifndef memgroups_hashtable
 #define memgroups_hashtable
 	
-#include "gcstack.h"
+#ifndef memgroups_hashtable_internal
+#undef private
+#define private const
+#else
+#undef private
+#define private
+#endif
 	
 	typedef struct hash_layer {
-		gcstack_item gc;
-		int n;
-		int* indices;
-		void** data;
-	} hash_layer;
+		private gcstack_item gc;
+		private int n;
+		private int* private indices;
+		private void** private private data;
+	} private hash_layer;
 	
 	typedef struct hash_table {
-		gcstack_item gc;
-		gcstack* layers;
-		int m_lastPrime;
+		private gcstack_item gc;
+		private gcstack* private layers;
+		private int m_lastPrime;
 	} hash_table;
 	
 	//

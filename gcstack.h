@@ -40,6 +40,14 @@ extern "C" {
 #ifndef memgroups_gcstack
 #define memgroups_gcstack
 	
+#ifndef memgroups_gcstack_internal
+#undef private
+#define private const
+#else
+#undef private
+#define private
+#endif
+	
 	//
 	//      GARBAGE COLLECTION
 	//
@@ -48,9 +56,9 @@ extern "C" {
 	typedef struct gcstack_item gcstack_item;
 	struct gcstack_item
 	{
-		gcstack_item* previous;
-		gcstack_item* next;
-		void(*freeSubPointers)(void* const p);
+		private gcstack_item* private previous;
+		private gcstack_item* private next;
+		void(* private freeSubPointers)(void* const p);
 	};
 	
 	//
@@ -60,27 +68,27 @@ extern "C" {
 	//
 	typedef struct gcdouble
 	{
-		gcstack_item gc;
-		double val;
-	} gcdouble;
+		private gcstack_item gc;
+		private double val;
+	} private gcdouble;
 	
 	typedef struct gcint
 	{
-		gcstack_item gc;
-		int val;
-	} gcint;
+		private gcstack_item gc;
+		private int val;
+	} private gcint;
 	
 	typedef struct gcbool
 	{
-		gcstack_item gc;
-		int val;
-	} gcbool;
+		private gcstack_item gc;
+		private int val;
+	} private gcbool;
 	
 	typedef struct gcstring
 	{
-		gcstack_item gc;
-		char* val;
-	} gcstring;
+		private gcstack_item gc;
+		private char* private val;
+	} private gcstring;
 	
 	//
 	// 	Garbage collector stack.
@@ -90,8 +98,8 @@ extern "C" {
 	//
 	typedef struct gcstack
 	{
-		int length;
-		gcstack_item* root;
+		private int length;
+		private gcstack_item* private root;
 	} gcstack;
 	
 	//

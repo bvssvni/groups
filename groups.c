@@ -41,12 +41,14 @@
 
 #include "gcstack.h"
 #include "bitstream.h"
+#include "hashtable.h"
 #include "sorting.h"
 
 #include "errorhandling.h"
 #include "readability.h"
 #include "parsing.h"
 
+#define memgroups_groups_internal
 #include "groups.h"
 
 #define TMP_ID_PROPID 123
@@ -440,15 +442,17 @@ void groups_RemoveProperty(groups* const g, const int propId)
 	free(b);
 	
 	// Loop through the stack to find the property to delete.
-	gcstack_item* cursor = g->properties->root->next;
+	const gcstack_item* cursor = g->properties->root->next;
 	property* prop = NULL;
 	for (; cursor != NULL; cursor = cursor->next)
 	{
 		prop = (property*)cursor;
-		if (prop->propId == propId) break;
+		if (prop->propId == propId) 
+			break;
 	}
 	
-	if (prop == NULL) return;
+	if (prop == NULL) 
+		return;
 	
 	// Delete it, including freeing the pointer.
 	gcstack_free(g->properties, prop);
@@ -509,9 +513,9 @@ int groups_AddMember(groups* const g, hash_table* const obj)
 	const int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
 	int newId = id;
 	while (oldId > newId) {
-		hash_table* hs = hashTable_AllocWithGC(g->members);
-		hs->layers = NULL;
-		hs->m_lastPrime = 0;
+		// The gcstack malloc sets everything to 0 so we do not need
+		// to set the members here.
+		hashTable_AllocWithGC(g->members);
 		newId++;
 	}
 	if (newId - id > 0)
@@ -1037,11 +1041,12 @@ const char* groups_PropertyNameById
 	macro_err(g == NULL); macro_err(propId < 0);
 	
 	property* prop;
-	gcstack_item* cursor = g->properties->root->next;
+	const gcstack_item* cursor = g->properties->root->next;
 	for (; cursor != NULL; cursor = cursor->next)
 	{
 		prop = (property*)cursor;
-		if (prop->propId == propId) return prop->name;
+		if (prop->propId == propId) 
+			return prop->name;
 	}
 	return NULL;
 }
@@ -1117,7 +1122,7 @@ void groups_RemoveMembers(groups* const g, bitstream const* prop)
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
 	// Remove the group from all bitstream properties.
-	gcstack_item* cursor = g->bitstreams->root->next;
+	const gcstack_item* cursor = g->bitstreams->root->next;
 	bitstream* exProp;
 	bitstream* tmpProp;
 	for (; cursor != NULL; cursor = cursor->next)
@@ -1319,7 +1324,7 @@ void groups_AppendMembers(groups* const g, gcstack* const newMembers)
 {
 	macro_err(g == NULL); macro_err(newMembers == NULL);
 	
-	gcstack_item* cursor = newMembers->root->next;
+	const gcstack_item* cursor = newMembers->root->next;
 	for (; cursor != NULL; cursor = cursor->next)
 	{
 		groups_AddMember(g, (hash_table*)cursor);

@@ -39,9 +39,11 @@
 
 #include <pthread.h>
 
+#include "gcstack.h"
 #include "errorhandling.h"
 #include "readability.h"
 
+#define memgroups_bitstream_internal
 #include "bitstream.h"
 
 void bitstream_Delete(void* const p)

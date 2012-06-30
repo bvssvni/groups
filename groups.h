@@ -40,21 +40,24 @@ extern "C" {
 #ifndef memgroups_groups
 #define memgroups_groups
 	
-#include "gcstack.h"
-#include "bitstream.h"
-#include "hashtable.h"
+#ifndef memgroups_groups_internal
+#undef private
+#define private const
+#else
+#undef private
+#define private
+#endif
 	
 	//
 	//      PROPERTY STRUCTURE
 	//
 	//      This is a sub structure of the Groups structure.
 	//
-	typedef struct property property;
-	struct property {
-		gcstack_item gc;
-		char* name;
-		int propId;
-	};
+	typedef struct property {
+		private gcstack_item gc;
+		private char* private name;
+		private int propId;
+	} private property;
 	
 	void property_Delete
 	(void* const p);
@@ -70,24 +73,24 @@ extern "C" {
 	//
 	typedef struct groups {
 		// Allow struct to be garbage collected by gcstack.
-		gcstack_item gc;
+		private gcstack_item gc;
 		
 		// Bitstream data.
-		gcstack* bitstreams;
-		int m_bitstreamsReady;
-		bitstream** m_bitstreamsArray;
-		bitstream* m_deletedBitstreams;
+		private gcstack* private bitstreams;
+		private int m_bitstreamsReady;
+		private bitstream** private m_bitstreamsArray;
+		private bitstream* private m_deletedBitstreams;
 		
 		// Property data.
-		gcstack* properties;
-		int m_propertiesReady;
-		gcstack_item** m_sortedPropertyItems;
+		private gcstack* private properties;
+		private int m_propertiesReady;
+		private gcstack_item** private m_sortedPropertyItems;
 		
 		// Member data.
-		gcstack* members;
-		int m_membersReady;
-		hash_table** m_memberArray;
-		bitstream* m_deletedMembers;
+		private gcstack* private members;
+		private int m_membersReady;
+		private hash_table** private m_memberArray;
+		private bitstream* private m_deletedMembers;
 	} groups;
 	
 	//

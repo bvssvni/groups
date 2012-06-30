@@ -38,9 +38,11 @@
 #include <pthread.h>
 #include <string.h>
 
+#include "gcstack.h"
 #include "errorhandling.h"
 #include "readability.h"
 
+#define memgroups_hashtable_internal
 #include "hashtable.h"
 
 #define START_PRIME 5

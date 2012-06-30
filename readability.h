@@ -111,9 +111,10 @@ for (_macro_j##a = _macro_start##a; _macro_j##a < _macro_end##a; _macro_j##a++) 
 	//      FOR EACH DESIGNED FOR HASH TABLE
 	//
 	
-#define macro_hashTable_foreach(a) gcstack_item* _macro_cursor##a = a->layers->root->next; \
-hash_layer* _macro_layer##a; \
-int* _macro_indices##a; \
+#define macro_hashTable_foreach(a) \
+const gcstack_item* _macro_cursor##a = a->layers->root->next; \
+const hash_layer* _macro_layer##a; \
+const int* _macro_indices##a; \
 int _macro_n##a, _macro_i##a; \
 for (; _macro_cursor##a != NULL; _macro_cursor##a = _macro_cursor##a->next) { \
 _macro_layer##a = (hash_layer*)_macro_cursor##a; \
@@ -160,13 +161,6 @@ macro_err(strcmp(a, b) != 0); \
 #define macro_test_int(a, b) \
 if (a != b) { \
 printf("|%i| expected |%i|\r\n", a, b); \
-macro_err(a != b); \
-}
-	//
-	//	This macro tests whether two pointers are equal.
-	//
-#define macro_test_pointer(a, b) \
-if (a != b) { \
 macro_err(a != b); \
 }
 	

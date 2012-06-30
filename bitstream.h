@@ -40,7 +40,13 @@ extern "C" {
 #ifndef memgroups_bitstream
 #define memgroups_bitstream
 	
-#include "gcstack.h"
+#ifndef memgroups_bitstream_internal
+#undef private
+#define private const
+#else
+#undef private
+#define private
+#endif
 	
 	//
 	//	Bitstream is a mathematical object that contains one
@@ -76,13 +82,11 @@ extern "C" {
 	//	A + B - C = A*!C + B*!C
 	//
 	
-	typedef	struct bitstream bitstream;
-	
-	struct bitstream {
-		gcstack_item gc;
-		int length;
-		int* pointer;
-	};
+	typedef struct bitstream {
+		private gcstack_item gc;
+		private int length;
+		private int* pointer;
+	} bitstream;
 	
 	//
 	//	Allocates on a garbage collector stack.
