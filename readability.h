@@ -162,6 +162,13 @@ if (a != b) { \
 printf("|%i| expected |%i|\r\n", a, b); \
 macro_err(a != b); \
 }
+	//
+	//	This macro tests whether two pointers are equal.
+	//
+#define macro_test_pointer(a, b) \
+if (a != b) { \
+macro_err(a != b); \
+}
 	
 	//
 	//      This macro is specially suited for expression errors.

@@ -443,6 +443,9 @@ gcstack_item* gcstack_malloc
 	
 	gcstack_item* const item = malloc(size);
 	
+	// Reset all bits to 0.
+	memset(item, 0, size);
+	
 	item->freeSubPointers = freeSubPointers;
 	
 	if (gc == NULL)
