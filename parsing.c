@@ -225,3 +225,70 @@ char* parsing_ReadEscapedString
 	return output;
 }
 
+void parsing_RunUnitTests(void)
+{
+	printf("Parsing unit tests - "); 
+	
+	{
+		int delta = 0;
+		char* res = parsing_ReadEscapedString("\"foo\"", &delta);
+		macro_test_string(res, "foo");
+		free(res);
+	}
+	
+	{
+		int delta = 0;
+		char* res = parsing_ReadVariableName("foo bar", "", &delta);
+		macro_test_string(res, "foo");
+		free(res);
+	}
+	
+	{
+		int delta = parsing_ReadCharacter("foo bar", 'f');
+		macro_test_int(delta, 1);
+	}
+	
+	{
+		int delta = parsing_SkipWhiteSpace("   foo");
+		macro_test_int(delta, 3);
+	}
+	
+	{
+		int num = 0;
+		int delta = parsing_ScanInt("1248", &num);
+		macro_test_int(delta, 4);
+	}
+	
+	{
+		int num = 0;
+		int delta = parsing_ScanInt("20.8", &num);
+		macro_test_int(delta, 0);
+	}
+	
+	{
+		double num = 0;
+		int delta = parsing_ScanDouble("30.7", &num);
+		macro_test_int(delta, 4);
+	}
+	
+	{
+		double num = 0;
+		int delta = parsing_ScanDouble("30", &num);
+		macro_test_int(delta, 2);
+	}
+	
+	{
+		double num = 0;
+		int delta = parsing_ScanDouble("3e4", &num);
+		macro_test_int(delta, 3);
+	}
+	
+	{
+		double num = 0;
+		int delta = parsing_ScanDouble("-10e20", &num);
+		macro_test_int(delta, 6);
+	}
+	
+	printf("OK\r\n");
+}
+

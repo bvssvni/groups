@@ -309,6 +309,12 @@ extern "C" {
 	 void(* const err)(const int line, const int column, const char* const message)
 	 );
 	
+	//
+	//	Run unit tests for groups.
+	//
+	void groups_RunUnitTests
+	(void);
+	
 #endif
 	
 #ifdef __cplusplus

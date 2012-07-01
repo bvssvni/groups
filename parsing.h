@@ -84,6 +84,12 @@ extern "C" {
 	char* parsing_ReadEscapedString
 	(const char* text, int* delta);
 	
+	//
+	//	Run unit tests for this file.
+	//
+	void parsing_RunUnitTests
+	(void);
+	
 #endif
 	
 #ifdef __cplusplus

@@ -791,3 +791,21 @@ char* gcstack_PopIntsAsString(gcstack* const gc) {
 	return str;
 }
 
+void gcstack_RunUnitTests(void)
+{
+	printf("GCStack unit tests - ");
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		gcstack_PushInt(gc, 20);
+		macro_test_int(gc->length, 1);
+		gcstack_free(gc, (gcstack_item*)gc->root->next);
+		macro_test_int(gc->length, 0);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	printf("OK\r\n");
+}
+
+

@@ -2001,3 +2001,62 @@ CLEAN_UP:
 	return true;
 }
 
+void groups_RunUnitTests(void)
+{
+	printf("Groups unit tests - ");
+	
+	{
+		groups* g = groups_AllocWithGC(NULL);
+		macro_test_int(g->m_bitstreamsReady, 0);
+		groups_Delete(g);
+		free(g);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propId = groups_AddProperty(g, "Name", "string");
+		macro_test_int(propId, 0+TYPE_STRING*TYPE_STRIDE);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propId = groups_AddProperty(g, "Age", "double");
+		macro_test_int(propId, 0+TYPE_DOUBLE*TYPE_STRIDE);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propId = groups_AddProperty(g, "Parent", "int");
+		macro_test_int(propId, 0+TYPE_INT*TYPE_STRIDE);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propId = groups_AddProperty(g, "IsOwner", "bool");
+		macro_test_int(propId, 0+TYPE_BOOL*TYPE_STRIDE);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propId = groups_AddProperty(g, "Age", "double");
+		string name = groups_PropertyNameById(g, propId);
+		macro_test_string(name, "Age");
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	printf("OK\r\n");
+}
