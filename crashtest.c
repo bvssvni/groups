@@ -96,7 +96,7 @@ void* crash_groups_GetProperty2(void* input)
 
 void* crash_groups_GetBitstream(void* input)
 {
-	groups_GetBitstream(NULL, 0);
+	groups_GetBitstream(NULL, NULL, 0);
 	
 	return &DID_NOT_CRASH;
 }
@@ -105,7 +105,7 @@ void* crash_groups_GetBitstream2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
 	groups* g = groups_Init(groups_AllocWithGC(gc));
-	groups_GetBitstream(g, -1);
+	groups_GetBitstream(NULL, g, -1);
 	
 	return &DID_NOT_CRASH;
 }

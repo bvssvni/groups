@@ -144,18 +144,12 @@ extern "C" {
 	(groups* const g);
 	
 	//
-	//	Bitstream is the object you use to group objects fast.
-	//	Each property has it's own bitstream, but it changes
-	//	each time you change a variable or remove members.
-	//	The bitstream you get is guaranteed not to change,
-	//	but you need to make sure that when you update
-	//	that Groups is in a state compatible with your update.
+	//	The resulted bitstream represents a selection of objects that
+	//	has a property. This is like taking a snapshot of the group
+	//	in that moment.
 	//
-	//	For example, if you delete an object and then try to update it,
-	//	that is no good.
-	//
-	const bitstream* groups_GetBitstream
-	(groups* const g, const int propId);
+	bitstream* groups_GetBitstream
+	(gcstack* const gc, groups* const g, const int propId);
 	
 	//
 	//      This method returns a bitstream containing all members.
@@ -163,7 +157,7 @@ extern "C" {
 	//      and subtracts the deleted members with exclude.
 	//
 	bitstream* groups_GetAll
-	(groups* const g);
+	(gcstack* const gc, groups* const g);
 	
 	//
 	// Removes the bitstream, but not the data itself from the members.

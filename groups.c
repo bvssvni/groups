@@ -393,26 +393,28 @@ bitstream* groups_getBitstream(groups* const g, const int propId)
 //
 //      Returns a read-only bitstream for use outside use.
 //
-const bitstream* groups_GetBitstream
-(groups* const g, const int propId)
+bitstream* groups_GetBitstream
+(gcstack* const gc, groups* const g, const int propId)
 {
 	macro_err(g == NULL); macro_err(propId < 0);
 	
-	return groups_getBitstream(g, propId);
+	bitstream* a = groups_getBitstream(g, propId);
+	return bitstream_Clone(gc, a);
 }
 
-bitstream* groups_GetAll(groups* const g) {
+bitstream* groups_GetAll(gcstack* const gc, groups* const g) 
+{
 	macro_err(g == NULL);
 	
 	const int length = g->members->length;
-	bitstream* const a = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 
-						2, (int[]){0, length});
+	bitstream* const a = bitstream_InitWithValues
+	(bitstream_AllocWithGC(NULL), 2, (int[]){0, length});
 	bitstream* const deleted = g->m_deletedMembers;
 	
 	// If there are no deleted members, then return the whole range.
 	if (deleted == NULL) return a;
 	
-	bitstream* const b = bitstream_Except(NULL, a, deleted);
+	bitstream* const b = bitstream_Except(gc, a, deleted);
 	bitstream_Delete(a);
 	free(a);
 	return b;
