@@ -116,7 +116,7 @@ extern "C" {
 	// 	pointer.
 	//
 	void gcstack_free
-	(gcstack* gc, void* p);
+	(gcstack* gc, gcstack_item* item);
 	
 	gcstack* gcstack_Alloc
 	();

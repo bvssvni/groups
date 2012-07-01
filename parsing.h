@@ -70,6 +70,12 @@ extern "C" {
 	(const char* text, char ch);
 	
 	//
+	//	Read one character of many options.
+	//
+	char parsing_ReadOneCharacterOf
+	(const char* const text, const char* const chs, int* const delta);
+	
+	//
 	//      Remember to release the pointer when done.
 	//
 	char* parsing_ReadVariableName

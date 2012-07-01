@@ -144,10 +144,27 @@ int parsing_SkipWhiteSpace(const char* const text)
 	return i;
 }
 
-int parsing_ReadCharacter(const char* const text, const char ch) {
+int parsing_ReadCharacter(const char* const text, const char ch) 
+{
 	macro_err(text == NULL);
 	
 	return text[0] == ch ? 1 : 0;
+}
+
+char parsing_ReadOneCharacterOf
+(const char* const text, const char* const chs, int* const delta)
+{
+	macro_err(text == NULL); macro_err(chs == NULL);
+	
+	for (int i = 0; chs[i] != '\0'; i++) {
+		if (text[0] == chs[i]) {
+			*delta = 1;
+			return chs[i];
+		}
+	}
+	
+	*delta = 0;
+	return '\0';
 }
 
 char* parsing_ReadVariableName

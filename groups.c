@@ -457,7 +457,7 @@ void groups_RemoveProperty(groups* const g, const int propId)
 		return;
 	
 	// Delete it, including freeing the pointer.
-	gcstack_free(g->properties, prop);
+	gcstack_free(g->properties, (gcstack_item*)prop);
 	
 	g->m_propertiesReady = false;
 }

@@ -421,14 +421,13 @@ void gcstack_End(gcstack* const gc, const gcstack_item* const end)
 	gc->root->next = cursor;
 }
 
-void gcstack_free(gcstack* const gc, void* const p)
+void gcstack_free(gcstack* const gc, gcstack_item* const item)
 {
-	macro_err(p == NULL);
+	macro_err(item == NULL);
 	
 	if (gc != NULL) {
-		gcstack_Pop(gc, p);
+		gcstack_Pop(gc, item);
 	}
-	gcstack_item* const item = (gcstack_item*)p;
 	if (item->freeSubPointers != NULL)
 	{
 		item->freeSubPointers(item);
