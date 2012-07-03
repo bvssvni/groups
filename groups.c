@@ -51,6 +51,8 @@
 #define memgroups_groups_internal
 #include "groups.h"
 
+#include "boolean.h"
+
 #define TMP_ID_PROPID 123
 
 void property_Delete(void* const p)
@@ -1337,6 +1339,7 @@ typedef struct read_from_file_settings {
 	gcstack* memberStack;
 	gcstack* stateStack;
 	gcstack* strStack;
+	bool buffAllocated;
 	char* buff;
 	string propText;
 	int propLength;
@@ -1362,6 +1365,7 @@ typedef struct read_from_file_settings {
 	int column;
 	int state;
 	int propId;
+	int size;
 } read_from_file_settings;
 
 const int _skip_white_space = 0;
@@ -1408,17 +1412,36 @@ switch (a) { case GROUPS_RFF_CONTINUE: continue; \
 case GROUPS_RFF_CLEAN_UP: goto CLEAN_UP; \
 case GROUPS_RFF_NEW_STATE: goto NEW_STATE; }
 
-inline void groups_readFromFile_initSettings
+inline void groups_readFromFile_readFileContent
 (read_from_file_settings* const s, FILE* const f, const int fileSize);
 
-void groups_readFromFile_initSettings
-(read_from_file_settings* const s, FILE* const f, 
- const int fileSize) 
+void groups_readFromFile_readFileContent
+(read_from_file_settings* const s, FILE* const f, const int fileSize)
 {
+	s->size = fileSize;
+	s->buffAllocated = true;
 	s->buff = malloc(sizeof(byte)*fileSize);
 	fread(s->buff, sizeof(byte), fileSize, f);
 	fclose(f);
-	
+}
+
+inline void groups_readFromFile_readStringContent
+(read_from_file_settings* const s, const char* const text, const int fileSize);
+
+void groups_readFromFile_readStringContent
+(read_from_file_settings* const s, const char* const text, const int fileSize)
+{
+	s->size = fileSize;
+	s->buffAllocated = false;
+	s->buff = (void*)text;
+}
+
+inline void groups_readFromFile_initSettings
+(read_from_file_settings* const s);
+
+void groups_readFromFile_initSettings
+(read_from_file_settings* const s) 
+{
 	s->memberStack = gcstack_Init(gcstack_Alloc());
 	
 	s->stateStack = gcstack_Init(gcstack_Alloc());
@@ -1469,7 +1492,8 @@ void groups_readFromFile_deleteSettings(read_from_file_settings* const s)
 	gcstack_Delete(s->memberStack);
 	free(s->memberStack);
 	
-	free(s->buff);
+	if (s->buffAllocated)
+		free(s->buff);
 }
 
 inline int groups_readFromFile_skipWhiteSpace
@@ -1639,6 +1663,7 @@ inline int groups_readFromFile_readValue
 int groups_readFromFile_readValue
 (groups* const g, read_from_file_settings* const s, const bool verbose)
 {
+	
 	s->isString = (s->ch == '"');
 	s->isProperty = s->tag == tag_properties;
 	s->isMember = s->tag == tag_member;
@@ -1704,6 +1729,7 @@ int groups_readFromFile_readValue
 					 s->name, s->valInt);
 			}
 			else if (type == TYPE_DOUBLE) {
+				
 				s->buffPos--; s->column--;
 				s->delta = parsing_ScanDouble
 				(s->buff+s->buffPos, &s->valDouble);
@@ -1719,8 +1745,9 @@ int groups_readFromFile_readValue
 			}
 			else if (type == TYPE_BOOL) {
 				s->buffPos--; s->column--;
+				// This line seems suspicious.
 				s->delta = parsing_ScanInt
-				(s->buff+s->buffPos-1, &s->valInt)-1;
+				(s->buff+s->buffPos, &s->valInt);
 				s->buffPos += s->delta;
 				s->column += s->delta;
 				hashTable_SetBool(s->hs, s->propId, s->valInt);
@@ -1894,8 +1921,118 @@ int groups_readFromFile_afterReadingString
 	return GROUPS_RFF_NEW_STATE;
 }
 
-bool groups_ReadFromFile(groups* const g, const char* const fileName, const bool verbose, 
+bool groups_ReadFromSettings(groups* const g, read_from_file_settings* const s, const bool verbose, 
 			 void(* const err)(int line, int column, const char* message))
+{
+	macro_err(g == NULL); 
+
+	for (s->ch = s->buff[s->buffPos++]; 
+	     s->buffPos <= s->size; 
+	     s->ch = s->buff[s->buffPos++])
+	 {
+		// s->ch = s->buff[s->buffPos];
+		if (s->ch == '\n') 
+			s->line++;
+		
+		if (s->ch == '\n') 
+			s->column = 0; 
+		else 
+			s->column++;
+		
+	NEW_STATE:
+		switch (s->state) {
+			case _skip_white_space:
+				macro_rff_action
+				(groups_readFromFile_skipWhiteSpace
+				 (s, verbose));
+				break;
+			case _error:
+				macro_rff_action
+				(groups_readFromFile_error
+				 (s, err));
+				break;
+			case _read_properties:
+				macro_rff_action
+				(groups_readFromFile_readProperties
+				 (s, verbose));
+				break;
+			case _read_member:
+				macro_rff_action
+				(groups_readFromFile_readMember
+				 (s, verbose));
+				break;
+			case _read_start_paranthesis:
+				macro_rff_action
+				(groups_readFromFile_readStartParanthesis
+				 (s, verbose));
+				break;
+			case _read_colon:
+				macro_rff_action
+				(groups_readFromFile_readColon
+				 (s, verbose));
+				break;
+			case _read_name:
+				macro_rff_action
+				(groups_readFromFile_readName
+				 (s, verbose));
+				break;
+			case _read_value:
+				macro_rff_action
+				(groups_readFromFile_readValue
+				 (g, s, verbose));
+				break;
+			case _read_backslash_in_string:
+				macro_rff_action
+				(groups_readFromFile_ReadBackSlashInString
+				 (s, verbose));
+				break;
+			case _read_string:
+				macro_rff_action
+				(groups_readFromFile_readString
+				 (s, verbose));
+				break;
+			case _read_comma_or_end_paranthesis:
+				macro_rff_action
+				(groups_readFromFile_readCommadOrEndParanthesis
+				 (g, s, verbose));
+				break;
+			case _add_after_reading_string:
+				macro_rff_action
+				(groups_readFromFile_afterReadingString
+				 (g, s, verbose));
+				break;
+				
+		}
+		break;
+	}
+	
+	// Add members to group.
+	groups_AppendMembers(g, s->memberStack);
+	
+CLEAN_UP:
+	groups_readFromFile_deleteSettings(s);
+	return true;
+}
+
+bool groups_ReadFromString
+(groups* const g, const char* const text, const bool verbose, 
+ void(* const err)(int line, int column, const char* message))
+{
+	macro_err(g == NULL); macro_err(text == NULL);
+	
+	int size = strlen(text);
+	
+	// Make settings ready for reading.
+	read_from_file_settings s;
+	groups_readFromFile_readStringContent(&s, text, size);
+	groups_readFromFile_initSettings(&s);
+	
+	return groups_ReadFromSettings(g, &s, verbose, err);
+}
+
+bool groups_ReadFromFile
+(groups* const g, const char* const fileName, const bool verbose, 
+void(* const err)(int line, int column, const char* message))
 {
 	macro_err(g == NULL); macro_err(fileName == NULL);
 	
@@ -1912,93 +2049,10 @@ bool groups_ReadFromFile(groups* const g, const char* const fileName, const bool
 	
 	// Make settings ready for reading.
 	read_from_file_settings s;
-	groups_readFromFile_initSettings(&s, f, size);
+	groups_readFromFile_readFileContent(&s, f, size);
+	groups_readFromFile_initSettings(&s);
 	
-	for (s.ch = s.buff[s.buffPos++]; 
-	     s.buffPos < size; 
-	     s.ch = s.buff[s.buffPos++]) 
-	{
-		if (s.ch == '\n') 
-			s.line++;
-		
-		if (s.ch == '\n') 
-			s.column = 0; 
-		else 
-			s.column++;
-		
-	NEW_STATE:
-		switch (s.state) {
-			case _skip_white_space:
-				macro_rff_action
-				(groups_readFromFile_skipWhiteSpace
-				 (&s, verbose));
-				break;
-			case _error:
-				macro_rff_action
-				(groups_readFromFile_error
-				 (&s, err));
-				break;
-			case _read_properties:
-				macro_rff_action
-				(groups_readFromFile_readProperties
-				 (&s, verbose));
-				break;
-			case _read_member:
-				macro_rff_action
-				(groups_readFromFile_readMember
-				 (&s, verbose));
-				break;
-			case _read_start_paranthesis:
-				macro_rff_action
-				(groups_readFromFile_readStartParanthesis
-				 (&s, verbose));
-				break;
-			case _read_colon:
-				macro_rff_action
-				(groups_readFromFile_readColon
-				 (&s, verbose));
-				break;
-			case _read_name:
-				macro_rff_action
-				(groups_readFromFile_readName
-				 (&s, verbose));
-				break;
-			case _read_value:
-				macro_rff_action
-				(groups_readFromFile_readValue
-				 (g, &s, verbose));
-				break;
-			case _read_backslash_in_string:
-				macro_rff_action
-				(groups_readFromFile_ReadBackSlashInString
-				 (&s, verbose));
-				break;
-			case _read_string:
-				macro_rff_action
-				(groups_readFromFile_readString
-				 (&s, verbose));
-				break;
-			case _read_comma_or_end_paranthesis:
-				macro_rff_action
-				(groups_readFromFile_readCommadOrEndParanthesis
-				 (g, &s, verbose));
-				break;
-			case _add_after_reading_string:
-				macro_rff_action
-				(groups_readFromFile_afterReadingString
-				 (g, &s, verbose));
-				break;
-				
-		}
-		break;
-	}
-	
-	// Add members to group.
-	groups_AppendMembers(g, s.memberStack);
-	
-CLEAN_UP:
-	groups_readFromFile_deleteSettings(&s);
-	return true;
+	return groups_ReadFromSettings(g, &s, verbose, err);
 }
 
 void groups_RunUnitTests(void)
@@ -2054,6 +2108,66 @@ void groups_RunUnitTests(void)
 		int propId = groups_AddProperty(g, "Age", "double");
 		string name = groups_PropertyNameById(g, propId);
 		macro_test_string(name, "Age");
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Name:\"string\"", false, NULL);
+		int propName = groups_GetProperty(g, "Name");
+		macro_test_int(propName, 0 + TYPE_STRING*TYPE_STRIDE);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Name:\"string\", Age:\"double\"}"
+		 "member {id:0, Name:\"Carl\",Age:38}", false, NULL);
+		int propName = groups_GetProperty(g, "Name");
+		macro_test_int(propName, 0 + TYPE_STRING*TYPE_STRIDE);
+		bitstream* a = groups_GetBitstream(gc, g, propName);
+		macro_test_int(a->length, 2);
+		macro_test_int(a->pointer[0], 0);
+		macro_test_int(a->pointer[1], 1);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Name:\"string\", Age:\"double\"}"
+		 "member {Name:\"Carl\",Age:38}"
+		 "member {Name:\"John\"}", false, NULL);
+		int propName = groups_GetProperty(g, "Name");
+		macro_test_int(propName, 0 + TYPE_STRING*TYPE_STRIDE);
+		bitstream* a = groups_GetBitstream(gc, g, propName);
+		macro_test_int(a->length, 2)
+		macro_test_int(a->pointer[0], 0);
+		macro_test_int(a->pointer[1], 2);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {IsTrue:\"bool\"}"
+		 "member {id:0, IsTrue:1}", false, NULL);
+		int propName = groups_GetProperty(g, "IsTrue");
+		macro_test_int(propName, 0 + TYPE_BOOL*TYPE_STRIDE);
+		bitstream* a = groups_GetBitstream(gc, g, propName);
+		macro_test_int(a->length, 2);
+		macro_test_int(a->pointer[0], 0);
+		macro_test_int(a->pointer[1], 1);
 		gcstack_Delete(gc);
 		free(gc);
 	}

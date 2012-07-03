@@ -300,7 +300,16 @@ extern "C" {
 	int        groups_SaveToFile
 	(groups* const g, const char* const fileName);
 	
-	// Reads data from a file in JSON format.
+	//
+	//	Reads data from a string.
+	//
+	int groups_ReadFromString
+	(groups* const g, const char* const text, const int verbose, 
+	 void(* const err)(int line, int column, const char* message));
+	
+	//
+	// 	Reads data from a file in JSON format.
+	//
 	int groups_ReadFromFile
 	(
 	 groups* g, 
