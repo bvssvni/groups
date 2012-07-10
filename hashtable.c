@@ -315,7 +315,7 @@ void hashTable_SetStringHash(hash_table* const hash, char* const value)
 	newLayer->data[pos] = value;
 }
 
-const void* hashTable_Get(hash_table* const hash, const int id)
+const void* hashTable_Get(const hash_table* const hash, const int id)
 {
 	macro_err(hash == NULL); macro_err(id < 0);
 	
@@ -341,7 +341,8 @@ const void* hashTable_Get(hash_table* const hash, const int id)
 	return NULL;
 }
 
-bool hashTable_ContainsStringHash(hash_table* const hash, const char* const value)
+bool hashTable_ContainsStringHash
+(hash_table* const hash, const char* const value)
 {
 	macro_err(hash == NULL);
 	macro_err(value == NULL);
@@ -371,7 +372,8 @@ bool hashTable_ContainsStringHash(hash_table* const hash, const char* const valu
 	return false;
 }
 
-void hashTable_SetDouble(hash_table* const obj, const int propId, const double val)
+void hashTable_SetDouble
+(hash_table* const obj, const int propId, const double val)
 {
 	macro_err(obj == NULL);
 	macro_err(propId < 0);
@@ -381,7 +383,8 @@ void hashTable_SetDouble(hash_table* const obj, const int propId, const double v
 	hashTable_Set(obj, propId, p);
 }
 
-void hashTable_SetString(hash_table* const obj, const int propId, const char* const val)
+void hashTable_SetString
+(hash_table* const obj, const int propId, const char* const val)
 {
 	macro_err(obj == NULL);
 	macro_err(propId < 0);
@@ -427,4 +430,28 @@ void hashTable_SetBool(hash_table* const obj, const int propId, const bool val)
 	bool* const p = malloc(sizeof(bool));
 	*p = val;
 	hashTable_Set(obj, propId, p);
+}
+
+void hashTable_RunUnitTests(void)
+{
+	printf("HashTable unit tests - ");
+	
+	{
+		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		hashTable_SetDouble(hs, 23, 40.4);
+		const double* ptr = hashTable_Get(hs, 23);
+		macro_test_double(*ptr, 40.4);
+		hashTable_Delete(hs);
+		free(hs);
+	}
+	
+	{
+		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		const double* ptr = hashTable_Get(hs, 23);
+		macro_test_null(ptr);
+		hashTable_Delete(hs);
+		free(hs);
+	}
+	
+	printf("OK\r\n");
 }

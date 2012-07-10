@@ -164,6 +164,18 @@ printf("|%i| expected |%i|\r\n", a, b); \
 macro_err(a != b); \
 }
 	
+#define macro_test_double(a, b) \
+if (a != b) { \
+printf("|%g| expected |%g|\r\n", a, b); \
+macro_err(a != b); \
+}
+	
+#define macro_test_null(a) \
+if (a != NULL) { \
+printf("Expected NULL\r\n"); \
+macro_err(a != NULL); \
+}
+	
 	//
 	//      This macro is specially suited for expression errors.
 	//      It displays where in an expression an error happened.

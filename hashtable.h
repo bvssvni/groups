@@ -138,7 +138,7 @@ extern "C" {
 	//	it.
 	//
 	const void* hashTable_Get       
-	(hash_table* const hash, const int id);
+	(const hash_table* const hash, const int id);
 	
 	
 	void hashTable_SetDouble 
@@ -152,6 +152,9 @@ extern "C" {
 	
 	void hashTable_SetBool
 	(hash_table* const obj, const int propId, const int val);
+	
+	void hashTable_RunUnitTests
+	(void);
 	
 #endif
 	

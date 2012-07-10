@@ -950,17 +950,22 @@ double* groups_GetDoubleArray
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
-	int size = bitstream_Size(a);
-	double* arr = malloc(sizeof(double)*size);
+	const int size = bitstream_Size(a);
+	double* const arr = malloc(sizeof(double)*size);
 	
 	int i;
-	hash_table* obj;
-	
+	const hash_table* obj;
 	int k = 0;
+	const double* ptr;
+	
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-		arr[k++] = *((double*)hashTable_Get(obj, propId));
+		ptr = (const double*)hashTable_Get(obj, propId);
+		if (ptr == NULL)
+			arr[k++] = 0.0;
+		else
+			arr[k++] = *ptr;
 	} macro_end_foreach(a)
 	
 	return arr;
@@ -975,17 +980,21 @@ int* groups_GetIntArray
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
-	int size = bitstream_Size(a);
-	int* arr = malloc(sizeof(int)*size);
+	const int size = bitstream_Size(a);
+	int* const arr = malloc(sizeof(int)*size);
 	
 	int i;
-	hash_table* obj;
-	
+	const hash_table* obj;
 	int k = 0;
+	const int* ptr;
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-		arr[k++] = *((int*)hashTable_Get(obj, propId));
+		ptr = (const int*)hashTable_Get(obj, propId);
+		if (ptr == NULL)
+			arr[k++] = -1;
+		else
+			arr[k++] = *ptr;
 	} macro_end_foreach(a)
 	
 	return arr;
@@ -999,17 +1008,21 @@ bool* groups_GetBoolArray
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
-	int size = bitstream_Size(a);
-	bool* arr = malloc(sizeof(bool)*size);
+	const int size = bitstream_Size(a);
+	bool* const arr = malloc(sizeof(bool)*size);
 	
 	int i;
-	hash_table* obj;
-	
+	const hash_table* obj;
 	int k = 0;
+	const bool* ptr;
 	macro_foreach (a) {
 		i = macro_pos(a);
 		obj = g->m_memberArray[i];
-		arr[k++] = *((bool*)hashTable_Get(obj, propId));
+		ptr = (const bool*)hashTable_Get(obj, propId);
+		if (ptr == NULL)
+			arr[k++] = false;
+		else
+			arr[k++] = *ptr;
 	} macro_end_foreach(a)
 	
 	return arr;
@@ -1023,11 +1036,11 @@ const char** groups_GetStringArray
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
 	
-	int size = bitstream_Size(a);
-	const char** arr = malloc(sizeof(string)*size);
+	const int size = bitstream_Size(a);
+	const char** const arr = malloc(sizeof(string)*size);
 	
 	int i;
-	hash_table* obj;
+	const hash_table* obj;
 	
 	int k = 0;
 	macro_foreach (a) {
@@ -1921,8 +1934,9 @@ int groups_readFromFile_afterReadingString
 	return GROUPS_RFF_NEW_STATE;
 }
 
-bool groups_ReadFromSettings(groups* const g, read_from_file_settings* const s, const bool verbose, 
-			 void(* const err)(int line, int column, const char* message))
+bool groups_ReadFromSettings
+(groups* const g, read_from_file_settings* const s, const bool verbose, 
+void(* const err)(int line, int column, const char* message))
 {
 	macro_err(g == NULL); 
 
@@ -2168,6 +2182,108 @@ void groups_RunUnitTests(void)
 		macro_test_int(a->length, 2);
 		macro_test_int(a->pointer[0], 0);
 		macro_test_int(a->pointer[1], 1);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {IsTrue:\"bool\", Age:\"double\"}"
+		 "member {id:0, IsTrue:1, Age:40}", false, NULL);
+		int propName = groups_GetProperty(g, "IsTrue");
+		macro_test_int(propName, 0 + TYPE_BOOL*TYPE_STRIDE);
+		bitstream* a = groups_GetBitstream(gc, g, propName);
+		macro_test_int(a->length, 2);
+		macro_test_int(a->pointer[0], 0);
+		macro_test_int(a->pointer[1], 1);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propName = groups_AddProperty(g, "Name", "string");
+		int propAge = groups_AddProperty(g, "Age", "double");
+		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hashTable_SetString(mem, propName, "John");
+		hashTable_SetDouble(mem, propAge, 0.0);
+		groups_AddMember(g, mem);
+		bitstream* Name = boolean_Eval(gc, g, "Name", NULL);
+		double* age = groups_GetDoubleArray(g, Name, propAge);
+		macro_test_double(age[0], 0.0);
+		free(age);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propName = groups_AddProperty(g, "Name", "string");
+		int propAge = groups_AddProperty(g, "Age", "double");
+		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hashTable_SetString(mem, propName, "John");
+		groups_AddMember(g, mem);
+		bitstream* Name = boolean_Eval(gc, g, "Name", NULL);
+		double* age = groups_GetDoubleArray(g, Name, propAge);
+		macro_test_double(age[0], 0.0);
+		free(age);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		int propName = groups_AddProperty(g, "Name", "string");
+		int propAge = groups_AddProperty(g, "Age", "double");
+		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hashTable_SetString(mem, propName, "John");
+		gcstack* s = gcstack_Init(gcstack_Alloc());
+		gcstack_Push(s, (gcstack_item*)mem);
+		groups_AppendMembers(g, s);
+		bitstream* Name = boolean_Eval(gc, g, "Name", NULL);
+		double* age = groups_GetDoubleArray(g, Name, propAge);
+		macro_test_double(age[0], 0.0);
+		free(age);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Name:\"string\", Age:\"double\"}"
+			"member {id:0, Name:\"John\"}", false, NULL);
+		bitstream* a = boolean_Eval(gc, g, "Name", NULL);
+		int aLength = bitstream_Size(a);
+		macro_test_int(aLength, 1);
+		macro_test_int(a->length, 2);
+		macro_test_int(a->pointer[0], 0);
+		macro_test_int(a->pointer[1], 1);
+		int propAge = groups_GetProperty(g, "Age");
+		double* age = groups_GetDoubleArray(g, a, propAge);
+		macro_test_double(age[0], 0.0);
+		free(age);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Name:\"string\", Parent:\"int\"}"
+		 "member {id:0, Name:\"John\"}", false, NULL);
+		bitstream* prop = boolean_Eval(gc, g, "Name", NULL);
+		int propParent = groups_GetProperty(g, "Parent");
+		int* parent = groups_GetIntArray(g, prop, propParent);
+		macro_test_int(parent[0], -1);
+		free(parent);
 		gcstack_Delete(gc);
 		free(gc);
 	}
