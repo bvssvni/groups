@@ -453,5 +453,20 @@ void hashTable_RunUnitTests(void)
 		free(hs);
 	}
 	
+	{
+		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		hashTable_SetString(hs, 23, "hello");
+		const char* ptr = hashTable_Get(hs, 23);
+		macro_test_string(ptr, "hello");
+		free(hs);
+	}
+	
+	{
+		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		const char* ptr = hashTable_Get(hs, 23);
+		macro_test_null(ptr);
+		free(hs);
+	}
+	
 	printf("OK\r\n");
 }

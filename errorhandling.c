@@ -89,3 +89,12 @@ void errorhandling_CrashWithFileAndLineAndFunctionAndMessage(const char* file, i
 		pthread_exit(NULL);
 }
 
+int errorhandling_CheckMargin
+(const double a, const double b, const double errorMargin)
+{
+	const double maxB = b * (1+errorMargin);
+	const double minB = b * (1-errorMargin);
+	if (a < minB || b > maxB)
+		return 0;
+	return 1;
+}

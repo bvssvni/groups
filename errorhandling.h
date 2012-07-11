@@ -62,6 +62,13 @@ extern "C" {
 	void errorhandling_OnCrashExitApp();
 	void errorhandling_OnCrashExitThread();
 	
+	//
+	//	MEASUREMENTS
+	//
+	
+	int errorhandling_CheckMargin
+	(const double a, const double b, const double errorMargin);
+	
 #endif
 	
 #ifdef __cplusplus

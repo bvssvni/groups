@@ -2288,5 +2288,63 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Name:\"string\", Age:\"double\"}"
+		 "member {id:1, Age:83}"
+		 "member {id:0, Name:\"John\", Age:73}", false, NULL);
+		bitstream* prop = boolean_Eval(gc, g, "Age", NULL);
+		int propName = groups_GetProperty(g, "Name");
+		string* name = groups_GetStringArray(g, prop, propName);
+		macro_test_string(name[0], "John");
+		macro_test_null(name[1]);
+		free(name);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Name:\"string\", Age:\"double\"}"
+		 "member {id:0, Age:83}"
+		 "member {id:1, Name:\"John\", Age:73}", false, NULL);
+		bitstream* prop = boolean_Eval(gc, g, "Age", NULL);
+		int propName = groups_GetProperty(g, "Name");
+		string* name = groups_GetStringArray(g, prop, propName);
+		macro_test_string(name[1], "John");
+		macro_test_null(name[0]);
+		free(name);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Order:\"int\"}"
+		 "member {id:3, Order:3}"
+		 "member {id:2, Order:2}"
+		 "member {id:1, Order:1}"
+		 "member {id:0, Order:0}"
+		 , false, NULL);
+		bitstream* prop = boolean_Eval(gc, g, "Order", NULL);
+		int orderLength = bitstream_Size(prop);
+		macro_test_int(orderLength, 4);
+		int propOrder = groups_GetProperty(g, "Order");
+		int* order = groups_GetIntArray(g, prop, propOrder);
+		macro_test_int(order[0], 0);
+		macro_test_int(order[1], 1);
+		macro_test_int(order[2], 2);
+		macro_test_int(order[3], 3);
+		free(order);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
 	printf("OK\r\n");
 }

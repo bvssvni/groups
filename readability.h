@@ -170,6 +170,12 @@ printf("|%g| expected |%g|\r\n", a, b); \
 macro_err(a != b); \
 }
 	
+#define macro_test_double_margin(a, b, c) \
+if (!errorhandling_CheckMargin(a, b, c)) { \
+printf("|%g| expected |%g|\r\n", a, b); \
+macro_err(!errorhandling_CheckMargin(a, b, c)); \
+}
+	
 #define macro_test_null(a) \
 if (a != NULL) { \
 printf("Expected NULL\r\n"); \
