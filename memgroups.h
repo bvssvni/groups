@@ -56,6 +56,7 @@ extern "C" {
 #include "boolean.h"
 #include "parsing.h"
 #include "errorhandling.h"
+#include "readability.h"
 	
 #endif
 	
