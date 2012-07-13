@@ -209,8 +209,8 @@ macro_err(a != NULL); \
 #define macro_string_concat(assignTo,string1,string2) \
 const char* _macro_string1##assignTo = string1; \
 const char* _macro_string2##assignTo = string2; \
-int _macro_string1Length##assignTo = strlen(_macro_string1##assignTo); \
-int _macro_string2Length##assignTo = strlen(_macro_string2##assignTo); \
+size_t _macro_string1Length##assignTo = strlen(_macro_string1##assignTo); \
+size_t _macro_string2Length##assignTo = strlen(_macro_string2##assignTo); \
 char assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo+1]; \
 memcpy(assignTo, _macro_string1##assignTo, _macro_string1Length##assignTo); \
 memcpy(assignTo+_macro_string1Length##assignTo, _macro_string2##assignTo, _macro_string2Length##assignTo); \

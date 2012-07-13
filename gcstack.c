@@ -785,7 +785,7 @@ char* gcstack_PopIntsAsString(gcstack* const gc) {
 	int index = gc->length-1;
 	
 	for (; cursor != NULL; cursor = cursor->next) {
-		str[index] = ((gcint*)cursor)->val;
+		str[index] = (char)((gcint*)cursor)->val;
 		index--;
 	}
 	

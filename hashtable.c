@@ -255,7 +255,7 @@ void hashTable_SetStringHash(hash_table* const hash, char* const value)
 {
 	macro_err(hash == NULL); macro_err(value == NULL);
 	
-	int hashId = hashTable_GenerateHashId(value);
+	int hashId = (int)hashTable_GenerateHashId(value);
 	int id = hashId < 0 ? -hashId : hashId;
 	const gcstack_item* cursor = hash->layers->root->next;
 	const hash_layer* layer;
@@ -347,7 +347,7 @@ bool hashTable_ContainsStringHash
 	macro_err(hash == NULL);
 	macro_err(value == NULL);
 	
-	const int hashId = hashTable_GenerateHashId(value);
+	const int hashId = (int)hashTable_GenerateHashId(value);
 	const int id = hashId < 0 ? -hashId : hashId;
 	
 	const gcstack_item* cursor = hash->layers->root->next;

@@ -78,7 +78,7 @@ property* property_InitWithNameAndId
 {
 	macro_err(prop == NULL); macro_err(name == NULL);
 	
-	const int nameLength = strlen(name);
+	const size_t nameLength = strlen(name);
 	char* const newName = malloc(sizeof(char)*nameLength);
 	prop->name = strcpy(newName, name);
 	prop->propId = propId;
@@ -1377,10 +1377,10 @@ typedef struct read_from_file_settings {
 	bool buffAllocated;
 	char* buff;
 	string propText;
-	int propLength;
+	size_t propLength;
 	int propIndex;
 	string memberText;
-	int memberLength;
+	size_t memberLength;
 	int memberIndex;
 	hash_table* hs;
 	string message;
@@ -1400,7 +1400,7 @@ typedef struct read_from_file_settings {
 	int column;
 	int state;
 	int propId;
-	int size;
+	size_t size;
 } read_from_file_settings;
 
 enum
@@ -1451,10 +1451,10 @@ case GROUPS_RFF_CLEAN_UP: goto CLEAN_UP; \
 case GROUPS_RFF_NEW_STATE: goto NEW_STATE; }
 
 void groups_readFromFile_readFileContent
-(read_from_file_settings* const s, FILE* const f, const int fileSize);
+(read_from_file_settings* const s, FILE* const f, const size_t fileSize);
 
 void groups_readFromFile_readFileContent
-(read_from_file_settings* const s, FILE* const f, const int fileSize)
+(read_from_file_settings* const s, FILE* const f, const size_t fileSize)
 {
 	s->size = fileSize;
 	s->buffAllocated = true;
@@ -1464,10 +1464,10 @@ void groups_readFromFile_readFileContent
 }
 
 void groups_readFromFile_readStringContent
-(read_from_file_settings* const s, const char* const text, const int fileSize);
+(read_from_file_settings* const s, const char* const text, const size_t fileSize);
 
 void groups_readFromFile_readStringContent
-(read_from_file_settings* const s, const char* const text, const int fileSize)
+(read_from_file_settings* const s, const char* const text, const size_t fileSize)
 {
 	s->size = fileSize;
 	s->buffAllocated = false;
@@ -1675,7 +1675,7 @@ int groups_readFromFile_readName
 	if ((s->ch >= 'a' && s->ch <= 'z') || 
 	    (s->ch >= 'A' && s->ch <= 'Z') || 
 	    (s->ch >= '0' && s->ch <= '9')) {
-		s->nameBuffer[s->nameBufferIndex++] = s->ch;
+		s->nameBuffer[s->nameBufferIndex++] = (char)s->ch;
 		return GROUPS_RFF_CONTINUE;
 	}
 	s->nameBuffer[s->nameBufferIndex++] = '\0';
@@ -1873,7 +1873,8 @@ int groups_readFromFile_readString
 	s->text = malloc((s->strStack->length+1)*sizeof(char));
 	s->text[s->strStack->length] = '\0';
 	while (s->strStack->length > 0)
-		s->text[s->strStack->length] = gcstack_PopInt(s->strStack);
+		s->text[s->strStack->length] = 
+		(char)gcstack_PopInt(s->strStack);
 	
 	if (verbose) 
 		printf("%i, %i: _read_string %s\r\n", s->line, s->column, 
@@ -2063,7 +2064,7 @@ bool groups_ReadFromString
 {
 	macro_err(g == NULL); macro_err(text == NULL);
 	
-	int size = strlen(text);
+	size_t size = strlen(text);
 	
 	// Make settings ready for reading.
 	read_from_file_settings s;
@@ -2084,7 +2085,7 @@ void(* const err)(int line, int column, const char* message))
 	if (stat(fileName, &fileState) != 0) {
 		return false;
 	}
-	int size = fileState.st_size;
+	size_t size = fileState.st_size;
 	
 	FILE* const f = fopen(fileName, "r");
 	if (f == NULL)

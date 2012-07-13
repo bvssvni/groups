@@ -20,7 +20,7 @@ void boolean_eval_BinaryOp(gcstack* st);
 void boolean_eval_BinaryOp(gcstack* const st)
 {
 	const gcint* const opItem = (gcint*)st->root->next->next;
-	const char op = opItem->val;
+	const char op = (char)opItem->val;
 	
 	// Pop arguments and operator from stack.
 	bitstream* const arg2 = (bitstream*)st->root->next;
@@ -70,7 +70,7 @@ bitstream* boolean_Eval
 	
 	gcstack* st = gcstack_Init(gcstack_Alloc());
 	
-	int exprLength = strlen(expr);
+	size_t exprLength = strlen(expr);
 	int pos = 0;
 	int delta = 0;
 	char op;
@@ -120,13 +120,13 @@ NEW_STATE:
 			break;
 		case precedence_check:
 			// We can access the operators directly on the stack.
-			op2 = ((gcint*)(st->root->next))->val;
-			op1 = ((gcint*)(st->root->next->next->next))->val;
+			op2 = (char)((gcint*)(st->root->next))->val;
+			op1 = (char)((gcint*)(st->root->next->next->next))->val;
 			
 			// The ascii table is sorted by negative precedence.
 			// * < + < -
 			if (op2 >= op1) {
-				op = gcstack_PopInt(st);
+				op = (char)gcstack_PopInt(st);
 				boolean_eval_BinaryOp(st);
 				gcstack_PushInt(st, op);
 			}
