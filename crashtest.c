@@ -1010,7 +1010,7 @@ void* crash_bitstream_DirectJoin2(void* input);
 void* crash_bitstream_DirectJoin2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream* a = bitstream_InitWithSize(a, 0);
+	bitstream* a = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
 	bitstream_DirectJoin(gc, a, NULL);
 	
 	return &DID_NOT_CRASH;
