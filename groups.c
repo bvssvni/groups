@@ -1287,10 +1287,10 @@ void groups_PrintMemberToFile
 }
 
 void groups_PrintPropertyToFile
-(FILE* const f, const groups* const g, property* const prop);
+(FILE* const f, property* const prop);
 
 void groups_PrintPropertyToFile
-(FILE* const f, const groups* const g, property* const prop)
+(FILE* const f, property* const prop)
 {
 	const char* const name = prop->name;
 	const int propId = prop->propId;
@@ -1327,7 +1327,7 @@ bool groups_SaveToFile(groups* const g, const char* const fileName)
 	for (; cursor != NULL; cursor = cursor->next)
 	{
 		prop = (property*)cursor;
-		groups_PrintPropertyToFile(f, g, prop);
+		groups_PrintPropertyToFile(f, prop);
 		if (cursor->next != NULL)
 			fprintf(f, ",\r\n");
 	}
@@ -1806,10 +1806,10 @@ int groups_readFromFile_readValue
 }
 
 int groups_readFromFile_ReadBackSlashInString
-(read_from_file_settings* const s, const bool verbose);
+(read_from_file_settings* const s);
 
 int groups_readFromFile_ReadBackSlashInString
-(read_from_file_settings* const s, const bool verbose)
+(read_from_file_settings* const s)
 {
 	// Read special characters that are escaped by backspace.
 	if (s->ch == '"')
@@ -2028,7 +2028,7 @@ void(* const err)(int line, int column, const char* message))
 			case _read_backslash_in_string:
 				macro_rff_action
 				(groups_readFromFile_ReadBackSlashInString
-				 (s, verbose));
+				 (s));
 				break;
 			case _read_string:
 				macro_rff_action
