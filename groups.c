@@ -1403,26 +1403,29 @@ typedef struct read_from_file_settings {
 	int size;
 } read_from_file_settings;
 
-const int _skip_white_space = 0;
-const int _read_properties = 1;
-const int _read_start_paranthesis = 2;
-const int _error = 3;
-const int _read_name = 4;
-const int _read_colon = 5;
-const int _read_value = 6;
-const int _read_string = 7;
-const int _read_backslash_in_string = 8;
-const int _add_after_reading_string = 9;
-const int _read_comma_or_end_paranthesis = 10;
-const int _read_member = 11;
-
-const int tag_properties = 1;
-const int tag_member = 2;
-
-const int GROUPS_RFF_CONTINUE = 0;
-const int GROUPS_RFF_CLEAN_UP = 1;
-const int GROUPS_RFF_NEW_STATE = 2;
-
+enum
+{
+	_skip_white_space = 0,
+	_read_properties = 1,
+	_read_start_paranthesis = 2,
+	_error = 3,
+	_read_name = 4,
+	_read_colon = 5,
+	_read_value = 6,
+	_read_string = 7,
+	_read_backslash_in_string = 8,
+	_add_after_reading_string = 9,
+	_read_comma_or_end_paranthesis = 10,
+	_read_member = 11,
+	
+	tag_properties = 1,
+	tag_member = 2,
+	
+	GROUPS_RFF_CONTINUE = 0,
+	GROUPS_RFF_CLEAN_UP = 1,
+	GROUPS_RFF_NEW_STATE = 2
+};
+	
 const char* const GROUPS_ERROR_EXPECTED_PROPERTIES = "Expected 'properties'";
 const char* const GROUPS_ERROR_EXPECTED_MEMBER = "Expected 'member'";
 const char* const GROUPS_ERROR_EXPECTED_START_CURLY_PARANTHESIS = "Expected '{'";

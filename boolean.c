@@ -59,11 +59,14 @@ bitstream* boolean_Eval
 	int stateIndex = 0;
 	int repeatIndex = 1;
 	
-	const char read_white_space = 'e';
-	const char read_variable = 'v';
-	const char read_operator = 'o';
-	const char precedence_check = 'p';
-	const char error = 'r';
+	enum {
+		read_white_space = 'e',
+		read_variable = 'v',
+		read_operator = 'o',
+		precedence_check = 'p',
+		error = 'r'
+	};
+	
 	
 	gcstack* st = gcstack_Init(gcstack_Alloc());
 	
