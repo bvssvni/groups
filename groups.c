@@ -172,6 +172,7 @@ groups* groups_Init(groups* const g)
 	return g;
 }
 
+int compareStringVSProperty(const void* const a, const void* const b);
 
 //
 // The first argument is string.
@@ -183,6 +184,9 @@ int compareStringVSProperty(const void* const a, const void* const b)
 	property const* prop = (property const*)b;
 	return strcmp(str, prop->name);
 }
+
+int compareProperties
+(void const* const a, void const* const b);
 
 int compareProperties
 (void const* const a, void const* const b)
@@ -201,6 +205,7 @@ int compareProperties
 	return strcmp(aName, bName);
 }
 
+void sortProperties(groups* const g);
 
 void sortProperties(groups* const g)
 {
@@ -236,6 +241,8 @@ void sortProperties(groups* const g)
 	
 	g->m_propertiesReady = true;
 }
+
+void createBitstreamArray(groups* const g);
 
 void createBitstreamArray(groups* const g)
 {
@@ -379,6 +386,8 @@ const char** groups_GetPropertyNames(groups* const g)
 	return arr;
 }
 
+bitstream* groups_getBitstream(groups* const g, const int propId);
+
 bitstream* groups_getBitstream(groups* const g, const int propId)
 {
 	// Filter out the type information.
@@ -490,6 +499,8 @@ bool groups_IsDefaultVariable
 	if (data == NULL) return true;
 	return false;
 }
+
+void createMemberArray(groups* const g);
 
 void createMemberArray(groups* const g)
 {
@@ -1197,7 +1208,10 @@ bool groups_IsBool(const int propId)
 	return propId/TYPE_STRIDE == TYPE_BOOL;
 }
 
-void groups_PrintStringToFile(FILE* const f, const char* const text) {
+void groups_PrintStringToFile(FILE* const f, const char* const text);
+
+void groups_PrintStringToFile(FILE* const f, const char* const text)
+{
 	// Put quotation mark at the beginning.
 	fputc('"', f);
 	char ch;
@@ -1242,6 +1256,9 @@ void groups_PrintStringToFile(FILE* const f, const char* const text) {
 }
 
 void groups_PrintMemberToFile
+(FILE* const f, const groups* const g, const hash_table* const obj);
+
+void groups_PrintMemberToFile
 (FILE* const f, const groups* const g, const hash_table* const obj)
 {
 	int propId, type;
@@ -1268,6 +1285,9 @@ void groups_PrintMemberToFile
 		}
 	} macro_end_foreach(obj)
 }
+
+void groups_PrintPropertyToFile
+(FILE* const f, const groups* const g, property* const prop);
 
 void groups_PrintPropertyToFile
 (FILE* const f, const groups* const g, property* const prop)
@@ -1336,6 +1356,8 @@ bool groups_SaveToFile(groups* const g, const char* const fileName)
 	
 	return true;
 }
+
+void groups_AppendMembers(groups* const g, gcstack* const newMembers);
 
 void groups_AppendMembers(groups* const g, gcstack* const newMembers)
 {
@@ -1425,7 +1447,7 @@ switch (a) { case GROUPS_RFF_CONTINUE: continue; \
 case GROUPS_RFF_CLEAN_UP: goto CLEAN_UP; \
 case GROUPS_RFF_NEW_STATE: goto NEW_STATE; }
 
-inline void groups_readFromFile_readFileContent
+void groups_readFromFile_readFileContent
 (read_from_file_settings* const s, FILE* const f, const int fileSize);
 
 void groups_readFromFile_readFileContent
@@ -1438,7 +1460,7 @@ void groups_readFromFile_readFileContent
 	fclose(f);
 }
 
-inline void groups_readFromFile_readStringContent
+void groups_readFromFile_readStringContent
 (read_from_file_settings* const s, const char* const text, const int fileSize);
 
 void groups_readFromFile_readStringContent
@@ -1449,7 +1471,7 @@ void groups_readFromFile_readStringContent
 	s->buff = (void*)text;
 }
 
-inline void groups_readFromFile_initSettings
+void groups_readFromFile_initSettings
 (read_from_file_settings* const s);
 
 void groups_readFromFile_initSettings
@@ -1487,7 +1509,7 @@ void groups_readFromFile_initSettings
 	s->state = gcstack_PopInt(s->stateStack);
 }
 
-inline void groups_readFromFile_deleteSettings(read_from_file_settings* const s);
+void groups_readFromFile_deleteSettings(read_from_file_settings* const s);
 
 void groups_readFromFile_deleteSettings(read_from_file_settings* const s)
 {
@@ -1509,7 +1531,7 @@ void groups_readFromFile_deleteSettings(read_from_file_settings* const s)
 		free(s->buff);
 }
 
-inline int groups_readFromFile_skipWhiteSpace
+int groups_readFromFile_skipWhiteSpace
 (read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_skipWhiteSpace
@@ -1525,7 +1547,7 @@ int groups_readFromFile_skipWhiteSpace
 	return GROUPS_RFF_NEW_STATE;
 }
 
-inline int groups_readFromFile_error
+int groups_readFromFile_error
 (const read_from_file_settings* const s, 
  void(*const err)(int line, int column, const char* message));
 
@@ -1542,7 +1564,7 @@ int groups_readFromFile_error
 	return GROUPS_RFF_CLEAN_UP;
 }
 
-inline int groups_readFromFile_readProperties
+int groups_readFromFile_readProperties
 (read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readProperties
@@ -1569,7 +1591,7 @@ int groups_readFromFile_readProperties
 	return GROUPS_RFF_NEW_STATE;
 }
 
-inline int groups_readFromFile_readMember
+int groups_readFromFile_readMember
 (read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readMember
@@ -1595,7 +1617,7 @@ int groups_readFromFile_readMember
 	return GROUPS_RFF_NEW_STATE;
 }
 
-inline int groups_readFromFile_readStartParanthesis
+int groups_readFromFile_readStartParanthesis
 (read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readStartParanthesis
@@ -1618,7 +1640,7 @@ int groups_readFromFile_readStartParanthesis
 	return GROUPS_RFF_NEW_STATE;
 }
 
-inline int groups_readFromFile_readColon
+int groups_readFromFile_readColon
 (read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readColon
@@ -1639,7 +1661,7 @@ int groups_readFromFile_readColon
 	return GROUPS_RFF_NEW_STATE;
 }
 
-inline int groups_readFromFile_readName
+int groups_readFromFile_readName
 (read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readName
@@ -1670,7 +1692,7 @@ int groups_readFromFile_readName
 	return GROUPS_RFF_NEW_STATE;
 }
 
-inline int groups_readFromFile_readValue
+int groups_readFromFile_readValue
 (groups* const g, read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_readValue
@@ -1780,7 +1802,7 @@ int groups_readFromFile_readValue
 	return GROUPS_RFF_CONTINUE;
 }
 
-inline int groups_readFromFile_ReadBackSlashInString
+int groups_readFromFile_ReadBackSlashInString
 (read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_ReadBackSlashInString
@@ -1827,7 +1849,7 @@ int groups_readFromFile_ReadBackSlashInString
 	return GROUPS_RFF_CONTINUE;
 }
 
-inline int groups_readFromFile_readString
+int groups_readFromFile_readString
 (read_from_file_settings* const s, bool const verbose);
 
 int groups_readFromFile_readString
@@ -1858,7 +1880,7 @@ int groups_readFromFile_readString
 	return GROUPS_RFF_NEW_STATE;	
 }
 
-inline int groups_readFromFile_readCommadOrEndParanthesis
+int groups_readFromFile_readCommadOrEndParanthesis
 (groups* const g, read_from_file_settings* const s, bool const verbose);
 
 int groups_readFromFile_readCommadOrEndParanthesis
@@ -1904,7 +1926,7 @@ int groups_readFromFile_readCommadOrEndParanthesis
 	return GROUPS_RFF_NEW_STATE;
 }
 
-inline int groups_readFromFile_afterReadingString
+int groups_readFromFile_afterReadingString
 (groups* const g, read_from_file_settings* const s, const bool verbose);
 
 int groups_readFromFile_afterReadingString
@@ -1933,6 +1955,10 @@ int groups_readFromFile_afterReadingString
 	s->message = GROUPS_ERROR_INVALID_TAG;
 	return GROUPS_RFF_NEW_STATE;
 }
+
+bool groups_ReadFromSettings
+(groups* const g, read_from_file_settings* const s, const bool verbose, 
+ void(* const err)(int line, int column, const char* message));
 
 bool groups_ReadFromSettings
 (groups* const g, read_from_file_settings* const s, const bool verbose, 

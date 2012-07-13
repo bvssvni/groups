@@ -119,7 +119,7 @@ extern "C" {
 	(gcstack* gc, gcstack_item* item);
 	
 	gcstack* gcstack_Alloc
-	();
+	(void);
 	
 	//
 	// 	Deletes the gcstack and all the data it refers to.

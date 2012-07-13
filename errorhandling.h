@@ -52,6 +52,10 @@ extern "C" {
 	void errorhandling_CrashWithLineAndFunctionAndMessage
 	(int line, const char* functionName, const char* message);
 	
+	void errorhandling_CrashWithFileAndLineAndFunctionAndMessage
+	(const char* file, int line, const char* functionName, 
+	 const char* message);
+	
 	void errorhandling_CrashExpression
 	(const char* message, int pos, const char* expr);
 	
@@ -59,8 +63,8 @@ extern "C" {
 	//      CRASH CONFIGURATION
 	//
 	
-	void errorhandling_OnCrashExitApp();
-	void errorhandling_OnCrashExitThread();
+	void errorhandling_OnCrashExitApp(void);
+	void errorhandling_OnCrashExitThread(void);
 	
 	//
 	//	MEASUREMENTS

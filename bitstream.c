@@ -112,6 +112,8 @@ bitstream* bitstream_InitWithValues
 	return a;
 }
 
+int countWithIndices(const int size, const int* const vals);
+
 int countWithIndices(const int size, const int* const vals)
 {
 	// Property list = new Property(x.Length*2);
@@ -142,6 +144,9 @@ int countWithIndices(const int size, const int* const vals)
 	// return list;
 	return count;
 }
+
+int* createArrayFromIndices
+(const int count, const int size, const int* const vals);
 
 int* createArrayFromIndices
 (const int count, const int size, const int* const vals)
@@ -189,6 +194,9 @@ bitstream* bitstream_InitWithIndices
 }
 
 int countDeltaDouble
+(const int n, const double* const old, const double* const new);
+
+int countDeltaDouble
 (const int n, const double* const old, const double* const new)
 {
 	int count = 0;
@@ -205,6 +213,8 @@ int countDeltaDouble
 	}
 	return count;
 }
+
+int countDeltaInt(const int n, const int* const old, const int* const new);
 
 int countDeltaInt(const int n, const int* const old, const int* const new)
 {
@@ -223,6 +233,8 @@ int countDeltaInt(const int n, const int* const old, const int* const new)
 	return count;
 }
 
+int countDeltaBool
+(const int n, const bool* const old, const bool* const new);
 
 int countDeltaBool
 (const int n, const bool* const old, const bool* const new)
@@ -241,6 +253,9 @@ int countDeltaBool
 	}
 	return count;
 }
+
+int countDeltaString
+(const int n, const string* const old, const string* const new);
 
 int countDeltaString
 (const int n, const string* const old, const string* const new)
@@ -476,6 +491,8 @@ bitstream* bitstream_Clone(gcstack* const gc, const bitstream* const a) {
 	return b;
 }
 
+int countAnd(const bitstream* const a, const bitstream* const b);
+
 int countAnd(const bitstream* const a, const bitstream* const b)
 {
 	int list = 0;
@@ -581,6 +598,8 @@ bitstream* bitstream_And
 	
 	return arr;
 }
+
+int countOr(const bitstream* const a, const bitstream* const b);
 
 int countOr(const bitstream* const a, const bitstream* const b)
 {
@@ -715,6 +734,8 @@ bitstream* bitstream_Or(gcstack* gc, bitstream const* a, bitstream const* b)
 	return list;
 }
 
+int countInvert(bitstream* const a, const int inv);
+
 int countInvert(bitstream* const a, const int inv)
 {
 	// var res = [];
@@ -777,6 +798,8 @@ bitstream* bitstream_Invert
 	
 	return res;
 }
+
+int countExcept(const bitstream* const a, const bitstream* const b);
 
 int countExcept(const bitstream* const a, const bitstream* const b)
 {
@@ -972,6 +995,8 @@ int bitstream_Size(const bitstream* const list)
 	}
 	return sum;
 }
+
+int bitstream_AbsSub(const bitstream* const list);
 
 int bitstream_AbsSub(const bitstream* const list)
 {

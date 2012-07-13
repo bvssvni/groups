@@ -69,6 +69,8 @@
  
  */
 
+void swapData
+(byte* const t, byte* const a, byte* const b, const int stride);
 
 //	The reasons this function takes bytes as arguments is because
 //	it copies the bytes when swapping.

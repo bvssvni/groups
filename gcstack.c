@@ -541,6 +541,8 @@ void gcstack_Push(gcstack* const gc, gcstack_item* const item)
 	gc->length++;
 }
 
+void gcpointer_Delete(void* const p);
+
 void gcpointer_Delete(void* const p) 
 {
 	macro_err(p == NULL);
@@ -602,6 +604,8 @@ gcstack_item* gcstack_PushBool(gcstack* const gc, const bool val)
 	
 	return (gcstack_item*)d;
 }
+
+void gcstring_Delete(void* const p);
 
 void gcstring_Delete(void* const p)
 {

@@ -15,7 +15,7 @@
 #include "errorhandling.h"
 #include "readability.h"
 
-inline void boolean_eval_BinaryOp(gcstack* st);
+void boolean_eval_BinaryOp(gcstack* st);
 
 void boolean_eval_BinaryOp(gcstack* const st)
 {

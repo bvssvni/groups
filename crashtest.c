@@ -11,11 +11,15 @@
 
 #include "memgroups.h"
 
+#include "crashtest.h"
+
 // Some arbitrary number to check if it didn't crash properly.
 int DID_NOT_CRASH = 42;
 
 #define macro_crash(a) \
 crash_Test(a, #a)
+
+void crash_Test(void*(*f)(void* input), const char const* message);
 
 void crash_Test(void*(*f)(void* input), const char const* message)
 {
@@ -39,12 +43,16 @@ void crash_Test(void*(*f)(void* input), const char const* message)
 	}
 }
 
+void* crash_groups_Delete(void* input);
+
 void* crash_groups_Delete(void* input)
 {
 	groups_Delete(NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_Init(void* input);
 
 void* crash_groups_Init(void* input)
 {
@@ -53,12 +61,16 @@ void* crash_groups_Init(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_AddProperty(void* input);
+
 void* crash_groups_AddProperty(void* input)
 {
 	groups_AddProperty(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_AddProperty2(void* input);
 
 void* crash_groups_AddProperty2(void* input)
 {
@@ -69,6 +81,8 @@ void* crash_groups_AddProperty2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_AddProperty3(void* input);
+
 void* crash_groups_AddProperty3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -78,12 +92,16 @@ void* crash_groups_AddProperty3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_GetProperty(void* input);
+
 void* crash_groups_GetProperty(void* input)
 {
 	groups_GetProperty(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetProperty2(void* input);
 
 void* crash_groups_GetProperty2(void* input)
 {
@@ -94,12 +112,16 @@ void* crash_groups_GetProperty2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_GetBitstream(void* input);
+
 void* crash_groups_GetBitstream(void* input)
 {
 	groups_GetBitstream(NULL, NULL, 0);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetBitstream2(void* input);
 
 void* crash_groups_GetBitstream2(void* input)
 {
@@ -110,12 +132,16 @@ void* crash_groups_GetBitstream2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_RemoveProperty(void* input);
+
 void* crash_groups_RemoveProperty(void* input)
 {
 	groups_RemoveProperty(NULL, 0);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_RemoveProperty2(void* input);
 
 void* crash_groups_RemoveProperty2(void* input)
 {
@@ -126,12 +152,16 @@ void* crash_groups_RemoveProperty2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_IsDefaultVariable(void* input);
+
 void* crash_groups_IsDefaultVariable(void* input)
 {
 	groups_IsDefaultVariable(-1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_IsDefaultVariable2(void* input);
 
 void* crash_groups_IsDefaultVariable2(void* input)
 {
@@ -140,12 +170,16 @@ void* crash_groups_IsDefaultVariable2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_AddMember(void* input);
+
 void* crash_groups_AddMember(void* input)
 {
 	groups_AddMember(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_AddMember2(void* input);
 
 void* crash_groups_AddMember2(void* input)
 {
@@ -156,12 +190,16 @@ void* crash_groups_AddMember2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetDouble(void* input);
+
 void* crash_groups_SetDouble(void* input)
 {
 	groups_SetDouble(NULL, NULL, -1, 0);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetDouble2(void* input);
 
 void* crash_groups_SetDouble2(void* input)
 {
@@ -171,6 +209,8 @@ void* crash_groups_SetDouble2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetDouble3(void* input);
 
 void* crash_groups_SetDouble3(void* input)
 {
@@ -182,12 +222,16 @@ void* crash_groups_SetDouble3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetString(void* input);
+
 void* crash_groups_SetString(void* input)
 {
 	groups_SetString(NULL, NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetString2(void* input);
 
 void* crash_groups_SetString2(void* input)
 {
@@ -197,6 +241,8 @@ void* crash_groups_SetString2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetString3(void* input);
 
 void* crash_groups_SetString3(void* input)
 {
@@ -208,12 +254,16 @@ void* crash_groups_SetString3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetInt(void* input);
+
 void* crash_groups_SetInt(void* input)
 {
 	groups_SetInt(NULL, NULL, 0, 20);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetInt2(void* input);
 
 void* crash_groups_SetInt2(void* input)
 {
@@ -223,6 +273,8 @@ void* crash_groups_SetInt2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetInt3(void* input);
 
 void* crash_groups_SetInt3(void* input)
 {
@@ -234,12 +286,16 @@ void* crash_groups_SetInt3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetBool(void* input);
+
 void* crash_groups_SetBool(void* input)
 {
 	groups_SetBool(NULL, NULL, -1, 1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetBool2(void* input);
 
 void* crash_groups_SetBool2(void* input)
 {
@@ -249,6 +305,8 @@ void* crash_groups_SetBool2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetBool3(void* input);
 
 void* crash_groups_SetBool3(void* input)
 {
@@ -260,12 +318,16 @@ void* crash_groups_SetBool3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetDoubleArray(void* input);
+
 void* crash_groups_SetDoubleArray(void* input)
 {
 	groups_SetDoubleArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetDoubleArray2(void* input);
 
 void* crash_groups_SetDoubleArray2(void* input)
 {
@@ -275,6 +337,8 @@ void* crash_groups_SetDoubleArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetDoubleArray3(void* input);
 
 void* crash_groups_SetDoubleArray3(void* input)
 {
@@ -286,6 +350,8 @@ void* crash_groups_SetDoubleArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetDoubleArray4(void* input);
+
 void* crash_groups_SetDoubleArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -295,6 +361,8 @@ void* crash_groups_SetDoubleArray4(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetDoubleArray5(void* input);
 
 void* crash_groups_SetDoubleArray5(void* input)
 {
@@ -306,12 +374,16 @@ void* crash_groups_SetDoubleArray5(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetStringArray(void* input);
+
 void* crash_groups_SetStringArray(void* input)
 {
 	groups_SetStringArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetStringArray2(void* input);
 
 void* crash_groups_SetStringArray2(void* input)
 {
@@ -321,6 +393,8 @@ void* crash_groups_SetStringArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetStringArray3(void* input);
 
 void* crash_groups_SetStringArray3(void* input)
 {
@@ -332,6 +406,8 @@ void* crash_groups_SetStringArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetStringArray4(void* input);
+
 void* crash_groups_SetStringArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -341,6 +417,8 @@ void* crash_groups_SetStringArray4(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetStringArray5(void* input);
 
 void* crash_groups_SetStringArray5(void* input)
 {
@@ -352,12 +430,16 @@ void* crash_groups_SetStringArray5(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetIntArray(void* input);
+
 void* crash_groups_SetIntArray(void* input)
 {
 	groups_SetIntArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetIntArray2(void* input);
 
 void* crash_groups_SetIntArray2(void* input)
 {
@@ -367,6 +449,8 @@ void* crash_groups_SetIntArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetIntArray3(void* input);
 
 void* crash_groups_SetIntArray3(void* input)
 {
@@ -378,6 +462,8 @@ void* crash_groups_SetIntArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetIntArray4(void* input);
+
 void* crash_groups_SetIntArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -387,6 +473,8 @@ void* crash_groups_SetIntArray4(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetIntArray5(void* input);
 
 void* crash_groups_SetIntArray5(void* input)
 {
@@ -398,12 +486,16 @@ void* crash_groups_SetIntArray5(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetBoolArray(void* input);
+
 void* crash_groups_SetBoolArray(void* input)
 {
 	groups_SetBoolArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetBoolArray2(void* input);
 
 void* crash_groups_SetBoolArray2(void* input)
 {
@@ -413,6 +505,8 @@ void* crash_groups_SetBoolArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetBoolArray3(void* input);
 
 void* crash_groups_SetBoolArray3(void* input)
 {
@@ -424,6 +518,8 @@ void* crash_groups_SetBoolArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SetBoolArray4(void* input);
+
 void* crash_groups_SetBoolArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -433,6 +529,8 @@ void* crash_groups_SetBoolArray4(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SetBoolArray5(void* input);
 
 void* crash_groups_SetBoolArray5(void* input)
 {
@@ -444,12 +542,16 @@ void* crash_groups_SetBoolArray5(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_GetDoubleArray(void* input);
+
 void* crash_groups_GetDoubleArray(void* input)
 {
 	groups_GetDoubleArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetDoubleArray2(void* input);
 
 void* crash_groups_GetDoubleArray2(void* input)
 {
@@ -459,6 +561,8 @@ void* crash_groups_GetDoubleArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetDoubleArray3(void* input);
 
 void* crash_groups_GetDoubleArray3(void* input)
 {
@@ -470,12 +574,16 @@ void* crash_groups_GetDoubleArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_GetIntArray(void* input);
+
 void* crash_groups_GetIntArray(void* input)
 {
 	groups_GetIntArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetIntArray2(void* input);
 
 void* crash_groups_GetIntArray2(void* input)
 {
@@ -485,6 +593,8 @@ void* crash_groups_GetIntArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetIntArray3(void* input);
 
 void* crash_groups_GetIntArray3(void* input)
 {
@@ -496,12 +606,17 @@ void* crash_groups_GetIntArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+
+void* crash_groups_GetBoolArray(void* input);
+
 void* crash_groups_GetBoolArray(void* input)
 {
 	groups_GetBoolArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetBoolArray2(void* input);
 
 void* crash_groups_GetBoolArray2(void* input)
 {
@@ -511,6 +626,8 @@ void* crash_groups_GetBoolArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetBoolArray3(void* input);
 
 void* crash_groups_GetBoolArray3(void* input)
 {
@@ -522,12 +639,16 @@ void* crash_groups_GetBoolArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_GetStringArray(void* input);
+
 void* crash_groups_GetStringArray(void* input)
 {
 	groups_GetStringArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetStringArray2(void* input);
 
 void* crash_groups_GetStringArray2(void* input)
 {
@@ -537,6 +658,8 @@ void* crash_groups_GetStringArray2(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_GetStringArray3(void* input);
 
 void* crash_groups_GetStringArray3(void* input)
 {
@@ -548,12 +671,16 @@ void* crash_groups_GetStringArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_PropertyNameById(void* input);
+
 void* crash_groups_PropertyNameById(void* input)
 {
 	groups_PropertyNameById(NULL, -1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_PropertyNameById2(void* input);
 
 void* crash_groups_PropertyNameById2(void* input)
 {
@@ -564,12 +691,16 @@ void* crash_groups_PropertyNameById2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_PrintMember(void* input);
+
 void* crash_groups_PrintMember(void* input)
 {
 	groups_PrintMember(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_PrintMember2(void* input);
 
 void* crash_groups_PrintMember2(void* input)
 {
@@ -580,12 +711,16 @@ void* crash_groups_PrintMember2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_RemoveMember(void* input);
+
 void* crash_groups_RemoveMember(void* input)
 {
 	groups_RemoveMember(NULL, -1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_RemoveMember2(void* input);
 
 void* crash_groups_RemoveMember2(void* input)
 {
@@ -596,12 +731,16 @@ void* crash_groups_RemoveMember2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_RemoveMembers(void* input);
+
 void* crash_groups_RemoveMembers(void* input)
 {
 	groups_RemoveMembers(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_RemoveMembers2(void* input);
 
 void* crash_groups_RemoveMembers2(void* input)
 {
@@ -612,12 +751,16 @@ void* crash_groups_RemoveMembers2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_SaveToFile(void* input);
+
 void* crash_groups_SaveToFile(void* input)
 {
 	groups_SaveToFile(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_SaveToFile2(void* input);
 
 void* crash_groups_SaveToFile2(void* input)
 {
@@ -628,12 +771,16 @@ void* crash_groups_SaveToFile2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_ReadFromFile(void* input);
+
 void* crash_groups_ReadFromFile(void* input)
 {
 	groups_ReadFromFile(NULL, NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_groups_ReadFromFile2(void* input);
 
 void* crash_groups_ReadFromFile2(void* input)
 {
@@ -644,6 +791,8 @@ void* crash_groups_ReadFromFile2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_Delete(void* input);
+
 void* crash_bitstream_Delete(void* input)
 {
 	bitstream_Delete(NULL);
@@ -651,12 +800,16 @@ void* crash_bitstream_Delete(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithSize(void* input);
+
 void* crash_bitstream_InitWithSize(void* input)
 {
 	bitstream_InitWithSize(NULL, 2);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_InitWithSize2(void* input);
 
 void* crash_bitstream_InitWithSize2(void* input)
 {
@@ -666,12 +819,16 @@ void* crash_bitstream_InitWithSize2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithValues(void* input);
+
 void* crash_bitstream_InitWithValues(void* input)
 {
 	bitstream_InitWithValues(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_InitWithValues2(void* input);
 
 void* crash_bitstream_InitWithValues2(void* input)
 {
@@ -681,6 +838,8 @@ void* crash_bitstream_InitWithValues2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithValues3(void* input);
+
 void* crash_bitstream_InitWithValues3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -689,12 +848,16 @@ void* crash_bitstream_InitWithValues3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithIndices(void* input);
+
 void* crash_bitstream_InitWithIndices(void* input)
 {
 	bitstream_InitWithIndices(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_InitWithIndices2(void* input);
 
 void* crash_bitstream_InitWithIndices2(void* input)
 {
@@ -704,6 +867,8 @@ void* crash_bitstream_InitWithIndices2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithIndices3(void* input);
+
 void* crash_bitstream_InitWithIndices3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -712,12 +877,16 @@ void* crash_bitstream_InitWithIndices3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaDouble(void* input);
+
 void* crash_bitstream_InitWithDeltaDouble(void* input)
 {
 	bitstream_InitWithDeltaDouble(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_InitWithDeltaDouble2(void* input);
 
 void* crash_bitstream_InitWithDeltaDouble2(void* input)
 {
@@ -728,6 +897,8 @@ void* crash_bitstream_InitWithDeltaDouble2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaDouble3(void* input);
+
 void* crash_bitstream_InitWithDeltaDouble3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -736,12 +907,16 @@ void* crash_bitstream_InitWithDeltaDouble3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaInt(void* input);
+
 void* crash_bitstream_InitWithDeltaInt(void* input)
 {
 	bitstream_InitWithDeltaInt(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_InitWithDeltaInt2(void* input);
 
 void* crash_bitstream_InitWithDeltaInt2(void* input)
 {
@@ -751,6 +926,8 @@ void* crash_bitstream_InitWithDeltaInt2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaInt3(void* input);
+
 void* crash_bitstream_InitWithDeltaInt3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -759,12 +936,16 @@ void* crash_bitstream_InitWithDeltaInt3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaBool(void* input);
+
 void* crash_bitstream_InitWithDeltaBool(void* input)
 {
 	bitstream_InitWithDeltaBool(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_InitWithDeltaBool2(void* input);
 
 void* crash_bitstream_InitWithDeltaBool2(void* input)
 {
@@ -774,6 +955,8 @@ void* crash_bitstream_InitWithDeltaBool2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaBool3(void* input);
+
 void* crash_bitstream_InitWithDeltaBool3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -782,12 +965,16 @@ void* crash_bitstream_InitWithDeltaBool3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaString(void* input);
+
 void* crash_bitstream_InitWithDeltaString(void* input)
 {
 	bitstream_InitWithDeltaString(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_InitWithDeltaString2(void* input);
 
 void* crash_bitstream_InitWithDeltaString2(void* input)
 {
@@ -798,6 +985,8 @@ void* crash_bitstream_InitWithDeltaString2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_InitWithDeltaString3(void* input);
+
 void* crash_bitstream_InitWithDeltaString3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -806,6 +995,8 @@ void* crash_bitstream_InitWithDeltaString3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_DirectJoin(void* input);
+
 void* crash_bitstream_DirectJoin(void* input)
 {
 	gcstack* gc = (gcstack*)input;
@@ -813,6 +1004,8 @@ void* crash_bitstream_DirectJoin(void* input)
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_DirectJoin2(void* input);
 
 void* crash_bitstream_DirectJoin2(void* input)
 {
@@ -823,12 +1016,16 @@ void* crash_bitstream_DirectJoin2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_Print(void* input);
+
 void* crash_bitstream_Print(void* input)
 {
 	bitstream_Print(NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_Clone(void* input);
 
 void* crash_bitstream_Clone(void* input)
 {
@@ -837,12 +1034,16 @@ void* crash_bitstream_Clone(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_And(void* input);
+
 void* crash_bitstream_And(void* input)
 {
 	bitstream_And(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_Or(void* input);
 
 void* crash_bitstream_Or(void* input)
 {
@@ -851,12 +1052,16 @@ void* crash_bitstream_Or(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_Invert(void* input);
+
 void* crash_bitstream_Invert(void* input)
 {
 	bitstream_Invert(NULL, NULL, 0);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_Except(void* input);
 
 void* crash_bitstream_Except(void* input)
 {
@@ -865,12 +1070,16 @@ void* crash_bitstream_Except(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_Size(void* input);
+
 void* crash_bitstream_Size(void* input)
 {
 	bitstream_Size(NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_Abs(void* input);
 
 void* crash_bitstream_Abs(void* input)
 {
@@ -879,12 +1088,16 @@ void* crash_bitstream_Abs(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_ArrayPointer(void* input);
+
 void* crash_bitstream_ArrayPointer(void* input)
 {
 	bitstream_ArrayPointer(NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_NumberOfBlocks(void* input);
 
 void* crash_bitstream_NumberOfBlocks(void* input)
 {
@@ -893,12 +1106,16 @@ void* crash_bitstream_NumberOfBlocks(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_bitstream_PopStart(void* input);
+
 void* crash_bitstream_PopStart(void* input)
 {
 	bitstream_PopStart(NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_bitstream_PopEnd(void* input);
 
 void* crash_bitstream_PopEnd(void* input)
 {
@@ -907,6 +1124,8 @@ void* crash_bitstream_PopEnd(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_gcstack_Delete(void* input);
+
 void* crash_gcstack_Delete(void* input)
 {
 	gcstack_Delete(NULL);
@@ -914,12 +1133,16 @@ void* crash_gcstack_Delete(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_gcstack_PopStringWithItem(void* input);
+
 void* crash_gcstack_PopStringWithItem(void* input)
 {
 	gcstack_PopStringWithItem(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_gcstack_PopStringWithItem2(void* input);
 
 void* crash_gcstack_PopStringWithItem2(void* input)
 {
@@ -934,12 +1157,16 @@ void* crash_gcstack_PopStringWithItem2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_property_Delete(void* input);
+
 void* crash_property_Delete(void* input)
 {
 	property_Delete(NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_Delete(void* input);
 
 void* crash_hashTable_Delete(void* input)
 {
@@ -948,6 +1175,8 @@ void* crash_hashTable_Delete(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_Init(void* input);
+
 void* crash_hashTable_Init(void* input)
 {
 	hashTable_Init(NULL);
@@ -955,12 +1184,16 @@ void* crash_hashTable_Init(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_InitWithMember(void* input);
+
 void* crash_hashTable_InitWithMember(void* input)
 {
 	hashTable_InitWithMember(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_InitWithMember2(void* input);
 
 void* crash_hashTable_InitWithMember2(void* input)
 {
@@ -970,12 +1203,16 @@ void* crash_hashTable_InitWithMember2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_Set(void* input);
+
 void* crash_hashTable_Set(void* input)
 {
 	hashTable_Set(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_Set2(void* input);
 
 void* crash_hashTable_Set2(void* input)
 {
@@ -986,12 +1223,16 @@ void* crash_hashTable_Set2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_SetStringHash(void* input);
+
 void* crash_hashTable_SetStringHash(void* input)
 {
 	hashTable_SetStringHash(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_SetStringHash2(void* input);
 
 void* crash_hashTable_SetStringHash2(void* input)
 {
@@ -1002,12 +1243,16 @@ void* crash_hashTable_SetStringHash2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_Get(void* input);
+
 void* crash_hashTable_Get(void* input)
 {
 	hashTable_Get(NULL, 0);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_Get2(void* input);
 
 void* crash_hashTable_Get2(void* input)
 {
@@ -1018,12 +1263,16 @@ void* crash_hashTable_Get2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_ContainsStringHash(void* input);
+
 void* crash_hashTable_ContainsStringHash(void* input)
 {
 	hashTable_ContainsStringHash(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_ContainsStringHash2(void* input);
 
 void* crash_hashTable_ContainsStringHash2(void* input)
 {
@@ -1034,12 +1283,16 @@ void* crash_hashTable_ContainsStringHash2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_SetDouble(void* input);
+
 void* crash_hashTable_SetDouble(void* input)
 {
 	hashTable_SetDouble(NULL, 0, 20);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_SetDouble2(void* input);
 
 void* crash_hashTable_SetDouble2(void* input)
 {
@@ -1050,12 +1303,16 @@ void* crash_hashTable_SetDouble2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_SetString(void* input);
+
 void* crash_hashTable_SetString(void* input)
 {
 	hashTable_SetString(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_SetString2(void* input);
 
 void* crash_hashTable_SetString2(void* input)
 {
@@ -1066,12 +1323,16 @@ void* crash_hashTable_SetString2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_SetInt(void* input);
+
 void* crash_hashTable_SetInt(void* input)
 {
 	hashTable_SetInt(NULL, 0, 20);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_SetInt2(void* input);
 
 void* crash_hashTable_SetInt2(void* input)
 {
@@ -1082,12 +1343,16 @@ void* crash_hashTable_SetInt2(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_hashTable_SetBool(void* input);
+
 void* crash_hashTable_SetBool(void* input)
 {
 	hashTable_SetBool(NULL, -1, 1);
 	
 	return &DID_NOT_CRASH;
 }
+
+void* crash_hashTable_SetBool2(void* input);
 
 void* crash_hashTable_SetBool2(void* input)
 {
@@ -1098,7 +1363,8 @@ void* crash_hashTable_SetBool2(void* input)
 	return &DID_NOT_CRASH;
 }
 
-void crashtest_Run() {
+void crashtest_Run(void) 
+{
 	macro_crash(crash_bitstream_Abs);
 	macro_crash(crash_bitstream_ArrayPointer);
 	macro_crash(crash_bitstream_And);

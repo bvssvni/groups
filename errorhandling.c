@@ -36,14 +36,16 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+#include "errorhandling.h"
+
 int m_crashApp = 0;
 
-void errorhandling_OnCrashExitApp()
+void errorhandling_OnCrashExitApp(void)
 {
 	m_crashApp = 1;
 }
 
-void errorhandling_OnCrashExitThread()
+void errorhandling_OnCrashExitThread(void)
 {
 	m_crashApp = 0;
 }
@@ -81,7 +83,9 @@ void errorhandling_CrashExpression
 	fprintf(stderr, "^");
 }
 
-void errorhandling_CrashWithFileAndLineAndFunctionAndMessage(const char* file, int line, const char* functionName, const char* message) {
+void errorhandling_CrashWithFileAndLineAndFunctionAndMessage
+(const char* file, int line, const char* functionName, const char* message) 
+{
 	fprintf(stderr, "%s %i, %s: %s\r\n", file, line, functionName, message);
 	if (m_crashApp)
 		exit(1);
