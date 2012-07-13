@@ -137,7 +137,8 @@ if (_macro_indices##a[_macro_i##a] == -1) continue;
 	//	message. It also prints the condition under which the thread or 
 	//	application should crash.
 	//
-#define macro_err(cond) if (cond) \
+#define macro_err(cond) \
+if (cond) \
 errorhandling_CrashWithLineAndFunctionAndMessage(__LINE__, __FUNCTION__, #cond);
 	
 	//
