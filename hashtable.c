@@ -56,7 +56,8 @@ void hashLayer_Delete(void* const p)
 	if (indices != NULL) {
 		void** data = hashLayer->data;
 		int n = hashLayer->n;
-		for (int i = 0; i < n; i++)
+		int i;
+		for (i = 0; i < n; i++)
 		{
 			if (indices[i] == -1) continue;
 			free(data[i]);
@@ -90,7 +91,8 @@ hash_layer* hashLayer_InitWithSize(hash_layer* const hashLayer, const int n)
 	hashLayer->data = malloc(sizeof(void*)*n);
         
 	int* indices = hashLayer->indices;
-	for (int i = 0; i < n; i++)
+	int i;
+	for (i = 0; i < n; i++)
 		indices[i] = -1;
 	return hashLayer;
 }

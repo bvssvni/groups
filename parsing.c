@@ -156,7 +156,8 @@ char parsing_ReadOneCharacterOf
 {
 	macro_err(text == NULL); macro_err(chs == NULL);
 	
-	for (int i = 0; chs[i] != '\0'; i++) {
+	int i;
+	for (i = 0; chs[i] != '\0'; i++) {
 		if (text[0] == chs[i]) {
 			*delta = 1;
 			return chs[i];
