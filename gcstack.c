@@ -92,7 +92,8 @@ void gcstack_ReverseWithLevel(gcstack* const gc, const int level) {
 	gcstack_item* last = NULL;
 	gcstack_item* next = NULL;
 	
-	for (int i = len; i > level; i--) {
+	int i;
+	for (i = len; i > level; i--) {
 		// Swap previous and next for each item.
 		next = cursor->next;
 		cursor->next = cursor->previous;
@@ -122,7 +123,8 @@ void gcstack_ReverseToOtherStackWithLevel
 	gcstack_item* next;
 	
 	// Push the item onto the other stack until reaching level.
-	for (int i = length; i > level; i--) {
+	int i;
+	for (i = length; i > level; i--) {
 		next = cursor->next;
 		
 		gcstack_Pop(from, cursor);
@@ -139,7 +141,8 @@ gcstack_item** gcstack_CreateItemsArray(const gcstack* const gc)
 	gcstack_item** const arr = malloc(gc->length*sizeof(void*));
 	
 	gcstack_item* cursor = gc->root->next;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		arr[i] = (void*)cursor;
 		cursor = cursor->next;
@@ -156,7 +159,8 @@ int* gcstack_CreateIntArray(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcint* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcint*)cursor;
 		arr[i] = item->val;
@@ -174,7 +178,8 @@ double* gcstack_CreateDoubleArray(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcdouble* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcdouble*)cursor;
 		arr[i] = item->val;
@@ -192,7 +197,8 @@ bool* gcstack_CreateBoolArray(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcbool* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcbool*)cursor;
 		arr[i] = item->val;
@@ -210,7 +216,8 @@ string* gcstack_CreateStringArray(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcstring* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcstring*)cursor;
 		arr[i] = item->val;
@@ -227,7 +234,8 @@ gcstack_item** gcstack_CreateItemsArrayBackward(const gcstack* const gc)
 	gcstack_item** const arr = malloc(length*sizeof(void*));
 	
 	gcstack_item* cursor = gc->root->next;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		arr[length-i-1] = (void*)cursor;
 		cursor = cursor->next;
@@ -244,7 +252,8 @@ int* gcstack_CreateIntArrayBackward(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcint* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcint*)cursor;
 		arr[length-i-1] = item->val;
@@ -262,7 +271,8 @@ double* gcstack_CreateDoubleArrayBackward(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcdouble* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcdouble*)cursor;
 		arr[length-i-1] = item->val;
@@ -280,7 +290,8 @@ string* gcstack_CreateStringArrayBackward(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcstring* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcstring*)cursor;
 		arr[length-i-1] = item->val;
@@ -298,7 +309,8 @@ bool* gcstack_CreateBoolArrayBackward(const gcstack* const gc)
 	
 	gcstack_item* cursor = gc->root->next;
 	gcbool* item;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		item = (gcbool*)cursor;
 		arr[length-i-1] = item->val;
@@ -313,7 +325,8 @@ void gcstack_Print(const gcstack* const gc, void(* const print)(void*a))
 	
 	const int length = gc->length;
 	gcstack_item* item = gc->root->next;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		print(item);
 		
@@ -331,7 +344,8 @@ void gcstack_PrintInt(const gcstack* const gc)
 	const int length = gc->length;
 	gcstack_item* item = gc->root->next;
 	gcint* intItem;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		intItem = (gcint*)item;
 		printf("%i ", intItem->val);
@@ -350,7 +364,8 @@ void gcstack_PrintString(const gcstack* const gc)
 	const int length = gc->length;
 	gcstack_item* item = gc->root->next;
 	gcstring* stringItem;
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		stringItem = (gcstring*)item;
 		printf("%s ", stringItem->val);

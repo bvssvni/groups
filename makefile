@@ -1,10 +1,10 @@
 all:
 	mkdir -p obj
 	gcc -c bitstream.c	-o obj/bitstream.o
-	gcc -std=c99 -c boolean.c 	-o obj/boolean.o
-	gcc -std=c99 -c crashtest.c 	-o obj/crashtest.o
-	gcc -std=c99 -c errorhandling.c -o obj/errorhandling.o
-	gcc -std=c99 -c gcstack.c 	-o obj/gcstack.o
+	gcc -c boolean.c 	-o obj/boolean.o
+	gcc -c crashtest.c 	-o obj/crashtest.o
+	gcc -c errorhandling.c -o obj/errorhandling.o
+	gcc -c gcstack.c 	-o obj/gcstack.o
 	gcc -std=c99 -c groups.c 	-o obj/groups.o
 	gcc -std=c99 -c hashtable.c 	-o obj/hashtable.o
 	gcc -std=c99 -c parsing.c 	-o obj/parsing.o
