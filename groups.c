@@ -1215,7 +1215,8 @@ void groups_PrintStringToFile(FILE* const f, const char* const text)
 	// Put quotation mark at the beginning.
 	fputc('"', f);
 	char ch;
-	for (const char* cursor = text; *cursor != '\0'; cursor++) {
+	const char* cursor;
+	for (cursor = text; *cursor != '\0'; cursor++) {
 		ch = *cursor;
 		
 		// Handle escaped characters.

@@ -78,7 +78,8 @@ void errorhandling_CrashExpression
 (const char* message, int pos, const char* expr) {
 	fprintf(stderr, "%i: ERROR, %s\r\n", pos, message);
 	fprintf(stderr, "%s\r\n", expr);
-	for (int i = 0; i < pos; i++)
+	int i;
+	for (i = 0; i < pos; i++)
 		fprintf(stderr, " ");
 	fprintf(stderr, "^");
 }

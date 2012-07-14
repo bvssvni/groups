@@ -119,7 +119,8 @@ int countWithIndices(const int size, const int* const vals)
 	// Property list = new Property(x.Length*2);
 	int count = 0;
 	int expected = 0;
-	for (int i = 0; i < size; i++)
+	int i;
+	for (i = 0; i < size; i++)
 	{
 		if (i > 0 && vals[i] != expected)
 			// list.Add(expected);
@@ -154,7 +155,8 @@ int* createArrayFromIndices
 	int* const list = malloc(sizeof(int*)*count);
 	int expected = 0;
 	int k = 0;
-	for (int i = 0; i < size; i++)
+	int i;
+	for (i = 0; i < size; i++)
 	{
 		if (i > 0 && vals[i] != expected)
 			list[k++] = expected;
@@ -202,7 +204,8 @@ int countDeltaDouble
 	int count = 0;
 	bool was = false;
 	bool is;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = new[i] != old[i];
 		if (was != is)
 			count++;
@@ -221,7 +224,8 @@ int countDeltaInt(const int n, const int* const old, const int* const new)
 	int count = 0;
 	bool was = false;
 	bool is;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = new[i] != old[i];
 		if (was != is)
 			count++;
@@ -242,7 +246,8 @@ int countDeltaBool
 	int count = 0;
 	bool was = false;
 	bool is;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = new[i] != old[i];
 		if (was != is)
 			count++;
@@ -263,7 +268,8 @@ int countDeltaString
 	int counter = 0;
 	bool was = false;
 	bool is;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = strcmp(new[i], old[i]) != 0;
 		if (was != is)
 			counter++;
@@ -295,7 +301,8 @@ bitstream* bitstream_InitWithDeltaDouble
 	bool was = false;
 	bool is;
 	int k = 0;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = newValues[i] != oldValues[i];
 		if (was != is)
 			a->pointer[k++] = i;
@@ -327,7 +334,8 @@ bitstream* bitstream_InitWithDeltaInt
 	bool was = false;
 	bool is;
 	int k = 0;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = newValues[i] != oldValues[i];
 		if (was != is)
 			a->pointer[k++] = i;
@@ -359,7 +367,8 @@ bitstream* bitstream_InitWithDeltaBool
 	bool was = false;
 	bool is;
 	int k = 0;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = newValues[i] != oldValues[i];
 		if (was != is)
 			a->pointer[k++] = i;
@@ -391,7 +400,8 @@ bitstream* bitstream_InitWithDeltaString
 	bool was = false;
 	bool is;
 	int k = 0;
-	for (int i = 0; i < n; i++) {
+	int i;
+	for (i = 0; i < n; i++) {
 		is = strcmp(newValues[i], oldValues[i]) != 0;
 		if (was != is)
 			a->pointer[k++] = i;
@@ -419,7 +429,8 @@ bitstream* bitstream_InitWithWordsInString
 	bool isSplit = false;
 	char* spaceCh = NULL;
 	char* splitCh = NULL;
-	for (char ch = text[0]; ch != '\0'; ch = text[++k])
+	char ch;
+	for (ch = text[0]; ch != '\0'; ch = text[++k])
 	{
 		spaceCh = strchr(spaceCharacters, ch);
 		splitCh = strchr(splitCharacters, ch);
@@ -452,7 +463,8 @@ void bitstream_Print(const bitstream* const a)
 	
 	const int length = a->length-1;
 	int p1, p2;
-	for (int i = 0; i < length; i += 2) {
+	int i;
+	for (i = 0; i < length; i += 2) {
 		p1 = a->pointer[i];
 		p2 = a->pointer[i+1];
 		printf("%i,%i ", p1, p2);
@@ -680,15 +692,17 @@ bitstream* bitstream_Or(gcstack* gc, bitstream const* a, bitstream const* b)
 	
 	if (a_length == 0 && b_length == 0)
 		return list;
+	
+	int k;
 	if (a_length == 0)
 	{
-		for (int k = 0; k < b_length; k++)
+		for (k = 0; k < b_length; k++)
 			list_pointer[counter++] = b->pointer[k];
 		return list;
 	}
 	if (b_length == 0)
 	{
-		for (int k = 0; k < a_length; k++)
+		for (k = 0; k < a_length; k++)
 			list_pointer[counter++] = a->pointer[k];
 		return list;
 	}
@@ -742,7 +756,8 @@ int countInvert(bitstream* const a, const int inv)
 	int resCount = 0;
 	
 	bool added = false;
-	for (int i = 0; i < a->length; i++)
+	int i;
+	for (i = 0; i < a->length; i++)
 	{
 		if (a->pointer[i] == inv)
 		{
@@ -777,7 +792,8 @@ bitstream* bitstream_Invert
 	int resCount = 0;
 	
 	bool added = false;
-	for (int i = 0; i < a->length; i++)
+	int i;
+	for (i = 0; i < a->length; i++)
 	{
 		if (a->pointer[i] == inv)
 		{
@@ -989,7 +1005,8 @@ int bitstream_Size(const bitstream* const list)
 	
 	const int listCount = list->length;
 	int sum = 0;
-	for (int i = 0; i < listCount; i+=2)
+	int i;
+	for (i = 0; i < listCount; i+=2)
 	{
 		sum += list->pointer[i+1]-list->pointer[i];
 	}
@@ -1000,6 +1017,8 @@ int bitstream_AbsSub(const bitstream* const list);
 
 int bitstream_AbsSub(const bitstream* const list)
 {
+	int i;
+	
 	// If it contains an odd number of elements,
 	// the absolute value of the list is infinite.
 	// Then we need to return -1 to tell it's infinite.
@@ -1013,7 +1032,7 @@ int bitstream_AbsSub(const bitstream* const list)
 		// the size of this vector is such and such
 		// less than the size.
 		int negSum = list->pointer[0];
-		for (int i = 1; i < listCount; i += 2)
+		for (i = 1; i < listCount; i += 2)
 		{
 			negSum += list->pointer[i+1]-list->pointer[i];
 		}
@@ -1021,7 +1040,7 @@ int bitstream_AbsSub(const bitstream* const list)
 	}
 	
 	int sum = 0;
-	for (int i = 0; i < listCount; i+=2)
+	for (i = 0; i < listCount; i+=2)
 	{
 		sum += list->pointer[i+1]-list->pointer[i];
 	}
@@ -1068,7 +1087,8 @@ int bitstream_PopStart(bitstream* const a)
 	if (a->pointer[0] >= a->pointer[1])
 	{
 		// Instead of allocating we move the bytes 2 places toward beginning.
-		for (int i = 2; i < length; i++)
+		int i;
+		for (i = 2; i < length; i++)
 			a->pointer[i-2] = a->pointer[i];
 		a->length -= 2;
 	}
