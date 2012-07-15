@@ -62,38 +62,38 @@ extern "C" {
 	//		These need to be copied to your source file in order to work.
 	//		They simplify the task of dealing with nested bitstreams.
 	//
-	//		foreach (bitstream) {
-	//			if (_pos(bitstream) > 200)
-	//				_break(bitstream);
-	//      } end_foreach
+	//		macro_bitstream_foreach (bitstream) {
+	//			if (macro_bitstream_pos(bitstream) > 200)
+	//				macro_bitstream_break(bitstream);
+	//      } macro_bitstream_end_foreach(bitstream)
 	//
 	//		// Iterating reverse:
-	//		foreach_reverse (bitstream) {
-	//		} end_foreach
+	//		macro_bitstream_foreach_reverse (bitstream) {
+	//		} macro_bitstream_end_foreach(bitstream)
 	//
 	//		// Nested loops:
-	//		foreach (a) {
-	//			foreach (b) {
-	//				_break(a); // Jumps outside the loop.
-	//			} end_foreach
-	//		} end_foreach
+	//		macro_bitstream_foreach (a) {
+	//			macro_bitstream_foreach (b) {
+	//				macro_bitstream_break(a); // Jumps outside the loop.
+	//			} macro_bitstream_end_foreach(b)
+	//		} macro_bitstream_end_foreach(a)
 	//
 	//		To access the index of the array which the bitstream
 	//		is referring to, use
 	//
-	//		int i = _pos(prop);
+	//		int i = macro_bitstream_pos(prop);
 	//
 	//		Tip: Declaring variables before the loop will increase performance.
 	//
 	
-#define macro_foreach_reverse(a) \
+#define macro_bitstream_foreach_reverse(a) \
 int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; \
 for (_macro_i##a = a->length-2; _macro_i##a >= 0; _macro_i##a -= 2) { \
 _macro_start##a = a->pointer[_macro_i##a]; \
 _macro_end##a = a->pointer[_macro_i##a+1]; \
 for (_macro_j##a = _macro_end##a-1; _macro_j##a >= _macro_start##a; _macro_j##a--) {
 	
-#define macro_foreach(a) \
+#define macro_bitstream_foreach(a) \
 int _macro_len##a = a->length-1; \
 int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; \
 for (_macro_i##a = 0; _macro_i##a < _macro_len##a; _macro_i##a += 2) { \
@@ -101,13 +101,14 @@ _macro_start##a = a->pointer[_macro_i##a]; \
 _macro_end##a = a->pointer[_macro_i##a+1]; \
 for (_macro_j##a = _macro_start##a;\
  _macro_j##a < _macro_end##a; _macro_j##a++) {
+
+// Add a dummy goto in order to remove compiler warning.
+#define macro_bitstream_end_foreach(a) \
+}} macro_bitstream_break(a); _macro_BREAK_BITSTREAM_##a:;
 	
-#define macro_end_foreach(a) \
-}} macro_break(a); _macro_BREAK_BITSTREAM_##a:;
+#define macro_bitstream_break(a)     goto _macro_BREAK_BITSTREAM_##a
 	
-#define macro_break(a)     goto _macro_BREAK_BITSTREAM_##a
-	
-#define macro_pos(a)    _macro_j##a
+#define macro_bitstream_pos(a)    _macro_j##a
 	
 	//
 	//      FOR EACH DESIGNED FOR HASH TABLE
