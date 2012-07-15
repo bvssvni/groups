@@ -99,9 +99,11 @@ int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; \
 for (_macro_i##a = 0; _macro_i##a < _macro_len##a; _macro_i##a += 2) { \
 _macro_start##a = a->pointer[_macro_i##a]; \
 _macro_end##a = a->pointer[_macro_i##a+1]; \
-for (_macro_j##a = _macro_start##a; _macro_j##a < _macro_end##a; _macro_j##a++) {
+for (_macro_j##a = _macro_start##a;\
+ _macro_j##a < _macro_end##a; _macro_j##a++) {
 	
-#define macro_end_foreach(a) }}_macro_BREAK_BITSTREAM_##a:;
+#define macro_end_foreach(a) \
+}} macro_break(a); _macro_BREAK_BITSTREAM_##a:;
 	
 #define macro_break(a)     goto _macro_BREAK_BITSTREAM_##a
 	
