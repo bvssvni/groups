@@ -79,6 +79,7 @@ bitstream* boolean_Eval
 	int propId = 0;
 	char op1;
 	char op2;
+	const char* ops = "*+-";
 	
 NEW_STATE:
 	switch (state[stateIndex]) {
@@ -87,7 +88,7 @@ NEW_STATE:
 			break;
 		case read_variable:
 			variableName = parsing_ReadVariableName
-			(expr+pos, "", &delta);
+			(expr+pos, ops, &delta);
 			
 			// Check that a variable name was read.
 			if (delta == 0) {
@@ -108,7 +109,7 @@ NEW_STATE:
 			break;
 		case read_operator:
 			op = parsing_ReadOneCharacterOf
-			(expr+pos, "*+-", &delta);
+			(expr+pos, ops, &delta);
 			
 			if (delta == 0) {
 				errorMessage = "Expected operator";

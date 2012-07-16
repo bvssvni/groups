@@ -982,6 +982,35 @@ double* groups_GetDoubleArray
 	return arr;
 }
 
+void groups_FillDoubleArray
+(groups* const g, const bitstream* const a, const int propId, 
+ const int arrc, double* const arr)
+{
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err(arr == NULL); macro_err(arrc < 0);
+	
+	// Make sure we have a table with pointers to members.
+	createMemberArray(g);
+	
+	const int size = bitstream_Size(a);
+	macro_err(size > arrc);
+	
+	int i;
+	const hash_table* obj;
+	int k = 0;
+	const double* ptr;
+	
+	macro_bitstream_foreach (a) {
+		i = macro_bitstream_pos(a);
+		obj = g->m_memberArray[i];
+		ptr = (const double*)hashTable_Get(obj, propId);
+		if (ptr == NULL)
+			arr[k++] = 0.0;
+		else
+			arr[k++] = *ptr;
+	} macro_bitstream_end_foreach(a)
+}
+
 
 int* groups_GetIntArray
 (groups* const g, const bitstream* const a, const int propId)
@@ -1009,6 +1038,34 @@ int* groups_GetIntArray
 	} macro_bitstream_end_foreach(a)
 	
 	return arr;
+}
+
+void groups_FillIntArray
+(groups* const g, const bitstream* const a, const int propId,
+ const int arrc, int* const arr)
+{
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err(arr == NULL); macro_err(arrc < 0);
+	
+	// Make sure we have a table with pointers to members.
+	createMemberArray(g);
+	
+	const int size = bitstream_Size(a);
+	macro_err(size > arrc);
+	
+	int i;
+	const hash_table* obj;
+	int k = 0;
+	const int* ptr;
+	macro_bitstream_foreach (a) {
+		i = macro_bitstream_pos(a);
+		obj = g->m_memberArray[i];
+		ptr = (const int*)hashTable_Get(obj, propId);
+		if (ptr == NULL)
+			arr[k++] = -1;
+		else
+			arr[k++] = *ptr;
+	} macro_bitstream_end_foreach(a)
 }
 
 bool* groups_GetBoolArray
@@ -2373,6 +2430,39 @@ void groups_RunUnitTests(void)
 		macro_test_int(order[2], 2);
 		macro_test_int(order[3], 3);
 		free(order);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	{
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups_ReadFromString
+		(g, "properties {Age:\"double\", Parent:\"int\"}"
+		"member {id:0, Age:22, Parent:-1}"
+		"member {id:1, Age:11, Parent:0}"
+		"member {id:2, Age:33, Parent:1}"
+		 ,false, NULL);
+		bitstream* prop = boolean_Eval(gc, g, "Age+Parent", NULL);
+		int propSize = bitstream_Size(prop);
+		macro_test_int(propSize, 3);
+		
+		double age[propSize];
+		int parent[propSize];
+		
+		groups_FillDoubleArray
+		(g, prop, groups_GetProperty(g, "Age"), propSize, age);
+		groups_FillIntArray
+		(g, prop, groups_GetProperty(g, "Parent"), propSize, parent);
+		
+		macro_test_double(age[0], 22);
+		macro_test_double(age[1], 11);
+		macro_test_double(age[2], 33);
+		
+		macro_test_int(parent[0], -1);
+		macro_test_int(parent[1], 0);
+		macro_test_int(parent[2], 1);
+		
 		gcstack_Delete(gc);
 		free(gc);
 	}

@@ -255,8 +255,16 @@ extern "C" {
 	double* groups_GetDoubleArray
 	(groups* const g, const bitstream* const a, const int propId);
 	
+	void groups_FillDoubleArray
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int arrc, double* const arr);
+	
 	int* groups_GetIntArray
 	(groups* const g, const bitstream* const a, const int propId);
+	
+	void groups_FillIntArray
+	(groups* const g, const bitstream* const a, const int propId,
+	 const int arrc, int* const arr);
 	
 	int* groups_GetBoolArray
 	(groups* const g, const bitstream* const a, const int propId);
