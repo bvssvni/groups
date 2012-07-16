@@ -957,6 +957,7 @@ double* groups_GetDoubleArray
 (groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err(!groups_IsDouble(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1017,6 +1018,7 @@ int* groups_GetIntArray
 (groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err(!groups_IsInt(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1074,6 +1076,7 @@ bool* groups_GetBoolArray
 (groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err(!groups_IsBool(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1131,6 +1134,7 @@ const char** groups_GetStringArray
 (groups* const g, const bitstream* const a, const int propId)
 {
 	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err(!groups_IsString(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);

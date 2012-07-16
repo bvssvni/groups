@@ -610,6 +610,19 @@ void* crash_groups_GetDoubleArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_GetDoubleArray4(void* input);
+
+void* crash_groups_GetDoubleArray4(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	groups* g = groups_Init(groups_AllocWithGC(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	int propId = groups_AddProperty(g, "Name", "string");
+	groups_GetDoubleArray(g, b, propId);
+	
+	return &DID_NOT_CRASH;
+}
+
 void* crash_groups_FillDoubleArray(void* input);
 
 void* crash_groups_FillDoubleArray(void* input)
@@ -693,6 +706,19 @@ void* crash_groups_GetIntArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_GetIntArray4(void* input);
+
+void* crash_groups_GetIntArray4(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	groups* g = groups_Init(groups_AllocWithGC(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	int propId = groups_AddProperty(g, "Name", "string");
+	groups_GetIntArray(g, b, propId);
+	
+	return &DID_NOT_CRASH;
+}
+
 void* crash_groups_FillIntArray(void* input);
 
 void* crash_groups_FillIntArray(void* input)
@@ -772,6 +798,19 @@ void* crash_groups_GetBoolArray3(void* input)
 	groups* g = groups_Init(groups_AllocWithGC(gc));
 	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
 	groups_GetBoolArray(g, b, -1);
+	
+	return &DID_NOT_CRASH;
+}
+
+void* crash_groups_GetBoolArray4(void* input);
+
+void* crash_groups_GetBoolArray4(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	groups* g = groups_Init(groups_AllocWithGC(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	int propId = groups_AddProperty(g, "Name", "string");
+	groups_GetBoolArray(g, b, propId);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1728,6 +1767,22 @@ void crashtest_Run(void)
 	macro_crash(crash_groups_AddProperty2);
 	macro_crash(crash_groups_AddProperty3);
 	macro_crash(crash_groups_Delete);
+	macro_crash(crash_groups_FillDoubleArray);
+	macro_crash(crash_groups_FillDoubleArray2);
+	macro_crash(crash_groups_FillDoubleArray3);
+	macro_crash(crash_groups_FillDoubleArray4);
+	macro_crash(crash_groups_FillIntArray);
+	macro_crash(crash_groups_FillIntArray2);
+	macro_crash(crash_groups_FillIntArray3);
+	macro_crash(crash_groups_FillIntArray4);
+	macro_crash(crash_groups_FillBoolArray);
+	macro_crash(crash_groups_FillBoolArray2);
+	macro_crash(crash_groups_FillBoolArray3);
+	macro_crash(crash_groups_FillBoolArray4);
+	macro_crash(crash_groups_FillStringArray);
+	macro_crash(crash_groups_FillStringArray2);
+	macro_crash(crash_groups_FillStringArray3);
+	macro_crash(crash_groups_FillStringArray4);
 	macro_crash(crash_groups_GetBitstream);
 	macro_crash(crash_groups_GetBitstream2);
 	macro_crash(crash_groups_Init);
@@ -1747,12 +1802,15 @@ void crashtest_Run(void)
 	macro_crash(crash_groups_GetBoolArray);
 	macro_crash(crash_groups_GetBoolArray2);
 	macro_crash(crash_groups_GetBoolArray3);
+	macro_crash(crash_groups_GetBoolArray4);
 	macro_crash(crash_groups_GetDoubleArray);
 	macro_crash(crash_groups_GetDoubleArray2);
 	macro_crash(crash_groups_GetDoubleArray3);
+	macro_crash(crash_groups_GetDoubleArray4);
 	macro_crash(crash_groups_GetIntArray);
 	macro_crash(crash_groups_GetIntArray2);
 	macro_crash(crash_groups_GetIntArray3);
+	macro_crash(crash_groups_GetIntArray4);
 	macro_crash(crash_groups_GetStringArray);
 	macro_crash(crash_groups_GetStringArray2);
 	macro_crash(crash_groups_GetStringArray3);
@@ -1818,25 +1876,7 @@ void crashtest_Run(void)
 	macro_crash(crash_property_Delete);
 	
 	////////////////////////////////////////////////////////////////////////
-	macro_crash(crash_groups_FillDoubleArray);
-	macro_crash(crash_groups_FillDoubleArray2);
-	macro_crash(crash_groups_FillDoubleArray3);
-	macro_crash(crash_groups_FillDoubleArray4);
 	
-	macro_crash(crash_groups_FillIntArray);
-	macro_crash(crash_groups_FillIntArray2);
-	macro_crash(crash_groups_FillIntArray3);
-	macro_crash(crash_groups_FillIntArray4);
-	
-	macro_crash(crash_groups_FillBoolArray);
-	macro_crash(crash_groups_FillBoolArray2);
-	macro_crash(crash_groups_FillBoolArray3);
-	macro_crash(crash_groups_FillBoolArray4);
-	
-	macro_crash(crash_groups_FillStringArray);
-	macro_crash(crash_groups_FillStringArray2);
-	macro_crash(crash_groups_FillStringArray3);
-	macro_crash(crash_groups_FillStringArray4);
 }
 
 
