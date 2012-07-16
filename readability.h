@@ -219,6 +219,8 @@ memcpy(assignTo, _macro_string1##assignTo, _macro_string1Length##assignTo); \
 memcpy(assignTo+_macro_string1Length##assignTo, _macro_string2##assignTo, _macro_string2Length##assignTo); \
 assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo] = '\0'
 	
+#define macro_unused(a) (void)(a);
+	
 #endif
 	
 #ifdef __cplusplus

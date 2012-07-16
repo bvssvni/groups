@@ -47,6 +47,8 @@ void* crash_groups_Delete(void* input);
 
 void* crash_groups_Delete(void* input)
 {
+	macro_unused(input);
+	
 	groups_Delete(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -56,6 +58,8 @@ void* crash_groups_Init(void* input);
 
 void* crash_groups_Init(void* input)
 {
+	macro_unused(input);
+	
 	groups_Init(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -65,6 +69,8 @@ void* crash_groups_AddProperty(void* input);
 
 void* crash_groups_AddProperty(void* input)
 {
+	macro_unused(input);
+	
 	groups_AddProperty(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -96,6 +102,8 @@ void* crash_groups_GetProperty(void* input);
 
 void* crash_groups_GetProperty(void* input)
 {
+	macro_unused(input);
+	
 	groups_GetProperty(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -116,6 +124,8 @@ void* crash_groups_GetBitstream(void* input);
 
 void* crash_groups_GetBitstream(void* input)
 {
+	macro_unused(input);
+	
 	groups_GetBitstream(NULL, NULL, 0);
 	
 	return &DID_NOT_CRASH;
@@ -136,6 +146,8 @@ void* crash_groups_RemoveProperty(void* input);
 
 void* crash_groups_RemoveProperty(void* input)
 {
+	macro_unused(input);
+	
 	groups_RemoveProperty(NULL, 0);
 	
 	return &DID_NOT_CRASH;
@@ -156,6 +168,8 @@ void* crash_groups_IsDefaultVariable(void* input);
 
 void* crash_groups_IsDefaultVariable(void* input)
 {
+	macro_unused(input);
+	
 	groups_IsDefaultVariable(-1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -165,6 +179,8 @@ void* crash_groups_IsDefaultVariable2(void* input);
 
 void* crash_groups_IsDefaultVariable2(void* input)
 {
+	macro_unused(input);
+	
 	groups_IsDefaultVariable(0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -174,6 +190,8 @@ void* crash_groups_AddMember(void* input);
 
 void* crash_groups_AddMember(void* input)
 {
+	macro_unused(input);
+	
 	groups_AddMember(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -194,6 +212,8 @@ void* crash_groups_SetDouble(void* input);
 
 void* crash_groups_SetDouble(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetDouble(NULL, NULL, -1, 0);
 	
 	return &DID_NOT_CRASH;
@@ -226,6 +246,8 @@ void* crash_groups_SetString(void* input);
 
 void* crash_groups_SetString(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetString(NULL, NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -258,6 +280,8 @@ void* crash_groups_SetInt(void* input);
 
 void* crash_groups_SetInt(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetInt(NULL, NULL, 0, 20);
 	
 	return &DID_NOT_CRASH;
@@ -290,6 +314,8 @@ void* crash_groups_SetBool(void* input);
 
 void* crash_groups_SetBool(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetBool(NULL, NULL, -1, 1);
 	
 	return &DID_NOT_CRASH;
@@ -322,6 +348,8 @@ void* crash_groups_SetDoubleArray(void* input);
 
 void* crash_groups_SetDoubleArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetDoubleArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -378,6 +406,8 @@ void* crash_groups_SetStringArray(void* input);
 
 void* crash_groups_SetStringArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetStringArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -434,6 +464,8 @@ void* crash_groups_SetIntArray(void* input);
 
 void* crash_groups_SetIntArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetIntArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -490,6 +522,8 @@ void* crash_groups_SetBoolArray(void* input);
 
 void* crash_groups_SetBoolArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_SetBoolArray(NULL, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -546,6 +580,8 @@ void* crash_groups_GetDoubleArray(void* input);
 
 void* crash_groups_GetDoubleArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_GetDoubleArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -574,10 +610,23 @@ void* crash_groups_GetDoubleArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_FillDoubleArray(void* input);
+
+void* crash_groups_FillDoubleArray(void* input)
+{
+	macro_unused(input);
+	
+	groups_FillDoubleArray(NULL, NULL, -1, -1, NULL);
+	
+	return &DID_NOT_CRASH;
+}
+
 void* crash_groups_GetIntArray(void* input);
 
 void* crash_groups_GetIntArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_GetIntArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -611,6 +660,8 @@ void* crash_groups_GetBoolArray(void* input);
 
 void* crash_groups_GetBoolArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_GetBoolArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -643,6 +694,8 @@ void* crash_groups_GetStringArray(void* input);
 
 void* crash_groups_GetStringArray(void* input)
 {
+	macro_unused(input);
+	
 	groups_GetStringArray(NULL, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -675,6 +728,8 @@ void* crash_groups_PropertyNameById(void* input);
 
 void* crash_groups_PropertyNameById(void* input)
 {
+	macro_unused(input);
+	
 	groups_PropertyNameById(NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -695,6 +750,8 @@ void* crash_groups_PrintMember(void* input);
 
 void* crash_groups_PrintMember(void* input)
 {
+	macro_unused(input);
+	
 	groups_PrintMember(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -715,6 +772,8 @@ void* crash_groups_RemoveMember(void* input);
 
 void* crash_groups_RemoveMember(void* input)
 {
+	macro_unused(input);
+	
 	groups_RemoveMember(NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -735,6 +794,8 @@ void* crash_groups_RemoveMembers(void* input);
 
 void* crash_groups_RemoveMembers(void* input)
 {
+	macro_unused(input);
+	
 	groups_RemoveMembers(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -755,6 +816,8 @@ void* crash_groups_SaveToFile(void* input);
 
 void* crash_groups_SaveToFile(void* input)
 {
+	macro_unused(input);
+	
 	groups_SaveToFile(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -775,6 +838,8 @@ void* crash_groups_ReadFromFile(void* input);
 
 void* crash_groups_ReadFromFile(void* input)
 {
+	macro_unused(input);
+	
 	groups_ReadFromFile(NULL, NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -795,6 +860,8 @@ void* crash_bitstream_Delete(void* input);
 
 void* crash_bitstream_Delete(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Delete(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -804,6 +871,8 @@ void* crash_bitstream_InitWithSize(void* input);
 
 void* crash_bitstream_InitWithSize(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_InitWithSize(NULL, 2);
 	
 	return &DID_NOT_CRASH;
@@ -823,6 +892,8 @@ void* crash_bitstream_InitWithValues(void* input);
 
 void* crash_bitstream_InitWithValues(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_InitWithValues(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -852,6 +923,8 @@ void* crash_bitstream_InitWithIndices(void* input);
 
 void* crash_bitstream_InitWithIndices(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_InitWithIndices(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -881,6 +954,8 @@ void* crash_bitstream_InitWithDeltaDouble(void* input);
 
 void* crash_bitstream_InitWithDeltaDouble(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_InitWithDeltaDouble(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -911,6 +986,8 @@ void* crash_bitstream_InitWithDeltaInt(void* input);
 
 void* crash_bitstream_InitWithDeltaInt(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_InitWithDeltaInt(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -940,6 +1017,8 @@ void* crash_bitstream_InitWithDeltaBool(void* input);
 
 void* crash_bitstream_InitWithDeltaBool(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_InitWithDeltaBool(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -969,6 +1048,8 @@ void* crash_bitstream_InitWithDeltaString(void* input);
 
 void* crash_bitstream_InitWithDeltaString(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_InitWithDeltaString(NULL, -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1020,6 +1101,8 @@ void* crash_bitstream_Print(void* input);
 
 void* crash_bitstream_Print(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Print(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1029,6 +1112,8 @@ void* crash_bitstream_Clone(void* input);
 
 void* crash_bitstream_Clone(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Clone(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1038,6 +1123,8 @@ void* crash_bitstream_And(void* input);
 
 void* crash_bitstream_And(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_And(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1047,6 +1134,8 @@ void* crash_bitstream_Or(void* input);
 
 void* crash_bitstream_Or(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Or(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1056,6 +1145,8 @@ void* crash_bitstream_Invert(void* input);
 
 void* crash_bitstream_Invert(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Invert(NULL, NULL, 0);
 	
 	return &DID_NOT_CRASH;
@@ -1065,6 +1156,8 @@ void* crash_bitstream_Except(void* input);
 
 void* crash_bitstream_Except(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Except(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1074,6 +1167,8 @@ void* crash_bitstream_Size(void* input);
 
 void* crash_bitstream_Size(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Size(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1083,6 +1178,8 @@ void* crash_bitstream_Abs(void* input);
 
 void* crash_bitstream_Abs(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_Abs(NULL, 10);
 	
 	return &DID_NOT_CRASH;
@@ -1092,6 +1189,8 @@ void* crash_bitstream_ArrayPointer(void* input);
 
 void* crash_bitstream_ArrayPointer(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_ArrayPointer(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1101,6 +1200,8 @@ void* crash_bitstream_NumberOfBlocks(void* input);
 
 void* crash_bitstream_NumberOfBlocks(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_NumberOfBlocks(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1110,6 +1211,8 @@ void* crash_bitstream_PopStart(void* input);
 
 void* crash_bitstream_PopStart(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_PopStart(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1119,6 +1222,8 @@ void* crash_bitstream_PopEnd(void* input);
 
 void* crash_bitstream_PopEnd(void* input)
 {
+	macro_unused(input);
+	
 	bitstream_PopEnd(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1128,6 +1233,8 @@ void* crash_gcstack_Delete(void* input);
 
 void* crash_gcstack_Delete(void* input)
 {
+	macro_unused(input);
+	
 	gcstack_Delete(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1137,6 +1244,8 @@ void* crash_gcstack_PopStringWithItem(void* input);
 
 void* crash_gcstack_PopStringWithItem(void* input)
 {
+	macro_unused(input);
+	
 	gcstack_PopStringWithItem(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1161,6 +1270,8 @@ void* crash_property_Delete(void* input);
 
 void* crash_property_Delete(void* input)
 {
+	macro_unused(input);
+	
 	property_Delete(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1170,6 +1281,8 @@ void* crash_hashTable_Delete(void* input);
 
 void* crash_hashTable_Delete(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_Delete(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1179,6 +1292,8 @@ void* crash_hashTable_Init(void* input);
 
 void* crash_hashTable_Init(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_Init(NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1188,6 +1303,8 @@ void* crash_hashTable_InitWithMember(void* input);
 
 void* crash_hashTable_InitWithMember(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_InitWithMember(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1207,6 +1324,8 @@ void* crash_hashTable_Set(void* input);
 
 void* crash_hashTable_Set(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_Set(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1227,6 +1346,8 @@ void* crash_hashTable_SetStringHash(void* input);
 
 void* crash_hashTable_SetStringHash(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_SetStringHash(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1247,6 +1368,8 @@ void* crash_hashTable_Get(void* input);
 
 void* crash_hashTable_Get(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_Get(NULL, 0);
 	
 	return &DID_NOT_CRASH;
@@ -1267,6 +1390,8 @@ void* crash_hashTable_ContainsStringHash(void* input);
 
 void* crash_hashTable_ContainsStringHash(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_ContainsStringHash(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1287,6 +1412,8 @@ void* crash_hashTable_SetDouble(void* input);
 
 void* crash_hashTable_SetDouble(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_SetDouble(NULL, 0, 20);
 	
 	return &DID_NOT_CRASH;
@@ -1307,6 +1434,8 @@ void* crash_hashTable_SetString(void* input);
 
 void* crash_hashTable_SetString(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_SetString(NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1327,6 +1456,8 @@ void* crash_hashTable_SetInt(void* input);
 
 void* crash_hashTable_SetInt(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_SetInt(NULL, 0, 20);
 	
 	return &DID_NOT_CRASH;
@@ -1347,6 +1478,8 @@ void* crash_hashTable_SetBool(void* input);
 
 void* crash_hashTable_SetBool(void* input)
 {
+	macro_unused(input);
+	
 	hashTable_SetBool(NULL, -1, 1);
 	
 	return &DID_NOT_CRASH;
@@ -1497,6 +1630,7 @@ void crashtest_Run(void)
 	////////////////////////////////////////////////////////////////////////
 	macro_crash(crash_gcstack_PopStringWithItem);
 	macro_crash(crash_gcstack_PopStringWithItem2);
+	macro_crash(crash_groups_FillDoubleArray);
 }
 
 
