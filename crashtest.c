@@ -645,6 +645,20 @@ void* crash_groups_FillDoubleArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_FillDoubleArray4(void* input);
+
+void* crash_groups_FillDoubleArray4(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	groups* g = groups_Init(groups_AllocWithGC(gc));
+	int ageId = groups_AddProperty(g, "Age", "int");
+	bitstream* Age = groups_GetBitstream(gc, g, ageId);
+	double arr[1];
+	groups_FillDoubleArray(g, Age, ageId, 1, arr);
+	
+	return &DID_NOT_CRASH;
+}
+
 void* crash_groups_GetIntArray(void* input);
 
 void* crash_groups_GetIntArray(void* input)
@@ -710,6 +724,20 @@ void* crash_groups_FillIntArray3(void* input)
 	int propParent = groups_AddProperty(g, "Parent", "int");
 	bitstream* Parent = groups_GetBitstream(gc, g, propParent);
 	groups_FillIntArray(g, Parent, propParent, -1, NULL);
+	
+	return &DID_NOT_CRASH;
+}
+
+void* crash_groups_FillIntArray4(void* input);
+
+void* crash_groups_FillIntArray4(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	groups* g = groups_Init(groups_AllocWithGC(gc));
+	int propParent = groups_AddProperty(g, "Parent", "double");
+	bitstream* Parent = groups_GetBitstream(gc, g, propParent);
+	int arr[1];
+	groups_FillIntArray(g, Parent, propParent, 1, arr);
 	
 	return &DID_NOT_CRASH;
 }
@@ -783,6 +811,20 @@ void* crash_groups_FillBoolArray3(void* input)
 	return &DID_NOT_CRASH;
 }
 
+void* crash_groups_FillBoolArray4(void* input);
+
+void* crash_groups_FillBoolArray4(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	groups* g = groups_Init(groups_AllocWithGC(gc));
+	int marriedId = groups_AddProperty(g, "Married", "int");
+	bitstream* Married = groups_GetBitstream(gc, g, marriedId);
+	bool arr[1];
+	groups_FillBoolArray(g, Married, marriedId, 1, arr);
+	
+	return &DID_NOT_CRASH;
+}
+
 void* crash_groups_GetStringArray(void* input);
 
 void* crash_groups_GetStringArray(void* input)
@@ -848,6 +890,20 @@ void* crash_groups_FillStringArray3(void* input)
 	int nameId = groups_AddProperty(g, "Name", "string");
 	bitstream* Name = groups_GetBitstream(gc, g, nameId);
 	groups_FillStringArray(g, Name, nameId, -1, NULL);
+	
+	return &DID_NOT_CRASH;
+}
+
+void* crash_groups_FillStringArray4(void* input);
+
+void* crash_groups_FillStringArray4(void* input)
+{
+	gcstack* gc = (gcstack*)input;
+	groups* g = groups_Init(groups_AllocWithGC(gc));
+	int nameId = groups_AddProperty(g, "Name", "double");
+	bitstream* Name = groups_GetBitstream(gc, g, nameId);
+	const char* arr[1];
+	groups_FillStringArray(g, Name, nameId, 1, arr);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1765,18 +1821,22 @@ void crashtest_Run(void)
 	macro_crash(crash_groups_FillDoubleArray);
 	macro_crash(crash_groups_FillDoubleArray2);
 	macro_crash(crash_groups_FillDoubleArray3);
+	macro_crash(crash_groups_FillDoubleArray4);
 	
 	macro_crash(crash_groups_FillIntArray);
 	macro_crash(crash_groups_FillIntArray2);
 	macro_crash(crash_groups_FillIntArray3);
+	macro_crash(crash_groups_FillIntArray4);
 	
 	macro_crash(crash_groups_FillBoolArray);
 	macro_crash(crash_groups_FillBoolArray2);
 	macro_crash(crash_groups_FillBoolArray3);
+	macro_crash(crash_groups_FillBoolArray4);
 	
 	macro_crash(crash_groups_FillStringArray);
 	macro_crash(crash_groups_FillStringArray2);
 	macro_crash(crash_groups_FillStringArray3);
+	macro_crash(crash_groups_FillStringArray4);
 }
 
 
