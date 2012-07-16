@@ -276,6 +276,10 @@ extern "C" {
 	const char** groups_GetStringArray
 	(groups* const g, const bitstream* const a, const int propId);
 	
+	void groups_FillStringArray
+	(groups* const g, const bitstream* const a, const int propId,
+	 const int arrc, const char** const arr);
+	
 	//
 	// Prints a member to the console window with property names and values.
 	// A member has no clue what the property names are, therefore it

@@ -1148,6 +1148,30 @@ const char** groups_GetStringArray
 	return arr;
 }
 
+void groups_FillStringArray
+(groups* const g, const bitstream* const a, const int propId,
+ const int arrc, const char** const arr)
+{
+	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err(arr == NULL); macro_err(arrc < 0);
+	
+	// Make sure we have a table with pointers to members.
+	createMemberArray(g);
+	
+	const int size = bitstream_Size(a);
+	macro_err(size > arrc);
+	
+	int i;
+	const hash_table* obj;
+	
+	int k = 0;
+	macro_bitstream_foreach (a) {
+		i = macro_bitstream_pos(a);
+		obj = g->m_memberArray[i];
+		arr[k++] = (const char*)hashTable_Get(obj, propId);
+	} macro_bitstream_end_foreach(a)
+}
+
 const char* groups_PropertyNameById
 (const groups* const g, const int propId)
 {
@@ -2467,10 +2491,10 @@ void groups_RunUnitTests(void)
 		groups* g = groups_Init(groups_AllocWithGC(gc));
 		groups_ReadFromString
 		(g, "properties {Age:\"double\", Parent:\"int\","
-		 "Married:\"bool\"}"
-		"member {id:0, Age:22, Parent:-1, Married:0}"
-		"member {id:1, Age:11, Parent:0, Married:1}"
-		"member {id:2, Age:33, Parent:1, Married:0}"
+		 "Married:\"bool\", Name:\"string\"}"
+		"member {id:0, Age:22, Parent:-1, Married:0, Name:\"a\"}"
+		"member {id:1, Age:11, Parent:0, Married:1, Name:\"b\"}"
+		"member {id:2, Age:33, Parent:1, Married:0, Name:\"c\"}"
 		 ,false, NULL);
 		bitstream* prop = boolean_Eval
 		(gc, g, "Age+Parent+Married", NULL);
@@ -2480,6 +2504,7 @@ void groups_RunUnitTests(void)
 		double age[propSize];
 		int parent[propSize];
 		bool married[propSize];
+		const char* name[propSize];
 		
 		groups_FillDoubleArray
 		(g, prop, groups_GetProperty(g, "Age"), propSize, age);
@@ -2487,6 +2512,8 @@ void groups_RunUnitTests(void)
 		(g, prop, groups_GetProperty(g, "Parent"), propSize, parent);
 		groups_FillBoolArray
 		(g, prop, groups_GetProperty(g, "Married"), propSize, married);
+		groups_FillStringArray
+		(g, prop, groups_GetProperty(g, "Name"), propSize, name);
 		
 		macro_test_double(age[0], 22);
 		macro_test_double(age[1], 11);
@@ -2499,6 +2526,10 @@ void groups_RunUnitTests(void)
 		macro_test_int(married[0], 0);
 		macro_test_int(married[1], 1);
 		macro_test_int(married[2], 0);
+		
+		macro_test_string(name[0], "a");
+		macro_test_string(name[1], "b");
+		macro_test_string(name[2], "c");
 		
 		gcstack_Delete(gc);
 		free(gc);
