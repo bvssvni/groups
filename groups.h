@@ -269,6 +269,10 @@ extern "C" {
 	int* groups_GetBoolArray
 	(groups* const g, const bitstream* const a, const int propId);
 	
+	void groups_FillBoolArray
+	(groups* const g, const bitstream* const a, const int propId,
+	 const int arrc, int* const arr);
+	
 	const char** groups_GetStringArray
 	(groups* const g, const bitstream* const a, const int propId);
 	

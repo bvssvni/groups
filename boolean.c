@@ -57,7 +57,7 @@ bitstream* boolean_Eval
 	
 	string state = "eveoeveop";
 	int stateIndex = 0;
-	int repeatIndex = 1;
+	int repeatIndex = 3;
 	
 	enum {
 		read_white_space = 'e',
@@ -133,6 +133,7 @@ NEW_STATE:
 			}
 			
 			stateIndex = repeatIndex;
+			delta = 0;
 			break;
 		case error:
 			if (err != NULL)
