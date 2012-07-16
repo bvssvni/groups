@@ -69,7 +69,8 @@ extern "C" {
 	//
 	//	MEASUREMENTS
 	//
-	
+	//	Checks error margin in percentage.
+	//
 	int errorhandling_CheckMargin
 	(const double a, const double b, const double errorMargin);
 	

@@ -68,7 +68,7 @@ extern "C" {
 	//
 	void hashLayer_Delete(void* const p);
 	
-	hash_layer* hashLayer_AllocWithGC(gcstack* const gc);
+	hash_layer* hashLayer_GcAlloc(gcstack* const gc);
 	
 	hash_layer* hashLayer_InitWithSize
 	(hash_layer* const hashLayer, const int n);
@@ -83,7 +83,7 @@ extern "C" {
 	void hashTable_Delete
 	(void* const p);
 	
-	hash_table* hashTable_AllocWithGC
+	hash_table* hashTable_GcAlloc
 	(gcstack* const gc);
 	
 	hash_table* hashTable_Init

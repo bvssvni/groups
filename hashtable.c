@@ -70,7 +70,7 @@ void hashLayer_Delete(void* const p)
 	}
 }
 
-hash_layer* hashLayer_AllocWithGC(gcstack* const gc)
+hash_layer* hashLayer_GcAlloc(gcstack* const gc)
 {
 	return (hash_layer*)gcstack_malloc(gc, sizeof(hash_layer), 
 					   hashLayer_Delete);
@@ -147,7 +147,7 @@ void hashTable_Delete(void* const p)
 	}
 }
 
-hash_table* hashTable_AllocWithGC(gcstack* const gc)
+hash_table* hashTable_GcAlloc(gcstack* const gc)
 {
 	return (hash_table*)gcstack_malloc(gc, sizeof(hash_table), 
 					   hashTable_Delete);
@@ -160,7 +160,7 @@ hash_table* hashTable_Init(hash_table* const hash)
 	hash->layers = gcstack_Init(gcstack_Alloc());
 	gcstack* layers = hash->layers;
 	hash->m_lastPrime = START_PRIME;
-	hashLayer_InitWithSize(hashLayer_AllocWithGC(layers), 
+	hashLayer_InitWithSize(hashLayer_GcAlloc(layers), 
 			       hash->m_lastPrime);
 	return hash;
 }
@@ -232,7 +232,7 @@ void hashTable_Set(hash_table* const hash, const int id, void* const value)
 	// Create new layer.
 	const int nextPrime = hashLayer_NextPrime(hash->m_lastPrime);
 	hash_layer* newLayer = hashLayer_InitWithSize
-	(hashLayer_AllocWithGC(hash->layers), nextPrime);
+	(hashLayer_GcAlloc(hash->layers), nextPrime);
 	hash->m_lastPrime = nextPrime;
 	pos = id % nextPrime;
 	newLayer->indices[pos] = id;
@@ -310,7 +310,7 @@ void hashTable_SetStringHash(hash_table* const hash, char* const value)
 	// Create new layer.
 	const int nextPrime = hashLayer_NextPrime(hash->m_lastPrime);
 	hash_layer* newLayer = hashLayer_InitWithSize
-	(hashLayer_AllocWithGC(hash->layers), nextPrime);
+	(hashLayer_GcAlloc(hash->layers), nextPrime);
 	hash->m_lastPrime = nextPrime;
 	pos = id % nextPrime;
 	newLayer->indices[pos] = id;
@@ -439,7 +439,7 @@ void hashTable_RunUnitTests(void)
 	printf("HashTable unit tests - ");
 	
 	{
-		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		hash_table* hs = hashTable_Init(hashTable_GcAlloc(NULL));
 		hashTable_SetDouble(hs, 23, 40.4);
 		const double* ptr = hashTable_Get(hs, 23);
 		macro_test_double(*ptr, 40.4);
@@ -448,7 +448,7 @@ void hashTable_RunUnitTests(void)
 	}
 	
 	{
-		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		hash_table* hs = hashTable_Init(hashTable_GcAlloc(NULL));
 		const double* ptr = hashTable_Get(hs, 23);
 		macro_test_null(ptr);
 		hashTable_Delete(hs);
@@ -456,7 +456,7 @@ void hashTable_RunUnitTests(void)
 	}
 	
 	{
-		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		hash_table* hs = hashTable_Init(hashTable_GcAlloc(NULL));
 		hashTable_SetString(hs, 23, "hello");
 		const char* ptr = hashTable_Get(hs, 23);
 		macro_test_string(ptr, "hello");
@@ -464,7 +464,7 @@ void hashTable_RunUnitTests(void)
 	}
 	
 	{
-		hash_table* hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+		hash_table* hs = hashTable_Init(hashTable_GcAlloc(NULL));
 		const char* ptr = hashTable_Get(hs, 23);
 		macro_test_null(ptr);
 		free(hs);

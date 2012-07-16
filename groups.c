@@ -68,7 +68,7 @@ void property_Delete(void* const p)
 	}
 }
 
-property* property_AllocWithGC(gcstack* const gc)
+property* property_GcAlloc(gcstack* const gc)
 {
 	return (property*)gcstack_malloc(gc, sizeof(property), property_Delete);
 }
@@ -147,7 +147,7 @@ void groups_Delete(void* const p)
 	}
 }
 
-groups* groups_AllocWithGC(gcstack* const gc)
+groups* groups_GcAlloc(gcstack* const gc)
 {
 	return (groups*)gcstack_malloc(gc, sizeof(groups), groups_Delete);
 }
@@ -159,7 +159,7 @@ groups* groups_Init(groups* const g)
 	g->bitstreams = gcstack_Init(gcstack_Alloc());
 	g->m_bitstreamsReady = false;
 	g->m_bitstreamsArray = NULL;
-	g->m_deletedBitstreams = bitstream_InitWithSize(bitstream_AllocWithGC(NULL), 0);
+	g->m_deletedBitstreams = bitstream_InitWithSize(bitstream_GcAlloc(NULL), 0);
 	
 	g->properties = gcstack_Init(gcstack_Alloc());
 	g->m_propertiesReady = false;
@@ -168,7 +168,7 @@ groups* groups_Init(groups* const g)
 	g->members = gcstack_Init(gcstack_Alloc());
 	g->m_membersReady = false;
 	g->m_memberArray = NULL;
-	g->m_deletedMembers = bitstream_InitWithSize(bitstream_AllocWithGC(NULL), 0);
+	g->m_deletedMembers = bitstream_InitWithSize(bitstream_GcAlloc(NULL), 0);
 	return g;
 }
 
@@ -332,11 +332,11 @@ IF_BREAK:
 	}
 	else
 		// Create a new empty bitstream for that property.
-		bitstream_InitWithSize(bitstream_AllocWithGC(g->bitstreams), 0);
+		bitstream_InitWithSize(bitstream_GcAlloc(g->bitstreams), 0);
 	
 	// Create new property that links name to id.
 	property_InitWithNameAndId
-	(property_AllocWithGC(g->properties), name, propId);
+	(property_GcAlloc(g->properties), name, propId);
 	
 	
 	g->m_propertiesReady = false;
@@ -404,28 +404,28 @@ bitstream* groups_getBitstream(groups* const g, const int propId)
 //
 //      Returns a read-only bitstream for use outside use.
 //
-bitstream* groups_GetBitstream
+bitstream* groups_GcGetBitstream
 (gcstack* const gc, groups* const g, const int propId)
 {
 	macro_err(g == NULL); macro_err(propId < 0);
 	
 	bitstream* a = groups_getBitstream(g, propId);
-	return bitstream_Clone(gc, a);
+	return bitstream_GcClone(gc, a);
 }
 
-bitstream* groups_GetAll(gcstack* const gc, groups* const g) 
+bitstream* groups_GcGetAll(gcstack* const gc, groups* const g) 
 {
 	macro_err(g == NULL);
 	
 	const int length = g->members->length;
 	bitstream* const a = bitstream_InitWithValues
-	(bitstream_AllocWithGC(NULL), 2, (int[]){0, length});
+	(bitstream_GcAlloc(NULL), 2, (int[]){0, length});
 	bitstream* const deleted = g->m_deletedMembers;
 	
 	// If there are no deleted members, then return the whole range.
 	if (deleted == NULL) return a;
 	
-	bitstream* const b = bitstream_Except(gc, a, deleted);
+	bitstream* const b = bitstream_GcExcept(gc, a, deleted);
 	bitstream_Delete(a);
 	free(a);
 	return b;
@@ -444,9 +444,9 @@ void groups_RemoveProperty(groups* const g, const int propId)
 	
 	// Add the property id to deleted bitstream for reuse.
 	bitstream* b = bitstream_InitWithValues
-	(bitstream_AllocWithGC(NULL), 2, (int[]){index, index+1});
+	(bitstream_GcAlloc(NULL), 2, (int[]){index, index+1});
 	bitstream* c = g->m_deletedBitstreams;
-	bitstream* d = bitstream_Or(NULL, c, b);
+	bitstream* d = bitstream_GcOr(NULL, c, b);
 	gcstack_Swap(d, c);
 	g->m_deletedBitstreams = d;
 	bitstream_Delete(c);
@@ -530,14 +530,14 @@ int groups_AddMember(groups* const g, hash_table* const obj)
 	while (oldId > newId) {
 		// The gcstack malloc sets everything to 0 so we do not need
 		// to set the members here.
-		hashTable_AllocWithGC(g->members);
+		hashTable_GcAlloc(g->members);
 		newId++;
 	}
 	if (newId - id > 0)
 	{
 		// Update the indices of deleted members to include the 'fakes' that has been added.
-		bitstream* addedIds = bitstream_InitWithValues(bitstream_AllocWithGC(NULL), 2, (int[]){id, newId});
-		bitstream* newDeleted = bitstream_Or(NULL, g->m_deletedMembers, addedIds);
+		bitstream* addedIds = bitstream_InitWithValues(bitstream_GcAlloc(NULL), 2, (int[]){id, newId});
+		bitstream* newDeleted = bitstream_GcOr(NULL, g->m_deletedMembers, addedIds);
 		bitstream* oldDeleted = g->m_deletedMembers;
 		g->m_deletedMembers = newDeleted;
 		bitstream_Delete(addedIds);
@@ -563,7 +563,7 @@ int groups_AddMember(groups* const g, hash_table* const obj)
 	else
 	{
 		// There is no free positions, so we allocate new.
-		new = hashTable_InitWithMember(hashTable_AllocWithGC(g->members), obj);
+		new = hashTable_InitWithMember(hashTable_GcAlloc(g->members), obj);
 	}
 	
 	// Reinitialize the input so one can continue using same object to insert data.
@@ -581,7 +581,7 @@ int groups_AddMember(groups* const g, hash_table* const obj)
 	bitstream* b;
 	bitstream* c;
 	b = bitstream_InitWithValues
-	(bitstream_AllocWithGC(gc), 2, (const int[]){id, id+1});
+	(bitstream_GcAlloc(gc), 2, (const int[]){id, id+1});
 	
 	macro_hashTable_foreach(new) {
 		propId = macro_hashTable_id(new);
@@ -590,7 +590,7 @@ int groups_AddMember(groups* const g, hash_table* const obj)
 		a = g->m_bitstreamsArray[index];
 		if (a == NULL) continue;
 		
-		c = bitstream_Or(gc, a, b);
+		c = bitstream_GcOr(gc, a, b);
 		// Switch stacks so the new one is kept.
 		gcstack_Swap(c, a);
 	} macro_bitstream_end_foreach(new)
@@ -630,7 +630,7 @@ void groups_SetDouble
 	// It takes only one operation to update all.
 	const int propIndex = propId%TYPE_STRIDE;
 	bitstream* b = g->m_bitstreamsArray[propIndex];
-	bitstream* c = bitstream_Or(NULL, b, a);
+	bitstream* c = bitstream_GcOr(NULL, b, a);
 	gcstack_Swap(c, b);
 	bitstream_Delete(b);
 	free(b);
@@ -666,8 +666,8 @@ void groups_SetString
 	// If the string is NULL, then it is a default value
 	// and we subtract from the bitstream instead of adding.
 	bitstream* c = val == NULL ?
-	bitstream_Except(NULL, b, a) :
-	bitstream_Or(NULL, b, a);
+	bitstream_GcExcept(NULL, b, a) :
+	bitstream_GcOr(NULL, b, a);
 	
 	gcstack_Swap(c, b);
 	bitstream_Delete(b);
@@ -701,8 +701,8 @@ void groups_SetInt
 	// If the string is NULL, then it is a default value
 	// and we subtract from the bitstream instead of adding.
 	bitstream* c = isDefault ?
-	bitstream_Except(NULL, b, a) :
-	bitstream_Or(NULL, b, a);
+	bitstream_GcExcept(NULL, b, a) :
+	bitstream_GcOr(NULL, b, a);
 	
 	gcstack_Swap(c, b);
 	bitstream_Delete(b);
@@ -736,8 +736,8 @@ void groups_SetBool
 	// If the string is NULL, then it is a default value
 	// and we subtract from the bitstream instead of adding.
 	bitstream* c = isDefault ?
-	bitstream_Except(NULL, b, a) :
-	bitstream_Or(NULL, b, a);
+	bitstream_GcExcept(NULL, b, a) :
+	bitstream_GcOr(NULL, b, a);
 	
 	gcstack_Swap(c, b);
 	bitstream_Delete(b);
@@ -776,7 +776,7 @@ void groups_SetDoubleArray
 	// It takes only one operation to update all.
 	int propIndex = propId%TYPE_STRIDE;
 	bitstream* b = g->m_bitstreamsArray[propIndex];
-	bitstream* c = bitstream_Or(NULL, b, a);
+	bitstream* c = bitstream_GcOr(NULL, b, a);
 	gcstack_Swap(c, b);
 	bitstream_Delete(b);
 	free(b);
@@ -821,13 +821,13 @@ void groups_SetStringArray
 	bitstream* b = g->m_bitstreamsArray[propIndex];
 	
 	bitstream* notDef = bitstream_InitWithIndices
-	(bitstream_AllocWithGC(gc), notDefaultIndicesSize, notDefaultIndices);
+	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	bitstream* isDef = bitstream_Except(gc, a, notDef);
+	bitstream* isDef = bitstream_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	bitstream* c = bitstream_Except(gc, bitstream_Or(gc, b, notDef), isDef);
+	bitstream* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -879,13 +879,13 @@ void groups_SetIntArray
 	bitstream* b = g->m_bitstreamsArray[propIndex];
 	
 	bitstream* notDef = bitstream_InitWithIndices
-	(bitstream_AllocWithGC(gc), notDefaultIndicesSize, notDefaultIndices);
+	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	bitstream* isDef = bitstream_Except(gc, a, notDef);
+	bitstream* isDef = bitstream_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	bitstream* c = bitstream_Except(gc, bitstream_Or(gc, b, notDef), isDef);
+	bitstream* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -935,13 +935,13 @@ void groups_SetBoolArray
 	bitstream* b = g->m_bitstreamsArray[propIndex];
 	
 	bitstream* notDef = bitstream_InitWithIndices
-	(bitstream_AllocWithGC(gc), notDefaultIndicesSize, notDefaultIndices);
+	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	bitstream* isDef = bitstream_Except(gc, a, notDef);
+	bitstream* isDef = bitstream_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	bitstream* c = bitstream_Except(gc, bitstream_Or(gc, b, notDef), isDef);
+	bitstream* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -1231,14 +1231,14 @@ void groups_RemoveMember(groups* const g, const int index)
 	int propId;
 	bitstream* a;
 	bitstream* b = bitstream_InitWithValues
-	(bitstream_AllocWithGC(gc), 2, (int[]){index,index+1});
+	(bitstream_GcAlloc(gc), 2, (int[]){index,index+1});
 	bitstream* c;
 	macro_hashTable_foreach(obj) {
 		propId = macro_hashTable_id(obj);
 		a = groups_getBitstream(g, propId);
 		if (a == NULL) continue;
 		
-		c = bitstream_Except(gc, a, b);
+		c = bitstream_GcExcept(gc, a, b);
 		gcstack_Swap(c, a);
 	} macro_bitstream_end_foreach(obj)
 	
@@ -1250,7 +1250,7 @@ void groups_RemoveMember(groups* const g, const int index)
 	
 	// Add the member to bitstream of deleted members for reuse of index.
 	bitstream* d = g->m_deletedMembers;
-	bitstream* e = bitstream_Or(gc, d, b);
+	bitstream* e = bitstream_GcOr(gc, d, b);
 	gcstack_Swap(d, e);
 	g->m_deletedMembers = e;
 	
@@ -1273,7 +1273,7 @@ void groups_RemoveMembers(groups* const g, bitstream const* prop)
 	for (; cursor != NULL; cursor = cursor->next)
 	{
 		exProp = (bitstream*)cursor;
-		tmpProp = bitstream_Except(gc, exProp, prop);
+		tmpProp = bitstream_GcExcept(gc, exProp, prop);
 		gcstack_Swap(tmpProp, exProp);
 	}
 	
@@ -1291,7 +1291,7 @@ void groups_RemoveMembers(groups* const g, bitstream const* prop)
 	
 	// Add the member to bitstream of deleted members for reuse of index.
 	bitstream* const d = g->m_deletedMembers;
-	bitstream* const e = bitstream_Or(gc, d, prop);
+	bitstream* const e = bitstream_GcOr(gc, d, prop);
 	gcstack_Swap(d, e);
 	g->m_deletedMembers = e;
 	
@@ -1613,7 +1613,7 @@ void groups_readFromFile_initSettings
 	s->memberLength = strlen(s->memberText);
 	s->memberIndex = 0;
 	
-	s->hs = hashTable_Init(hashTable_AllocWithGC(NULL));
+	s->hs = hashTable_Init(hashTable_GcAlloc(NULL));
 	
 	s->message = NULL;
 	s->name = NULL;
@@ -2029,7 +2029,7 @@ int groups_readFromFile_readCommadOrEndParanthesis
 				groups_PrintMember(g, s->hs);
 			
 			hashTable_InitWithMember
-			(hashTable_AllocWithGC(s->memberStack), s->hs);
+			(hashTable_GcAlloc(s->memberStack), s->hs);
 			hashTable_Init(s->hs);
 			if (verbose) 
 				printf
@@ -2222,7 +2222,7 @@ void groups_RunUnitTests(void)
 	printf("Groups unit tests - ");
 	
 	{
-		groups* g = groups_AllocWithGC(NULL);
+		groups* g = groups_GcAlloc(NULL);
 		macro_test_int(g->m_bitstreamsReady, 0);
 		groups_Delete(g);
 		free(g);
@@ -2230,7 +2230,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propId = groups_AddProperty(g, "Name", "string");
 		macro_test_int(propId, 0+TYPE_STRING*TYPE_STRIDE);
 		gcstack_Delete(gc);
@@ -2239,7 +2239,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propId = groups_AddProperty(g, "Age", "double");
 		macro_test_int(propId, 0+TYPE_DOUBLE*TYPE_STRIDE);
 		gcstack_Delete(gc);
@@ -2248,7 +2248,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propId = groups_AddProperty(g, "Parent", "int");
 		macro_test_int(propId, 0+TYPE_INT*TYPE_STRIDE);
 		gcstack_Delete(gc);
@@ -2257,7 +2257,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propId = groups_AddProperty(g, "IsOwner", "bool");
 		macro_test_int(propId, 0+TYPE_BOOL*TYPE_STRIDE);
 		gcstack_Delete(gc);
@@ -2266,7 +2266,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propId = groups_AddProperty(g, "Age", "double");
 		string name = groups_PropertyNameById(g, propId);
 		macro_test_string(name, "Age");
@@ -2276,7 +2276,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Name:\"string\"", false, NULL);
 		int propName = groups_GetProperty(g, "Name");
@@ -2287,13 +2287,13 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Name:\"string\", Age:\"double\"}"
 		 "member {id:0, Name:\"Carl\",Age:38}", false, NULL);
 		int propName = groups_GetProperty(g, "Name");
 		macro_test_int(propName, 0 + TYPE_STRING*TYPE_STRIDE);
-		bitstream* a = groups_GetBitstream(gc, g, propName);
+		bitstream* a = groups_GcGetBitstream(gc, g, propName);
 		macro_test_int(a->length, 2);
 		macro_test_int(a->pointer[0], 0);
 		macro_test_int(a->pointer[1], 1);
@@ -2303,14 +2303,14 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Name:\"string\", Age:\"double\"}"
 		 "member {Name:\"Carl\",Age:38}"
 		 "member {Name:\"John\"}", false, NULL);
 		int propName = groups_GetProperty(g, "Name");
 		macro_test_int(propName, 0 + TYPE_STRING*TYPE_STRIDE);
-		bitstream* a = groups_GetBitstream(gc, g, propName);
+		bitstream* a = groups_GcGetBitstream(gc, g, propName);
 		macro_test_int(a->length, 2)
 		macro_test_int(a->pointer[0], 0);
 		macro_test_int(a->pointer[1], 2);
@@ -2320,13 +2320,13 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {IsTrue:\"bool\"}"
 		 "member {id:0, IsTrue:1}", false, NULL);
 		int propName = groups_GetProperty(g, "IsTrue");
 		macro_test_int(propName, 0 + TYPE_BOOL*TYPE_STRIDE);
-		bitstream* a = groups_GetBitstream(gc, g, propName);
+		bitstream* a = groups_GcGetBitstream(gc, g, propName);
 		macro_test_int(a->length, 2);
 		macro_test_int(a->pointer[0], 0);
 		macro_test_int(a->pointer[1], 1);
@@ -2336,13 +2336,13 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {IsTrue:\"bool\", Age:\"double\"}"
 		 "member {id:0, IsTrue:1, Age:40}", false, NULL);
 		int propName = groups_GetProperty(g, "IsTrue");
 		macro_test_int(propName, 0 + TYPE_BOOL*TYPE_STRIDE);
-		bitstream* a = groups_GetBitstream(gc, g, propName);
+		bitstream* a = groups_GcGetBitstream(gc, g, propName);
 		macro_test_int(a->length, 2);
 		macro_test_int(a->pointer[0], 0);
 		macro_test_int(a->pointer[1], 1);
@@ -2352,14 +2352,14 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propName = groups_AddProperty(g, "Name", "string");
 		int propAge = groups_AddProperty(g, "Age", "double");
-		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
 		hashTable_SetString(mem, propName, "John");
 		hashTable_SetDouble(mem, propAge, 0.0);
 		groups_AddMember(g, mem);
-		bitstream* Name = boolean_Eval(gc, g, "Name", NULL);
+		bitstream* Name = boolean_GcEval(gc, g, "Name", NULL);
 		double* age = groups_GetDoubleArray(g, Name, propAge);
 		macro_test_double(age[0], 0.0);
 		free(age);
@@ -2369,13 +2369,13 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propName = groups_AddProperty(g, "Name", "string");
 		int propAge = groups_AddProperty(g, "Age", "double");
-		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
 		hashTable_SetString(mem, propName, "John");
 		groups_AddMember(g, mem);
-		bitstream* Name = boolean_Eval(gc, g, "Name", NULL);
+		bitstream* Name = boolean_GcEval(gc, g, "Name", NULL);
 		double* age = groups_GetDoubleArray(g, Name, propAge);
 		macro_test_double(age[0], 0.0);
 		free(age);
@@ -2385,15 +2385,15 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propName = groups_AddProperty(g, "Name", "string");
 		int propAge = groups_AddProperty(g, "Age", "double");
-		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
 		hashTable_SetString(mem, propName, "John");
 		gcstack* s = gcstack_Init(gcstack_Alloc());
 		gcstack_Push(s, (gcstack_item*)mem);
 		groups_AppendMembers(g, s);
-		bitstream* Name = boolean_Eval(gc, g, "Name", NULL);
+		bitstream* Name = boolean_GcEval(gc, g, "Name", NULL);
 		double* age = groups_GetDoubleArray(g, Name, propAge);
 		macro_test_double(age[0], 0.0);
 		free(age);
@@ -2403,11 +2403,11 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Name:\"string\", Age:\"double\"}"
 			"member {id:0, Name:\"John\"}", false, NULL);
-		bitstream* a = boolean_Eval(gc, g, "Name", NULL);
+		bitstream* a = boolean_GcEval(gc, g, "Name", NULL);
 		int aLength = bitstream_Size(a);
 		macro_test_int(aLength, 1);
 		macro_test_int(a->length, 2);
@@ -2423,11 +2423,11 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Name:\"string\", Parent:\"int\"}"
 		 "member {id:0, Name:\"John\"}", false, NULL);
-		bitstream* prop = boolean_Eval(gc, g, "Name", NULL);
+		bitstream* prop = boolean_GcEval(gc, g, "Name", NULL);
 		int propParent = groups_GetProperty(g, "Parent");
 		int* parent = groups_GetIntArray(g, prop, propParent);
 		macro_test_int(parent[0], -1);
@@ -2438,12 +2438,12 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Name:\"string\", Age:\"double\"}"
 		 "member {id:1, Age:83}"
 		 "member {id:0, Name:\"John\", Age:73}", false, NULL);
-		bitstream* prop = boolean_Eval(gc, g, "Age", NULL);
+		bitstream* prop = boolean_GcEval(gc, g, "Age", NULL);
 		int propName = groups_GetProperty(g, "Name");
 		string* name = groups_GetStringArray(g, prop, propName);
 		macro_test_string(name[0], "John");
@@ -2455,12 +2455,12 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Name:\"string\", Age:\"double\"}"
 		 "member {id:0, Age:83}"
 		 "member {id:1, Name:\"John\", Age:73}", false, NULL);
-		bitstream* prop = boolean_Eval(gc, g, "Age", NULL);
+		bitstream* prop = boolean_GcEval(gc, g, "Age", NULL);
 		int propName = groups_GetProperty(g, "Name");
 		string* name = groups_GetStringArray(g, prop, propName);
 		macro_test_string(name[1], "John");
@@ -2472,7 +2472,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Order:\"int\"}"
 		 "member {id:3, Order:3}"
@@ -2480,7 +2480,7 @@ void groups_RunUnitTests(void)
 		 "member {id:1, Order:1}"
 		 "member {id:0, Order:0}"
 		 , false, NULL);
-		bitstream* prop = boolean_Eval(gc, g, "Order", NULL);
+		bitstream* prop = boolean_GcEval(gc, g, "Order", NULL);
 		int orderLength = bitstream_Size(prop);
 		macro_test_int(orderLength, 4);
 		int propOrder = groups_GetProperty(g, "Order");
@@ -2496,7 +2496,7 @@ void groups_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		groups_ReadFromString
 		(g, "properties {Age:\"double\", Parent:\"int\","
 		 "Married:\"bool\", Name:\"string\"}"
@@ -2504,7 +2504,7 @@ void groups_RunUnitTests(void)
 		"member {id:1, Age:11, Parent:0, Married:1, Name:\"b\"}"
 		"member {id:2, Age:33, Parent:1, Married:0, Name:\"c\"}"
 		 ,false, NULL);
-		bitstream* prop = boolean_Eval
+		bitstream* prop = boolean_GcEval
 		(gc, g, "Age+Parent+Married", NULL);
 		int propSize = bitstream_Size(prop);
 		macro_test_int(propSize, 3);

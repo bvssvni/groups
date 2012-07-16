@@ -28,13 +28,13 @@ void boolean_eval_BinaryOp(gcstack* const st)
 	
 	switch (op) {
 		case '*':
-			bitstream_And(st, arg1, arg2);
+			bitstream_GcAnd(st, arg1, arg2);
 			break;
 		case '+':
-			bitstream_Or(st, arg1, arg2);
+			bitstream_GcOr(st, arg1, arg2);
 			break;
 		case '-':
-			bitstream_Except(st, arg1, arg2);
+			bitstream_GcExcept(st, arg1, arg2);
 			break;
 	}
 	
@@ -49,7 +49,7 @@ void boolean_eval_BinaryOp(gcstack* const st)
 	gcstack_free(st, (gcstack_item*)opItem);
 }
 
-bitstream* boolean_Eval
+bitstream* boolean_GcEval
 (gcstack* const gc, groups* const g, const char* const expr, 
  void (* const err)(int pos, const char* message))
 {
@@ -105,7 +105,7 @@ NEW_STATE:
 				goto NEW_STATE;
 			}
 			
-			groups_GetBitstream(st, g, propId);
+			groups_GcGetBitstream(st, g, propId);
 			break;
 		case read_operator:
 			op = parsing_ReadOneCharacterOf
@@ -176,12 +176,12 @@ void boolean_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propName = groups_AddProperty(g, "Name", "string");
-		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
 		hashTable_SetString(mem, propName, "Andrew");
 		groups_AddMember(g, mem);
-		bitstream* b = boolean_Eval(gc, g, "Name", NULL);
+		bitstream* b = boolean_GcEval(gc, g, "Name", NULL);
 		macro_test_int(b->length, 2);
 		macro_test_int(b->pointer[0], 0);
 		macro_test_int(b->pointer[1], 1);
@@ -191,14 +191,14 @@ void boolean_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propName = groups_AddProperty(g, "Name", "string");
 		int propLastName = groups_AddProperty(g, "LastName", "string");
-		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
 		hashTable_SetString(mem, propName, "Andrew");
 		hashTable_SetString(mem, propLastName, "Snow");
 		groups_AddMember(g, mem);
-		bitstream* b = boolean_Eval(gc, g, "Name * LastName", NULL);
+		bitstream* b = boolean_GcEval(gc, g, "Name * LastName", NULL);
 		macro_test_int(b->length, 2);
 		macro_test_int(b->pointer[0], 0);
 		macro_test_int(b->pointer[1], 1);
@@ -208,13 +208,13 @@ void boolean_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propName = groups_AddProperty(g, "Name", "string");
 		groups_AddProperty(g, "LastName", "string");
-		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
 		hashTable_SetString(mem, propName, "Andrew");
 		groups_AddMember(g, mem);
-		bitstream* b = boolean_Eval(gc, g, "LastName * Name", NULL);
+		bitstream* b = boolean_GcEval(gc, g, "LastName * Name", NULL);
 		macro_test_int(b->length, 0);
 		gcstack_Delete(gc);
 		free(gc);
@@ -222,13 +222,13 @@ void boolean_RunUnitTests(void)
 	
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		groups* g = groups_Init(groups_AllocWithGC(gc));
+		groups* g = groups_Init(groups_GcAlloc(gc));
 		int propName = groups_AddProperty(g, "Name", "string");
 		groups_AddProperty(g, "LastName", "string");
-		hash_table* mem = hashTable_Init(hashTable_AllocWithGC(gc));
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
 		hashTable_SetString(mem, propName, "Andrew");
 		groups_AddMember(g, mem);
-		bitstream* b = boolean_Eval(gc, g, "Name - LastName", NULL);
+		bitstream* b = boolean_GcEval(gc, g, "Name - LastName", NULL);
 		macro_test_int(b->length, 2);
 		macro_test_int(b->pointer[0], 0);
 		macro_test_int(b->pointer[1], 1);

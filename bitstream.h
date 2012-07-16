@@ -92,7 +92,7 @@ extern "C" {
 	//	Allocates on a garbage collector stack.
 	//	This technique makes it easier to write safe code.
 	//
-	bitstream* bitstream_AllocWithGC
+	bitstream* bitstream_GcAlloc
 	(gcstack* const gc);
 	
 	//
@@ -186,13 +186,13 @@ extern "C" {
 	//	If you know all indices in a is less than b,
 	//	then using DirectJoin is a faster operation than Or.
 	//
-	bitstream* bitstream_DirectJoin
+	bitstream* bitstream_GcDirectJoin
 	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
 	//	Creates a copy of the bitstream.
 	//
-	bitstream* bitstream_Clone
+	bitstream* bitstream_GcClone
 	(gcstack* const gc, const bitstream* const a);
 	
 	//
@@ -202,7 +202,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countAnd'.
 	//
-	bitstream* bitstream_And
+	bitstream* bitstream_GcAnd
 	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
@@ -212,7 +212,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countOr'.
 	//
-	bitstream* bitstream_Or
+	bitstream* bitstream_GcOr
 	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
@@ -225,7 +225,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countExcept'.
 	//
-	bitstream* bitstream_Except
+	bitstream* bitstream_GcExcept
 	(gcstack* const gc, const bitstream* const a, const bitstream* const b);
 	
 	//
@@ -249,7 +249,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countInvert'.
 	//
-	bitstream* bitstream_Invert
+	bitstream* bitstream_GcInvert
 	(gcstack* const gc, bitstream* const a, const int inv);
 	
 	//

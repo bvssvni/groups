@@ -81,7 +81,7 @@ void* crash_groups_AddProperty2(void* input);
 void* crash_groups_AddProperty2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_AddProperty(g, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -92,7 +92,7 @@ void* crash_groups_AddProperty3(void* input);
 void* crash_groups_AddProperty3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_AddProperty(g, "name", NULL);
 	
 	return &DID_NOT_CRASH;
@@ -114,7 +114,7 @@ void* crash_groups_GetProperty2(void* input);
 void* crash_groups_GetProperty2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_GetProperty(g, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -126,7 +126,7 @@ void* crash_groups_GetBitstream(void* input)
 {
 	macro_unused(input);
 	
-	groups_GetBitstream(NULL, NULL, 0);
+	groups_GcGetBitstream(NULL, NULL, 0);
 	
 	return &DID_NOT_CRASH;
 }
@@ -136,8 +136,8 @@ void* crash_groups_GetBitstream2(void* input);
 void* crash_groups_GetBitstream2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	groups_GetBitstream(NULL, g, -1);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	groups_GcGetBitstream(NULL, g, -1);
 	
 	return &DID_NOT_CRASH;
 }
@@ -158,7 +158,7 @@ void* crash_groups_RemoveProperty2(void* input);
 void* crash_groups_RemoveProperty2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_RemoveProperty(g, -1);
 	
 	return &DID_NOT_CRASH;
@@ -202,7 +202,7 @@ void* crash_groups_AddMember2(void* input);
 void* crash_groups_AddMember2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_AddMember(g, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -224,7 +224,7 @@ void* crash_groups_SetDouble2(void* input);
 void* crash_groups_SetDouble2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetDouble(g, NULL, -1, 0);
 	
 	return &DID_NOT_CRASH;
@@ -235,8 +235,8 @@ void* crash_groups_SetDouble3(void* input);
 void* crash_groups_SetDouble3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetDouble(g, b, -1, 0);
 	
 	return &DID_NOT_CRASH;
@@ -258,7 +258,7 @@ void* crash_groups_SetString2(void* input);
 void* crash_groups_SetString2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetString(g, NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -269,8 +269,8 @@ void* crash_groups_SetString3(void* input);
 void* crash_groups_SetString3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetString(g, b, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -292,7 +292,7 @@ void* crash_groups_SetInt2(void* input);
 void* crash_groups_SetInt2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetInt(g, NULL, 0, 20);
 	
 	return &DID_NOT_CRASH;
@@ -303,8 +303,8 @@ void* crash_groups_SetInt3(void* input);
 void* crash_groups_SetInt3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetInt(g, b, -1, 20);
 	
 	return &DID_NOT_CRASH;
@@ -326,7 +326,7 @@ void* crash_groups_SetBool2(void* input);
 void* crash_groups_SetBool2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetBool(g, NULL, 0, 1);
 	
 	return &DID_NOT_CRASH;
@@ -337,8 +337,8 @@ void* crash_groups_SetBool3(void* input);
 void* crash_groups_SetBool3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetBool(g, b, -1, 1);
 	
 	return &DID_NOT_CRASH;
@@ -360,7 +360,7 @@ void* crash_groups_SetDoubleArray2(void* input);
 void* crash_groups_SetDoubleArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetDoubleArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -371,8 +371,8 @@ void* crash_groups_SetDoubleArray3(void* input);
 void* crash_groups_SetDoubleArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetDoubleArray(g, b, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -383,8 +383,8 @@ void* crash_groups_SetDoubleArray4(void* input);
 void* crash_groups_SetDoubleArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetDoubleArray(g, b, 0, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -395,8 +395,8 @@ void* crash_groups_SetDoubleArray5(void* input);
 void* crash_groups_SetDoubleArray5(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetDoubleArray(g, b, 0, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -418,7 +418,7 @@ void* crash_groups_SetStringArray2(void* input);
 void* crash_groups_SetStringArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetStringArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -429,8 +429,8 @@ void* crash_groups_SetStringArray3(void* input);
 void* crash_groups_SetStringArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetStringArray(g, b, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -441,8 +441,8 @@ void* crash_groups_SetStringArray4(void* input);
 void* crash_groups_SetStringArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetStringArray(g, b, 0, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -453,8 +453,8 @@ void* crash_groups_SetStringArray5(void* input);
 void* crash_groups_SetStringArray5(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetStringArray(g, b, 0, 20, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -476,7 +476,7 @@ void* crash_groups_SetIntArray2(void* input);
 void* crash_groups_SetIntArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetIntArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -487,8 +487,8 @@ void* crash_groups_SetIntArray3(void* input);
 void* crash_groups_SetIntArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetIntArray(g, b, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -499,8 +499,8 @@ void* crash_groups_SetIntArray4(void* input);
 void* crash_groups_SetIntArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetIntArray(g, b, 0, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -511,8 +511,8 @@ void* crash_groups_SetIntArray5(void* input);
 void* crash_groups_SetIntArray5(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetIntArray(g, b, 0, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -534,7 +534,7 @@ void* crash_groups_SetBoolArray2(void* input);
 void* crash_groups_SetBoolArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SetBoolArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -545,8 +545,8 @@ void* crash_groups_SetBoolArray3(void* input);
 void* crash_groups_SetBoolArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetBoolArray(g, b, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -557,8 +557,8 @@ void* crash_groups_SetBoolArray4(void* input);
 void* crash_groups_SetBoolArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetBoolArray(g, b, 0, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -569,8 +569,8 @@ void* crash_groups_SetBoolArray5(void* input);
 void* crash_groups_SetBoolArray5(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_SetBoolArray(g, b, 0, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -592,7 +592,7 @@ void* crash_groups_GetDoubleArray2(void* input);
 void* crash_groups_GetDoubleArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_GetDoubleArray(g, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -603,8 +603,8 @@ void* crash_groups_GetDoubleArray3(void* input);
 void* crash_groups_GetDoubleArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_GetDoubleArray(g, b, -1);
 	
 	return &DID_NOT_CRASH;
@@ -615,8 +615,8 @@ void* crash_groups_GetDoubleArray4(void* input);
 void* crash_groups_GetDoubleArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	int propId = groups_AddProperty(g, "Name", "string");
 	groups_GetDoubleArray(g, b, propId);
 	
@@ -639,7 +639,7 @@ void* crash_groups_FillDoubleArray2(void* input);
 void* crash_groups_FillDoubleArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_FillDoubleArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -650,9 +650,9 @@ void* crash_groups_FillDoubleArray3(void* input);
 void* crash_groups_FillDoubleArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int ageId = groups_AddProperty(g, "Age", "double");
-	bitstream* Age = groups_GetBitstream(gc, g, ageId);
+	bitstream* Age = groups_GcGetBitstream(gc, g, ageId);
 	groups_FillDoubleArray(g, Age, ageId, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -663,9 +663,9 @@ void* crash_groups_FillDoubleArray4(void* input);
 void* crash_groups_FillDoubleArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int ageId = groups_AddProperty(g, "Age", "int");
-	bitstream* Age = groups_GetBitstream(gc, g, ageId);
+	bitstream* Age = groups_GcGetBitstream(gc, g, ageId);
 	double arr[1];
 	groups_FillDoubleArray(g, Age, ageId, 1, arr);
 	
@@ -688,7 +688,7 @@ void* crash_groups_GetIntArray2(void* input);
 void* crash_groups_GetIntArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_GetIntArray(g, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -699,8 +699,8 @@ void* crash_groups_GetIntArray3(void* input);
 void* crash_groups_GetIntArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_GetIntArray(g, b, -1);
 	
 	return &DID_NOT_CRASH;
@@ -711,8 +711,8 @@ void* crash_groups_GetIntArray4(void* input);
 void* crash_groups_GetIntArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	int propId = groups_AddProperty(g, "Name", "string");
 	groups_GetIntArray(g, b, propId);
 	
@@ -735,7 +735,7 @@ void* crash_groups_FillIntArray2(void* input);
 void* crash_groups_FillIntArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_FillIntArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -746,9 +746,9 @@ void* crash_groups_FillIntArray3(void* input);
 void* crash_groups_FillIntArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int propParent = groups_AddProperty(g, "Parent", "int");
-	bitstream* Parent = groups_GetBitstream(gc, g, propParent);
+	bitstream* Parent = groups_GcGetBitstream(gc, g, propParent);
 	groups_FillIntArray(g, Parent, propParent, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -759,9 +759,9 @@ void* crash_groups_FillIntArray4(void* input);
 void* crash_groups_FillIntArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int propParent = groups_AddProperty(g, "Parent", "double");
-	bitstream* Parent = groups_GetBitstream(gc, g, propParent);
+	bitstream* Parent = groups_GcGetBitstream(gc, g, propParent);
 	int arr[1];
 	groups_FillIntArray(g, Parent, propParent, 1, arr);
 	
@@ -784,7 +784,7 @@ void* crash_groups_GetBoolArray2(void* input);
 void* crash_groups_GetBoolArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_GetBoolArray(g, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -795,8 +795,8 @@ void* crash_groups_GetBoolArray3(void* input);
 void* crash_groups_GetBoolArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_GetBoolArray(g, b, -1);
 	
 	return &DID_NOT_CRASH;
@@ -807,8 +807,8 @@ void* crash_groups_GetBoolArray4(void* input);
 void* crash_groups_GetBoolArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	int propId = groups_AddProperty(g, "Name", "string");
 	groups_GetBoolArray(g, b, propId);
 	
@@ -831,7 +831,7 @@ void* crash_groups_FillBoolArray2(void* input);
 void* crash_groups_FillBoolArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_FillBoolArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -842,9 +842,9 @@ void* crash_groups_FillBoolArray3(void* input);
 void* crash_groups_FillBoolArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int marriedId = groups_AddProperty(g, "Married", "bool");
-	bitstream* Married = groups_GetBitstream(gc, g, marriedId);
+	bitstream* Married = groups_GcGetBitstream(gc, g, marriedId);
 	groups_FillBoolArray(g, Married, marriedId, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -855,9 +855,9 @@ void* crash_groups_FillBoolArray4(void* input);
 void* crash_groups_FillBoolArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int marriedId = groups_AddProperty(g, "Married", "int");
-	bitstream* Married = groups_GetBitstream(gc, g, marriedId);
+	bitstream* Married = groups_GcGetBitstream(gc, g, marriedId);
 	bool arr[1];
 	groups_FillBoolArray(g, Married, marriedId, 1, arr);
 	
@@ -880,7 +880,7 @@ void* crash_groups_GetStringArray2(void* input);
 void* crash_groups_GetStringArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_GetStringArray(g, NULL, -1);
 	
 	return &DID_NOT_CRASH;
@@ -891,8 +891,8 @@ void* crash_groups_GetStringArray3(void* input);
 void* crash_groups_GetStringArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
-	bitstream* b = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
+	groups* g = groups_Init(groups_GcAlloc(gc));
+	bitstream* b = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
 	groups_GetStringArray(g, b, -1);
 	
 	return &DID_NOT_CRASH;
@@ -914,7 +914,7 @@ void* crash_groups_FillStringArray2(void* input);
 void* crash_groups_FillStringArray2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_FillStringArray(g, NULL, -1, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -925,9 +925,9 @@ void* crash_groups_FillStringArray3(void* input);
 void* crash_groups_FillStringArray3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int nameId = groups_AddProperty(g, "Name", "string");
-	bitstream* Name = groups_GetBitstream(gc, g, nameId);
+	bitstream* Name = groups_GcGetBitstream(gc, g, nameId);
 	groups_FillStringArray(g, Name, nameId, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -938,9 +938,9 @@ void* crash_groups_FillStringArray4(void* input);
 void* crash_groups_FillStringArray4(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	int nameId = groups_AddProperty(g, "Name", "double");
-	bitstream* Name = groups_GetBitstream(gc, g, nameId);
+	bitstream* Name = groups_GcGetBitstream(gc, g, nameId);
 	const char* arr[1];
 	groups_FillStringArray(g, Name, nameId, 1, arr);
 	
@@ -963,7 +963,7 @@ void* crash_groups_PropertyNameById2(void* input);
 void* crash_groups_PropertyNameById2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_PropertyNameById(g, -1);
 	
 	return &DID_NOT_CRASH;
@@ -985,7 +985,7 @@ void* crash_groups_PrintMember2(void* input);
 void* crash_groups_PrintMember2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_PrintMember(g, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1007,7 +1007,7 @@ void* crash_groups_RemoveMember2(void* input);
 void* crash_groups_RemoveMember2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_RemoveMember(g, -1);
 	
 	return &DID_NOT_CRASH;
@@ -1029,7 +1029,7 @@ void* crash_groups_RemoveMembers2(void* input);
 void* crash_groups_RemoveMembers2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_RemoveMembers(g, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1051,7 +1051,7 @@ void* crash_groups_SaveToFile2(void* input);
 void* crash_groups_SaveToFile2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_SaveToFile(g, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1073,7 +1073,7 @@ void* crash_groups_ReadFromFile2(void* input);
 void* crash_groups_ReadFromFile2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	groups* g = groups_Init(groups_AllocWithGC(gc));
+	groups* g = groups_Init(groups_GcAlloc(gc));
 	groups_ReadFromFile(g, NULL, 0, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1106,7 +1106,7 @@ void* crash_bitstream_InitWithSize2(void* input);
 void* crash_bitstream_InitWithSize2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithSize(bitstream_AllocWithGC(gc), -1);
+	bitstream_InitWithSize(bitstream_GcAlloc(gc), -1);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1127,7 +1127,7 @@ void* crash_bitstream_InitWithValues2(void* input);
 void* crash_bitstream_InitWithValues2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithValues(bitstream_AllocWithGC(gc), -1, NULL);
+	bitstream_InitWithValues(bitstream_GcAlloc(gc), -1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1137,7 +1137,7 @@ void* crash_bitstream_InitWithValues3(void* input);
 void* crash_bitstream_InitWithValues3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithValues(bitstream_AllocWithGC(gc), 1, NULL);
+	bitstream_InitWithValues(bitstream_GcAlloc(gc), 1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1158,7 +1158,7 @@ void* crash_bitstream_InitWithIndices2(void* input);
 void* crash_bitstream_InitWithIndices2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithIndices(bitstream_AllocWithGC(gc), -1, NULL);
+	bitstream_InitWithIndices(bitstream_GcAlloc(gc), -1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1168,7 +1168,7 @@ void* crash_bitstream_InitWithIndices3(void* input);
 void* crash_bitstream_InitWithIndices3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithIndices(bitstream_AllocWithGC(gc), 1, NULL);
+	bitstream_InitWithIndices(bitstream_GcAlloc(gc), 1, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1189,7 +1189,7 @@ void* crash_bitstream_InitWithDeltaDouble2(void* input);
 void* crash_bitstream_InitWithDeltaDouble2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaDouble(bitstream_AllocWithGC(gc), -1, NULL, 
+	bitstream_InitWithDeltaDouble(bitstream_GcAlloc(gc), -1, NULL, 
 				      NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1200,7 +1200,7 @@ void* crash_bitstream_InitWithDeltaDouble3(void* input);
 void* crash_bitstream_InitWithDeltaDouble3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaDouble(bitstream_AllocWithGC(gc), 1, NULL, NULL);
+	bitstream_InitWithDeltaDouble(bitstream_GcAlloc(gc), 1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1221,7 +1221,7 @@ void* crash_bitstream_InitWithDeltaInt2(void* input);
 void* crash_bitstream_InitWithDeltaInt2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaInt(bitstream_AllocWithGC(gc), -1, NULL, NULL);
+	bitstream_InitWithDeltaInt(bitstream_GcAlloc(gc), -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1231,7 +1231,7 @@ void* crash_bitstream_InitWithDeltaInt3(void* input);
 void* crash_bitstream_InitWithDeltaInt3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaInt(bitstream_AllocWithGC(gc), 1, NULL, NULL);
+	bitstream_InitWithDeltaInt(bitstream_GcAlloc(gc), 1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1252,7 +1252,7 @@ void* crash_bitstream_InitWithDeltaBool2(void* input);
 void* crash_bitstream_InitWithDeltaBool2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaBool(bitstream_AllocWithGC(gc), -1, NULL, NULL);
+	bitstream_InitWithDeltaBool(bitstream_GcAlloc(gc), -1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1262,7 +1262,7 @@ void* crash_bitstream_InitWithDeltaBool3(void* input);
 void* crash_bitstream_InitWithDeltaBool3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaBool(bitstream_AllocWithGC(gc), 1, NULL, NULL);
+	bitstream_InitWithDeltaBool(bitstream_GcAlloc(gc), 1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1283,7 +1283,7 @@ void* crash_bitstream_InitWithDeltaString2(void* input);
 void* crash_bitstream_InitWithDeltaString2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaString(bitstream_AllocWithGC(gc), -1, NULL, 
+	bitstream_InitWithDeltaString(bitstream_GcAlloc(gc), -1, NULL, 
 				      NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1294,7 +1294,7 @@ void* crash_bitstream_InitWithDeltaString3(void* input);
 void* crash_bitstream_InitWithDeltaString3(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_InitWithDeltaString(bitstream_AllocWithGC(gc), 1, NULL, NULL);
+	bitstream_InitWithDeltaString(bitstream_GcAlloc(gc), 1, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1304,7 +1304,7 @@ void* crash_bitstream_DirectJoin(void* input);
 void* crash_bitstream_DirectJoin(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream_DirectJoin(gc, NULL, NULL);
+	bitstream_GcDirectJoin(gc, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1314,8 +1314,8 @@ void* crash_bitstream_DirectJoin2(void* input);
 void* crash_bitstream_DirectJoin2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	bitstream* a = bitstream_InitWithSize(bitstream_AllocWithGC(gc), 0);
-	bitstream_DirectJoin(gc, a, NULL);
+	bitstream* a = bitstream_InitWithSize(bitstream_GcAlloc(gc), 0);
+	bitstream_GcDirectJoin(gc, a, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1337,7 +1337,7 @@ void* crash_bitstream_Clone(void* input)
 {
 	macro_unused(input);
 	
-	bitstream_Clone(NULL, NULL);
+	bitstream_GcClone(NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1348,7 +1348,7 @@ void* crash_bitstream_And(void* input)
 {
 	macro_unused(input);
 	
-	bitstream_And(NULL, NULL, NULL);
+	bitstream_GcAnd(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1359,7 +1359,7 @@ void* crash_bitstream_Or(void* input)
 {
 	macro_unused(input);
 	
-	bitstream_Or(NULL, NULL, NULL);
+	bitstream_GcOr(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1370,7 +1370,7 @@ void* crash_bitstream_Invert(void* input)
 {
 	macro_unused(input);
 	
-	bitstream_Invert(NULL, NULL, 0);
+	bitstream_GcInvert(NULL, NULL, 0);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1381,7 +1381,7 @@ void* crash_bitstream_Except(void* input)
 {
 	macro_unused(input);
 	
-	bitstream_Except(NULL, NULL, NULL);
+	bitstream_GcExcept(NULL, NULL, NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1538,7 +1538,7 @@ void* crash_hashTable_InitWithMember2(void* input);
 void* crash_hashTable_InitWithMember2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hashTable_InitWithMember(hashTable_AllocWithGC(gc), NULL);
+	hashTable_InitWithMember(hashTable_GcAlloc(gc), NULL);
 	
 	return &DID_NOT_CRASH;
 }
@@ -1559,7 +1559,7 @@ void* crash_hashTable_Set2(void* input);
 void* crash_hashTable_Set2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_Set(hs, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1581,7 +1581,7 @@ void* crash_hashTable_SetStringHash2(void* input);
 void* crash_hashTable_SetStringHash2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_SetStringHash(hs, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1603,7 +1603,7 @@ void* crash_hashTable_Get2(void* input);
 void* crash_hashTable_Get2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_Get(hs, -1);
 	
 	return &DID_NOT_CRASH;
@@ -1625,7 +1625,7 @@ void* crash_hashTable_ContainsStringHash2(void* input);
 void* crash_hashTable_ContainsStringHash2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_ContainsStringHash(hs, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1647,7 +1647,7 @@ void* crash_hashTable_SetDouble2(void* input);
 void* crash_hashTable_SetDouble2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_SetDouble(hs, -1, 20);
 	
 	return &DID_NOT_CRASH;
@@ -1669,7 +1669,7 @@ void* crash_hashTable_SetString2(void* input);
 void* crash_hashTable_SetString2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_SetString(hs, -1, NULL);
 	
 	return &DID_NOT_CRASH;
@@ -1691,7 +1691,7 @@ void* crash_hashTable_SetInt2(void* input);
 void* crash_hashTable_SetInt2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_SetInt(hs, -1, 20);
 	
 	return &DID_NOT_CRASH;
@@ -1713,7 +1713,7 @@ void* crash_hashTable_SetBool2(void* input);
 void* crash_hashTable_SetBool2(void* input)
 {
 	gcstack* gc = (gcstack*)input;
-	hash_table* hs = hashTable_Init(hashTable_AllocWithGC(gc));
+	hash_table* hs = hashTable_Init(hashTable_GcAlloc(gc));
 	hashTable_SetBool(hs, -1, 1);
 	
 	return &DID_NOT_CRASH;

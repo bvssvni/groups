@@ -62,7 +62,7 @@ extern "C" {
 	void property_Delete
 	(void* const p);
 	
-	property* property_AllocWithGC
+	property* property_GcAlloc
 	(gcstack* const gc);
 	
 	property* property_InitWithNameAndId
@@ -102,7 +102,7 @@ extern "C" {
 	//
 	//		Groups supports stack-based garbage collection.
 	//
-	groups* groups_AllocWithGC
+	groups* groups_GcAlloc
 	(gcstack* const gc);
 	
 	//
@@ -148,7 +148,7 @@ extern "C" {
 	//	has a property. This is like taking a snapshot of the group
 	//	in that moment.
 	//
-	bitstream* groups_GetBitstream
+	bitstream* groups_GcGetBitstream
 	(gcstack* const gc, groups* const g, const int propId);
 	
 	//
@@ -156,7 +156,7 @@ extern "C" {
 	//      It takes the whole range from 0 to the length of member stack,
 	//      and subtracts the deleted members with exclude.
 	//
-	bitstream* groups_GetAll
+	bitstream* groups_GcGetAll
 	(gcstack* const gc, groups* const g);
 	
 	//

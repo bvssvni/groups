@@ -61,7 +61,7 @@ void bitstream_Delete(void* const p)
 	a->length = 0;
 }
 
-bitstream* bitstream_AllocWithGC(gcstack* const gc) 
+bitstream* bitstream_GcAlloc(gcstack* const gc) 
 {
 	return (bitstream*)gcstack_malloc
 	(gc, sizeof(bitstream), bitstream_Delete);
@@ -472,7 +472,7 @@ void bitstream_Print(const bitstream* const a)
 	printf("\r\n");
 }
 
-bitstream* bitstream_DirectJoin
+bitstream* bitstream_GcDirectJoin
 (gcstack* const gc, const bitstream* const a, const bitstream* const b) {
 	macro_err(a == NULL); macro_err(b == NULL);
 	
@@ -489,7 +489,7 @@ bitstream* bitstream_DirectJoin
 	return arr;
 }
 
-bitstream* bitstream_Clone(gcstack* const gc, const bitstream* const a) {
+bitstream* bitstream_GcClone(gcstack* const gc, const bitstream* const a) {
 	macro_err(a == NULL);
 	
 	bitstream* const b = (bitstream*)gcstack_malloc
@@ -555,14 +555,14 @@ int countAnd(const bitstream* const a, const bitstream* const b)
 }
 
 
-bitstream* bitstream_And
+bitstream* bitstream_GcAnd
 (gcstack* const gc, const bitstream* const a, const bitstream* const b)
 {
 	macro_err(a == NULL); macro_err(b == NULL);
 	
 	int list = 0;
 	bitstream* const arr = bitstream_InitWithSize
-	(bitstream_AllocWithGC(gc), countAnd(a, b));
+	(bitstream_GcAlloc(gc), countAnd(a, b));
 	
 	if (a->length == 0 || b->length == 0)
 		return arr;
@@ -676,14 +676,14 @@ int countOr(const bitstream* const a, const bitstream* const b)
 }
 
 
-bitstream* bitstream_Or(gcstack* gc, bitstream const* a, bitstream const* b)
+bitstream* bitstream_GcOr(gcstack* gc, bitstream const* a, bitstream const* b)
 {
 	macro_err(a == NULL); macro_err(b == NULL);
 	
 	int count = countOr(a,b);
 	
 	bitstream* const list = bitstream_InitWithSize
-	(bitstream_AllocWithGC(gc), count);
+	(bitstream_GcAlloc(gc), count);
 	
 	int counter = 0;
 	const int a_length = a->length;
@@ -781,13 +781,13 @@ int countInvert(bitstream* const a, const int inv)
 	return resCount;
 }
 
-bitstream* bitstream_Invert
+bitstream* bitstream_GcInvert
 (gcstack* const gc, bitstream* const a, const int inv)
 {
 	macro_err(a == NULL);
 	
 	bitstream* const res = bitstream_InitWithSize
-	(bitstream_AllocWithGC(gc), countInvert(a, inv));
+	(bitstream_GcAlloc(gc), countInvert(a, inv));
 	
 	int resCount = 0;
 	
@@ -935,7 +935,7 @@ void bitstream_ExceptTmp
 	}
 }
 
-bitstream* bitstream_Except
+bitstream* bitstream_GcExcept
 (gcstack* const gc, const bitstream* const a, const bitstream* const b)
 {
 	macro_err(a == NULL); macro_err(b == NULL);
@@ -943,12 +943,12 @@ bitstream* bitstream_Except
 	const int a_length = a->length;
 	const int b_length = b->length;
 	if (b_length == 0)
-		return bitstream_Clone(gc, a);
+		return bitstream_GcClone(gc, a);
 	
 	int list = 0;
 	
 	bitstream* arr = bitstream_InitWithSize
-	(bitstream_AllocWithGC(gc), countExcept(a, b));
+	(bitstream_GcAlloc(gc), countExcept(a, b));
 	
 	if (a_length == 0 || b_length == 0)
 		return arr;
@@ -1147,7 +1147,7 @@ void bitstream_RunUnitTests(void)
 	printf("Bitstream unit tests - ");
 	
 	{
-		bitstream* b = bitstream_AllocWithGC(NULL);
+		bitstream* b = bitstream_GcAlloc(NULL);
 		macro_test_int(b->length, 0);
 		bitstream_Delete(b);
 		free(b);
