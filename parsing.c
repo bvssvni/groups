@@ -290,6 +290,11 @@ void parsing_RunUnitTests(void)
 		macro_test_int(delta, 6);
 	}
 	
+	{
+		macro_decl_string_concat(res, "hello ", "world");
+		macro_test_string(res, "hello world");
+	}
+	
 	printf("OK\r\n");
 }
 

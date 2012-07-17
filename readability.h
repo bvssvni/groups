@@ -209,15 +209,20 @@ macro_err(a != NULL); \
 	//      This string concat macro is very fast.
 	//      It allocated on the stack so 'assignTo' does not need to be released.
 	//
-#define macro_string_concat(assignTo,string1,string2) \
-const char* _macro_string1##assignTo = string1; \
-const char* _macro_string2##assignTo = string2; \
-size_t _macro_string1Length##assignTo = strlen(_macro_string1##assignTo); \
-size_t _macro_string2Length##assignTo = strlen(_macro_string2##assignTo); \
-char assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo+1]; \
-memcpy(assignTo, _macro_string1##assignTo, _macro_string1Length##assignTo); \
-memcpy(assignTo+_macro_string1Length##assignTo, _macro_string2##assignTo, _macro_string2Length##assignTo); \
-assignTo[_macro_string1Length##assignTo+_macro_string2Length##assignTo] = '\0'
+#define macro_decl_string_concat(dest,string1,string2) \
+	const char* _macro_string1 ## dest = string1; \
+	const char* _macro_string2 ## dest = string2; \
+	size_t _macro_len1 ## dest = \
+		strlen(_macro_string1 ## dest); \
+	size_t _macro_len2 ## dest = \
+		strlen(_macro_string2 ## dest); \
+	char dest[_macro_len1 ## dest + \
+		      _macro_len2 ## dest + 1]; \
+	memcpy(dest, _macro_string1 ## dest, \
+	       	_macro_len1 ## dest); \
+	memcpy(dest + _macro_len1 ## dest, \
+		dest, _macro_len2 ## dest); \
+	dest[_macro_len1 ## dest + _macro_len2 ## dest] = '\0'
 	
 #define macro_unused(a) (void)(a);
 	
