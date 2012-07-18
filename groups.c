@@ -2219,8 +2219,9 @@ void(* const err)(int line, int column, const char* message))
 
 void groups_RunUnitTests(void)
 {
-	printf("Groups unit tests - ");
+	printf("Groups unit tests - \r\n");
 	
+	printf("%i\r\n", __LINE__);
 	{
 		groups* g = groups_GcAlloc(NULL);
 		macro_test_int(g->m_bitstreamsReady, 0);
@@ -2228,6 +2229,7 @@ void groups_RunUnitTests(void)
 		free(g);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2237,6 +2239,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2246,6 +2249,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2255,6 +2259,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2264,6 +2269,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2274,6 +2280,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2285,6 +2292,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2301,6 +2309,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2318,6 +2327,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2334,6 +2344,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2350,6 +2361,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2367,6 +2379,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2383,6 +2396,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2401,6 +2415,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2421,6 +2436,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2436,6 +2452,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2453,6 +2470,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2470,6 +2488,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -2494,6 +2513,7 @@ void groups_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));

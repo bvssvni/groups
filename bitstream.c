@@ -52,7 +52,7 @@ void bitstream_Delete(void* const p)
 	
 	bitstream* const a = (bitstream* const)p;
 	
-	if (a->pointer != NULL)
+	if (a != NULL && a->pointer != NULL)
 	{
 		free(a->pointer);
 		a->pointer = NULL;

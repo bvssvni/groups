@@ -235,7 +235,7 @@ extern "C" {
 	memcpy(dest, _macro_string1 ## dest, 				\
 	       	_macro_len1 ## dest); 					\
 	memcpy(dest + _macro_len1 ## dest, 				\
-		dest, _macro_len2 ## dest); 				\
+		_macro_string2 ## dest, _macro_len2 ## dest); 		\
 	dest[_macro_len1 ## dest + _macro_len2 ## dest] = '\0'
 	
 #define macro_unused(a) (void)(a);

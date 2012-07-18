@@ -7,13 +7,21 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "memgroups.h"
+
+#include "gcstack.h"
+#include "hashtable.h"
+#include "bitstream.h"
+#include "groups.h"
+
 #include "parsing.h"
 
 #include "errorhandling.h"
 #include "readability.h"
+
+#include "boolean.h"
 
 void boolean_eval_BinaryOp(gcstack* st);
 
@@ -49,123 +57,155 @@ void boolean_eval_BinaryOp(gcstack* const st)
 	gcstack_free(st, (gcstack_item*)opItem);
 }
 
+
+typedef struct data
+{
+	gcstack* const st;
+	const char* errorMessage;
+	int delta;
+	int stateIndex;
+	groups* const g;
+} data;
+
+void boolean_eval_CheckPrecedence(data* data, const int repeatIndex);
+void boolean_eval_CheckPrecedence(data* data, const int repeatIndex)
+{
+	// We can access the operators directly on the stack.
+	char op2 = (char)((gcint*)(data->st->root->next))->val;
+	char op1 = (char)((gcint*)(data->st->root->next->next->next))->val;
+	
+	// The ascii table is sorted by negative precedence.
+	// * < + < -
+	if (op2 >= op1) {
+		char op = (char)gcstack_PopInt(data->st);
+		boolean_eval_BinaryOp(data->st);
+		gcstack_PushInt(data->st, op);
+	}
+	
+	data->stateIndex = repeatIndex;
+}
+
+void boolean_eval_ReadOperator
+(data *data, const int pos, const char* const expr, const char* const ops);
+
+void boolean_eval_ReadOperator
+(data *data, const int pos, const char* const expr, const char* const ops)
+{
+	char op = parsing_ReadOneCharacterOf
+	(expr+pos, ops, &data->delta);
+	
+	if (data->delta == 0) {
+		data->errorMessage = "Expected operator";
+		return;
+	}
+	
+	gcstack_PushInt(data->st, op);
+}
+
+void boolean_eval_ReadVariable
+(data *data, const int pos, const char* const expr, const char* const ops);
+
+void boolean_eval_ReadVariable
+(data *data, const int pos, const char* const expr, const char* const ops)
+{
+	char* const variableName = parsing_ReadVariableName
+	(expr+pos, ops, &data->delta);
+	
+	// Check that a variable name was read.
+	if (data->delta == 0) {
+		data->errorMessage = "Expected variable";
+		return;
+	}
+	
+	int propId = groups_GetProperty(data->g, variableName);
+	
+	if (propId == -1) {
+		data->errorMessage = "Unknown property";
+		return;
+	}
+	
+	groups_GcGetBitstream(data->st, data->g, propId);
+	
+	free(variableName);
+}
+
 bitstream* boolean_GcEval
 (gcstack* const gc, groups* const g, const char* const expr, 
  void (* const err)(int pos, const char* message))
 {
 	macro_err(g == NULL); macro_err(expr == NULL);
 	
-	string state = "eveoeveop";
-	int stateIndex = 0;
+	const char* const flow = " v o v op";
+	data data = {.stateIndex = 0,
+		.st = gcstack_Init(gcstack_Alloc()),
+		.errorMessage = NULL,
+		.delta = 0,
+		.g = g
+	};
+	
 	int repeatIndex = 3;
 	
 	enum {
-		read_white_space = 'e',
+		read_white_space = ' ',
 		read_variable = 'v',
 		read_operator = 'o',
 		precedence_check = 'p',
 		error = 'r'
 	};
 	
-	
-	gcstack* st = gcstack_Init(gcstack_Alloc());
-	
 	size_t exprLength = strlen(expr);
 	int pos = 0;
-	int delta = 0;
-	char op;
-	const char* variableName = NULL;
-	const char* errorMessage = NULL;
-	int propId = 0;
-	char op1;
-	char op2;
 	const char* ops = "*+-";
 	
 NEW_STATE:
-	switch (state[stateIndex]) {
+	switch (flow[data.stateIndex]) {
 		case read_white_space:
-			delta = parsing_SkipWhiteSpace(expr+pos);
+			data.delta = parsing_SkipWhiteSpace(expr+pos);
 			break;
 		case read_variable:
-			variableName = parsing_ReadVariableName
-			(expr+pos, ops, &delta);
-			
-			// Check that a variable name was read.
-			if (delta == 0) {
-				errorMessage = "Expected variable";
-				stateIndex = error;
-				goto NEW_STATE;
-			}
-			
-			propId = groups_GetProperty(g, variableName);
-			
-			if (propId == -1) {
-				errorMessage = "Unknown property";
-				stateIndex = error;
-				goto NEW_STATE;
-			}
-			
-			groups_GcGetBitstream(st, g, propId);
+			boolean_eval_ReadVariable
+			(&data, pos, expr, ops);
 			break;
 		case read_operator:
-			op = parsing_ReadOneCharacterOf
-			(expr+pos, ops, &delta);
-			
-			if (delta == 0) {
-				errorMessage = "Expected operator";
-				stateIndex = error;
-				goto NEW_STATE;
-			}
-			
-			gcstack_PushInt(st, op);
+			boolean_eval_ReadOperator
+			(&data, pos, expr, ops);
 			break;
 		case precedence_check:
-			// We can access the operators directly on the stack.
-			op2 = (char)((gcint*)(st->root->next))->val;
-			op1 = (char)((gcint*)(st->root->next->next->next))->val;
-			
-			// The ascii table is sorted by negative precedence.
-			// * < + < -
-			if (op2 >= op1) {
-				op = (char)gcstack_PopInt(st);
-				boolean_eval_BinaryOp(st);
-				gcstack_PushInt(st, op);
-			}
-			
-			stateIndex = repeatIndex;
-			delta = 0;
-			break;
-		case error:
-			if (err != NULL)
-				err(pos, errorMessage);
-			else
-				macro_errExp(errorMessage, pos, expr);
-			goto CLEAN_UP;
+			boolean_eval_CheckPrecedence(&data, repeatIndex);
 			break;
 	}
 	
-	pos += delta;
+	if (data.errorMessage != NULL) {
+		if (err != NULL)
+			err(pos, data.errorMessage);
+		else
+			macro_errExp(data.errorMessage, pos, expr);
+		goto CLEAN_UP;
+	}
+	
+	pos += data.delta;
+	data.delta = 0;
 	
 	if (pos >= exprLength)
 		goto CLEAN_UP;
 	
-	stateIndex++;
+	data.stateIndex++;
 	goto NEW_STATE;
 	
 CLEAN_UP:
 	// Evaluate all operators.
-	while (st->length > 1) {
-		boolean_eval_BinaryOp(st);
+	while (data.st->length > 1) {
+		boolean_eval_BinaryOp(data.st);
 	}
 	
-	bitstream* b = (bitstream*)st->root->next;
+	bitstream* b = (bitstream*)data.st->root->next;
 	if (gc != NULL)
 		gcstack_Push(gc, (gcstack_item*)b);
 	else
-		gcstack_Pop(st, (gcstack_item*)b);
+		gcstack_Pop(data.st, (gcstack_item*)b);
 	
-	gcstack_Delete(st);
-	free(st);
+	gcstack_Delete(data.st);
+	free(data.st);
 	
 	return b;
 }
