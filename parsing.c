@@ -128,7 +128,7 @@ int parsing_ScanInt(const char* const text, int* const output)
 
 int parsing_SkipWhiteSpace(const char* const text)
 {
-	macro_err(text == NULL);
+	macro_err_return_zero(text == NULL);
 	
 	int i;
 	char ch;
@@ -146,7 +146,7 @@ int parsing_SkipWhiteSpace(const char* const text)
 
 int parsing_ReadCharacter(const char* const text, const char ch) 
 {
-	macro_err(text == NULL);
+	macro_err_return_zero(text == NULL);
 	
 	return text[0] == ch ? 1 : 0;
 }
@@ -154,7 +154,8 @@ int parsing_ReadCharacter(const char* const text, const char ch)
 char parsing_ReadOneCharacterOf
 (const char* const text, const char* const chs, int* const delta)
 {
-	macro_err(text == NULL); macro_err(chs == NULL);
+	macro_err_return_zero(text == NULL);
+	macro_err_return_zero(chs == NULL);
 	
 	int i;
 	for (i = 0; chs[i] != '\0'; i++) {

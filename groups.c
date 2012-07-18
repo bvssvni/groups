@@ -57,7 +57,7 @@
 
 void property_Delete(void* const p)
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	property* const prop = (property* const)p;
 	
@@ -76,7 +76,8 @@ property* property_GcAlloc(gcstack* const gc)
 property* property_InitWithNameAndId
 (property* const prop, const char* const name, const int propId)
 {
-	macro_err(prop == NULL); macro_err(name == NULL);
+	macro_err_return_null(prop == NULL);
+	macro_err_return_null(name == NULL);
 	
 	const size_t nameLength = strlen(name);
 	char* const newName = malloc(sizeof(char)*nameLength);
@@ -87,7 +88,7 @@ property* property_InitWithNameAndId
 
 void groups_Delete(void* const p)
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	groups* const g = (groups* const)p;
 	
@@ -154,7 +155,7 @@ groups* groups_GcAlloc(gcstack* const gc)
 
 groups* groups_Init(groups* const g)
 {
-	macro_err(g == NULL);
+	macro_err_return_null(g == NULL);
 	
 	g->bitstreams = gcstack_Init(gcstack_Alloc());
 	g->m_bitstreamsReady = false;
@@ -259,8 +260,9 @@ void createBitstreamArray(groups* const g)
 int groups_AddProperty
 (groups* const g, const void* const name, const void* const propType)
 {
-	macro_err(g == NULL); macro_err(name == NULL); 
-	macro_err(propType == NULL);
+	macro_err_return_zero(g == NULL);
+	macro_err_return_zero(name == NULL); 
+	macro_err_return_zero(propType == NULL);
 	
 	// We use the length of the bitstream stack to generate ids,
 	// because those bitstreams are set to empty instead of deleted.
@@ -348,7 +350,8 @@ IF_BREAK:
 
 int groups_GetProperty(groups* const g, char const* const name)
 {
-	macro_err(g == NULL); macro_err(name == NULL);
+	macro_err_return_zero(g == NULL);
+	macro_err_return_zero(name == NULL);
 	
 	const int length = g->properties->length;
 	if (length == 0) return -1;
@@ -369,7 +372,7 @@ int groups_GetProperty(groups* const g, char const* const name)
 
 const char** groups_GetPropertyNames(groups* const g)
 {
-	macro_err(g == NULL);
+	macro_err_return_null(g == NULL);
 	
 	sortProperties(g);
 	
@@ -415,7 +418,7 @@ bitstream* groups_GcGetBitstream
 
 bitstream* groups_GcGetAll(gcstack* const gc, groups* const g) 
 {
-	macro_err(g == NULL);
+	macro_err_return_null(g == NULL);
 	
 	const int length = g->members->length;
 	bitstream* const a = bitstream_InitWithValues
@@ -433,7 +436,8 @@ bitstream* groups_GcGetAll(gcstack* const gc, groups* const g)
 
 void groups_RemoveProperty(groups* const g, const int propId)
 {
-	macro_err(g == NULL); macro_err(propId < 0);
+	macro_err_return(g == NULL);
+	macro_err_return(propId < 0);
 	
 	const int index = propId % TYPE_STRIDE;
 	
@@ -476,7 +480,8 @@ void groups_RemoveProperty(groups* const g, const int propId)
 bool groups_IsDefaultVariable
 (const int propId, void* const data)
 {
-	macro_err(propId < 0); macro_err(data == NULL);
+	macro_err_return_zero(propId < 0);
+	macro_err_return_zero(data == NULL);
 	
 	int type = propId/TYPE_STRIDE;
 	if (type == TYPE_DOUBLE) return false;
@@ -610,7 +615,9 @@ int groups_AddMember(groups* const g, hash_table* const obj)
 void groups_SetDouble
 (groups* const g, const bitstream* const a, const int propId, const double val)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -643,7 +650,9 @@ void groups_SetString
 (groups* const g, const bitstream* const a, const int propId, 
  const char* const val)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -677,7 +686,9 @@ void groups_SetString
 void groups_SetInt
 (groups* const g, const bitstream* const a, const int propId, const int val)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -712,7 +723,9 @@ void groups_SetInt
 void groups_SetBool
 (groups* const g, const bitstream* const a, const int propId, const bool val)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -753,8 +766,11 @@ void groups_SetDoubleArray
 (groups* const g, const bitstream* const a, const int propId, const int n, 
  const double* const values)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-	macro_err(n < 0); macro_err(values == NULL);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0); 
+	macro_err_return(n < 0);
+	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -786,8 +802,11 @@ void groups_SetStringArray
 (groups* const g, const bitstream* const a, const int propId, const int n, 
  const char** const values)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-	macro_err(n < 0); macro_err(values == NULL);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0); 
+	macro_err_return(n < 0);
+	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -844,8 +863,11 @@ void groups_SetIntArray
 (groups* const g, const bitstream* const a, const int propId, const int n, 
  const int* values)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-	macro_err(n < 0); macro_err(values == NULL);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0); 
+	macro_err_return(n < 0);
+	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -900,8 +922,11 @@ void groups_SetBoolArray
 (groups* const g, const bitstream* const a, const int propId, const int n, 
  const bool* const values)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0); 
-	macro_err(n < 0); macro_err(values == NULL);
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0); 
+	macro_err_return(n < 0);
+	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
 	createMemberArray(g);
@@ -956,8 +981,10 @@ void groups_SetBoolArray
 double* groups_GetDoubleArray
 (groups* const g, const bitstream* const a, const int propId)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(!groups_IsDouble(propId));
+	macro_err_return_null(g == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(propId < 0);
+	macro_err_return_null(!groups_IsDouble(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -987,9 +1014,12 @@ void groups_FillDoubleArray
 (groups* const g, const bitstream* const a, const int propId, 
  const int arrc, double* const arr)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(arr == NULL); macro_err(arrc < 0);
-	macro_err(!groups_IsDouble(propId));
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
+	macro_err_return(arr == NULL);
+	macro_err_return(arrc < 0);
+	macro_err_return(!groups_IsDouble(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1017,8 +1047,10 @@ void groups_FillDoubleArray
 int* groups_GetIntArray
 (groups* const g, const bitstream* const a, const int propId)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(!groups_IsInt(propId));
+	macro_err_return_null(g == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(propId < 0);
+	macro_err_return_null(!groups_IsInt(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1047,9 +1079,12 @@ void groups_FillIntArray
 (groups* const g, const bitstream* const a, const int propId,
  const int arrc, int* const arr)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(arr == NULL); macro_err(arrc < 0);
-	macro_err(!groups_IsInt(propId));
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
+	macro_err_return(arr == NULL);
+	macro_err_return(arrc < 0);
+	macro_err_return(!groups_IsInt(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1075,8 +1110,10 @@ void groups_FillIntArray
 bool* groups_GetBoolArray
 (groups* const g, const bitstream* const a, const int propId)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(!groups_IsBool(propId));
+	macro_err_return_null(g == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(propId < 0);
+	macro_err_return_null(!groups_IsBool(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1105,9 +1142,12 @@ void groups_FillBoolArray
 (groups* const g, const bitstream* const a, const int propId,
  const int arrc, bool* const arr)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(arr == NULL); macro_err(arrc < 0);
-	macro_err(!groups_IsBool(propId));
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
+	macro_err_return(arr == NULL);
+	macro_err_return(arrc < 0);
+	macro_err_return(!groups_IsBool(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1133,8 +1173,10 @@ void groups_FillBoolArray
 const char** groups_GetStringArray
 (groups* const g, const bitstream* const a, const int propId)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(!groups_IsString(propId));
+	macro_err_return_null(g == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(propId < 0);
+	macro_err_return_null(!groups_IsString(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1159,9 +1201,12 @@ void groups_FillStringArray
 (groups* const g, const bitstream* const a, const int propId,
  const int arrc, const char** const arr)
 {
-	macro_err(g == NULL); macro_err(a == NULL); macro_err(propId < 0);
-	macro_err(arr == NULL); macro_err(arrc < 0);
-	macro_err(!groups_IsString(propId));
+	macro_err_return(g == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(propId < 0);
+	macro_err_return(arr == NULL);
+	macro_err_return(arrc < 0);
+	macro_err_return(!groups_IsString(propId));
 	
 	// Make sure we have a table with pointers to members.
 	createMemberArray(g);
@@ -1183,7 +1228,8 @@ void groups_FillStringArray
 const char* groups_PropertyNameById
 (const groups* const g, const int propId)
 {
-	macro_err(g == NULL); macro_err(propId < 0);
+	macro_err_return_null(g == NULL);
+	macro_err_return_null(propId < 0);
 	
 	property* prop;
 	const gcstack_item* cursor = g->properties->root->next;
@@ -1199,7 +1245,8 @@ const char* groups_PropertyNameById
 void groups_PrintMember
 (const groups* const g, const hash_table* const obj)
 {
-	macro_err(g == NULL); macro_err(obj == NULL);
+	macro_err_return(g == NULL);
+	macro_err_return(obj == NULL);
 	
 	int propId, type;
 	
@@ -1221,7 +1268,8 @@ void groups_PrintMember
 
 void groups_RemoveMember(groups* const g, const int index)
 {
-	macro_err(g == NULL); macro_err(index < 0);
+	macro_err_return(g == NULL);
+	macro_err_return(index < 0);
 	
 	createMemberArray(g);
 	
@@ -1261,7 +1309,8 @@ void groups_RemoveMember(groups* const g, const int index)
 
 void groups_RemoveMembers(groups* const g, bitstream const* prop)
 {
-	macro_err(g == NULL); macro_err(prop == NULL);
+	macro_err_return(g == NULL);
+	macro_err_return(prop == NULL);
 	
 	createMemberArray(g);
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
@@ -1428,7 +1477,8 @@ void groups_PrintPropertyToFile
 
 bool groups_SaveToFile(groups* const g, const char* const fileName)
 {
-	macro_err(g == NULL); macro_err(fileName == NULL);
+	macro_err_return_zero(g == NULL);
+	macro_err_return_zero(fileName == NULL);
 	
 	FILE* f = fopen(fileName, "w");
 	if (f == NULL)
@@ -1479,7 +1529,8 @@ void groups_AppendMembers(groups* const g, gcstack* const newMembers);
 
 void groups_AppendMembers(groups* const g, gcstack* const newMembers)
 {
-	macro_err(g == NULL); macro_err(newMembers == NULL);
+	macro_err_return(g == NULL);
+	macro_err_return(newMembers == NULL);
 	
 	const gcstack_item* cursor = newMembers->root->next;
 	for (; cursor != NULL; cursor = cursor->next)
@@ -2203,7 +2254,7 @@ void(* const err)(int line, int column, const char* message))
 	if (stat(fileName, &fileState) != 0) {
 		return false;
 	}
-	size_t size = fileState.st_size;
+	size_t size = (size_t)fileState.st_size;
 	
 	FILE* const f = fopen(fileName, "r");
 	if (f == NULL)

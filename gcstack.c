@@ -59,7 +59,7 @@ gcstack* gcstack_Alloc()
 
 gcstack* gcstack_Init(gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	gc->length = 0;
 	gc->root = malloc(sizeof(gcstack_item));
@@ -71,7 +71,7 @@ gcstack* gcstack_Init(gcstack* const gc)
 
 void gcstack_Delete(void* const p)
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	gcstack* const gc = (gcstack*)p;
 	
@@ -83,7 +83,8 @@ void gcstack_Delete(void* const p)
 }
 
 void gcstack_ReverseWithLevel(gcstack* const gc, const int level) {
-	macro_err(gc == NULL); macro_err(level < 0);
+	macro_err_return(gc == NULL);
+	macro_err_return(level < 0);
 	
 	const int len = gc->length;
 	
@@ -115,7 +116,9 @@ void gcstack_ReverseWithLevel(gcstack* const gc, const int level) {
 void gcstack_ReverseToOtherStackWithLevel
 (gcstack* const from, gcstack* const to, const int level) 
 {
-	macro_err(from == NULL); macro_err(to == NULL); macro_err(level < 0);
+	macro_err_return(from == NULL);
+	macro_err_return(to == NULL);
+	macro_err_return(level < 0);
 	
 	const int length = from->length;
 	
@@ -135,7 +138,7 @@ void gcstack_ReverseToOtherStackWithLevel
 
 gcstack_item** gcstack_CreateItemsArray(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	gcstack_item** const arr = malloc(gc->length*sizeof(void*));
@@ -152,7 +155,7 @@ gcstack_item** gcstack_CreateItemsArray(const gcstack* const gc)
 
 int* gcstack_CreateIntArray(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	int* const arr = malloc(gc->length*sizeof(int));
@@ -171,7 +174,7 @@ int* gcstack_CreateIntArray(const gcstack* const gc)
 
 double* gcstack_CreateDoubleArray(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	double* const arr = malloc(gc->length*sizeof(double));
@@ -190,7 +193,7 @@ double* gcstack_CreateDoubleArray(const gcstack* const gc)
 
 bool* gcstack_CreateBoolArray(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	bool* const arr = malloc(gc->length*sizeof(bool));
@@ -209,7 +212,7 @@ bool* gcstack_CreateBoolArray(const gcstack* const gc)
 
 string* gcstack_CreateStringArray(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	string* const arr = malloc(gc->length*sizeof(string));
@@ -228,7 +231,7 @@ string* gcstack_CreateStringArray(const gcstack* const gc)
 
 gcstack_item** gcstack_CreateItemsArrayBackward(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	gcstack_item** const arr = malloc(length*sizeof(void*));
@@ -245,7 +248,7 @@ gcstack_item** gcstack_CreateItemsArrayBackward(const gcstack* const gc)
 
 int* gcstack_CreateIntArrayBackward(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	int* const arr = malloc(gc->length*sizeof(int));
@@ -264,7 +267,7 @@ int* gcstack_CreateIntArrayBackward(const gcstack* const gc)
 
 double* gcstack_CreateDoubleArrayBackward(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	double* const arr = malloc(length*sizeof(double));
@@ -283,7 +286,7 @@ double* gcstack_CreateDoubleArrayBackward(const gcstack* const gc)
 
 string* gcstack_CreateStringArrayBackward(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	string* const arr = malloc(length*sizeof(string));
@@ -302,7 +305,7 @@ string* gcstack_CreateStringArrayBackward(const gcstack* const gc)
 
 bool* gcstack_CreateBoolArrayBackward(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
 	bool* const arr = malloc(gc->length*sizeof(bool));
@@ -321,7 +324,8 @@ bool* gcstack_CreateBoolArrayBackward(const gcstack* const gc)
 
 void gcstack_Print(const gcstack* const gc, void(* const print)(void*a))
 {
-	macro_err(gc == NULL); macro_err(print == NULL);
+	macro_err_return(gc == NULL);
+	macro_err_return(print == NULL);
 	
 	const int length = gc->length;
 	gcstack_item* item = gc->root->next;
@@ -339,7 +343,7 @@ void gcstack_Print(const gcstack* const gc, void(* const print)(void*a))
 
 void gcstack_PrintInt(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return(gc == NULL);
 	
 	const int length = gc->length;
 	gcstack_item* item = gc->root->next;
@@ -359,7 +363,7 @@ void gcstack_PrintInt(const gcstack* const gc)
 
 void gcstack_PrintString(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return(gc == NULL);
 	
 	const int length = gc->length;
 	gcstack_item* item = gc->root->next;
@@ -379,14 +383,15 @@ void gcstack_PrintString(const gcstack* const gc)
 
 const gcstack_item* gcstack_Start(const gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	return gc->root->next;
 }
 
 void gcstack_EndLevel(gcstack* const gc, const int level)
 {
-	macro_err(gc == NULL); macro_err(level < 0);
+	macro_err_return(gc == NULL);
+	macro_err_return(level < 0);
 	
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item* next;
@@ -412,7 +417,7 @@ void gcstack_EndLevel(gcstack* const gc, const int level)
 
 void gcstack_End(gcstack* const gc, const gcstack_item* const end)
 {
-	macro_err(gc == NULL);
+	macro_err_return(gc == NULL);
 	
 	gcstack_item* cursor = gc->root->next;
 	gcstack_item* next;
@@ -438,7 +443,7 @@ void gcstack_End(gcstack* const gc, const gcstack_item* const end)
 
 void gcstack_free(gcstack* const gc, gcstack_item* const item)
 {
-	macro_err(item == NULL);
+	macro_err_return(item == NULL);
 	
 	if (gc != NULL) {
 		gcstack_Pop(gc, item);
@@ -490,7 +495,8 @@ gcstack_item* gcstack_malloc
 
 void gcstack_Swap(void* const aPtr, void* const bPtr)
 {
-	macro_err(aPtr == NULL); macro_err(bPtr == NULL);
+	macro_err_return(aPtr == NULL);
+	macro_err_return(bPtr == NULL);
 	
 	gcstack_item* const a = (gcstack_item*)aPtr;
 	gcstack_item* const b = (gcstack_item*)bPtr;
@@ -518,7 +524,8 @@ void gcstack_Swap(void* const aPtr, void* const bPtr)
 
 void gcstack_Pop(gcstack* const gc, void* const p)
 {
-	macro_err(gc == NULL); macro_err(p == NULL);
+	macro_err_return(gc == NULL);
+	macro_err_return(p == NULL);
 	
 	gcstack_item* const item = (gcstack_item*)p;
 	// Detach from old stack.
@@ -535,7 +542,8 @@ void gcstack_Pop(gcstack* const gc, void* const p)
 
 void gcstack_Push(gcstack* const gc, gcstack_item* const item)
 {
-	macro_err(gc == NULL); macro_err(item == NULL);
+	macro_err_return(gc == NULL);
+	macro_err_return(item == NULL);
 	
 	// Detach from old stack.
 	if (item->previous != NULL)
@@ -560,7 +568,7 @@ void gcpointer_Delete(void* const p);
 
 void gcpointer_Delete(void* const p) 
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	gcpointer* const gcp = (gcpointer*)p;
 	
@@ -624,7 +632,7 @@ void gcstring_Delete(void* const p);
 
 void gcstring_Delete(void* const p)
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	gcstring* const d = (gcstring* const)p;
 	free(d->val);
@@ -646,7 +654,7 @@ gcstack_item* gcstack_PushString(gcstack* const gc, const char* const val)
 
 double gcstack_PopDouble(gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_zero(gc == NULL);
 	
 	gcstack_item* const item = gc->root->next;
 	if (item == NULL) 
@@ -662,7 +670,7 @@ double gcstack_PopDouble(gcstack* const gc)
 
 int gcstack_PopInt(gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_zero(gc == NULL);
 	
 	gcstack_item* const item = gc->root->next;
 	if (item == NULL) 
@@ -679,7 +687,7 @@ int gcstack_PopInt(gcstack* const gc)
 
 bool gcstack_PopBool(gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_zero(gc == NULL);
 	
 	gcstack_item* const item = gc->root->next;
 	if (item == NULL) 
@@ -696,7 +704,7 @@ bool gcstack_PopBool(gcstack* const gc)
 
 char* gcstack_PopString(gcstack* const gc)
 {
-	macro_err(gc == NULL);
+	macro_err_return_null(gc == NULL);
 	
 	gcstack_item* const item = gc->root->next;
 	if (item == NULL) 
@@ -716,7 +724,8 @@ char* gcstack_PopString(gcstack* const gc)
 
 double gcstack_PopDoubleWithItem(gcstack* const gc, gcstack_item* const item)
 {
-	macro_err(gc == NULL); macro_err(item == NULL);
+	macro_err_return_zero(gc == NULL);
+	macro_err_return_zero(item == NULL);
 	
 	gcstack_Pop(gc, item);
 	
@@ -729,7 +738,8 @@ double gcstack_PopDoubleWithItem(gcstack* const gc, gcstack_item* const item)
 
 int gcstack_PopIntWithItem(gcstack* const gc, gcstack_item* const item)
 {
-	macro_err(gc == NULL); macro_err(item == NULL);
+	macro_err_return_zero(gc == NULL);
+	macro_err_return_zero(item == NULL);
 	
 	gcstack_Pop(gc, item);
 	
@@ -743,7 +753,8 @@ int gcstack_PopIntWithItem(gcstack* const gc, gcstack_item* const item)
 
 bool gcstack_PopBoolWithItem(gcstack* const gc, gcstack_item* const item)
 {
-	macro_err(gc == NULL); macro_err(item == NULL);
+	macro_err_return_zero(gc == NULL);
+	macro_err_return_zero(item == NULL);
 	
 	gcstack_Pop(gc, item);
 	
@@ -758,7 +769,8 @@ bool gcstack_PopBoolWithItem(gcstack* const gc, gcstack_item* const item)
 const char* gcstack_PopStringWithItem
 (gcstack* const gc, gcstack_item* const item)
 {
-	macro_err(gc == NULL); macro_err(item == NULL);
+	macro_err_return_null(gc == NULL);
+	macro_err_return_null(item == NULL);
 	
 	// Since we will need a pointer to return
 	// we can reuse the string instead of copying it.

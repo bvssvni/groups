@@ -49,7 +49,7 @@
 
 void hashLayer_Delete(void* const p)
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	hash_layer* const hashLayer = (hash_layer* const)p;
 	int* const indices = hashLayer->indices;
@@ -78,7 +78,8 @@ hash_layer* hashLayer_GcAlloc(gcstack* const gc)
 
 hash_layer* hashLayer_InitWithSize(hash_layer* const hashLayer, const int n)
 {
-	macro_err(hashLayer == NULL); macro_err(n < 1);
+	macro_err_return_null(hashLayer == NULL);
+	macro_err_return_null(n < 1);
 	
 	hashLayer->indices = NULL;
 	hashLayer->data = NULL;
@@ -135,7 +136,7 @@ int hashLayer_NextPrime(const int prime)
 
 void hashTable_Delete(void* const p)
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	hash_table* const hash = (hash_table* const)p;
 	
@@ -155,7 +156,7 @@ hash_table* hashTable_GcAlloc(gcstack* const gc)
 
 hash_table* hashTable_Init(hash_table* const hash)
 {
-	macro_err(hash == NULL);
+	macro_err_return_null(hash == NULL);
 	
 	hash->layers = gcstack_Init(gcstack_Alloc());
 	gcstack* layers = hash->layers;
@@ -167,7 +168,8 @@ hash_table* hashTable_Init(hash_table* const hash)
 
 hash_table* hashTable_InitWithMember(hash_table* const obj, hash_table* const b)
 {
-	macro_err(obj == NULL); macro_err(b == NULL);
+	macro_err_return_null(obj == NULL);
+	macro_err_return_null(b == NULL);
 	
 	obj->layers = b->layers;
 	obj->m_lastPrime = b->m_lastPrime;
@@ -180,7 +182,8 @@ hash_table* hashTable_InitWithMember(hash_table* const obj, hash_table* const b)
 
 void hashTable_Set(hash_table* const hash, const int id, void* const value)
 {
-	macro_err(hash == NULL); macro_err(id < 0);
+	macro_err_return(hash == NULL);
+	macro_err_return(id < 0);
 	
 	const gcstack_item* cursor = hash->layers->root->next;
 	const hash_layer* layer;
@@ -255,7 +258,8 @@ hashTable_GenerateHashId(const char * const text)
 
 void hashTable_SetStringHash(hash_table* const hash, char* const value)
 {
-	macro_err(hash == NULL); macro_err(value == NULL);
+	macro_err_return(hash == NULL);
+	macro_err_return(value == NULL);
 	
 	int hashId = (int)hashTable_GenerateHashId(value);
 	int id = hashId < 0 ? -hashId : hashId;
@@ -319,7 +323,8 @@ void hashTable_SetStringHash(hash_table* const hash, char* const value)
 
 const void* hashTable_Get(const hash_table* const hash, const int id)
 {
-	macro_err(hash == NULL); macro_err(id < 0);
+	macro_err_return_null(hash == NULL);
+	macro_err_return_null(id < 0);
 	
 	const gcstack_item* cursor = hash->layers->root->next;
 	const hash_layer* layer;
@@ -346,8 +351,8 @@ const void* hashTable_Get(const hash_table* const hash, const int id)
 bool hashTable_ContainsStringHash
 (hash_table* const hash, const char* const value)
 {
-	macro_err(hash == NULL);
-	macro_err(value == NULL);
+	macro_err_return_zero(hash == NULL);
+	macro_err_return_zero(value == NULL);
 	
 	const int hashId = (int)hashTable_GenerateHashId(value);
 	const int id = hashId < 0 ? -hashId : hashId;

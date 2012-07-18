@@ -164,6 +164,27 @@ extern "C" {
 		errorhandling_CrashWithLineAndFunctionAndMessage 	\
 		(__LINE__, __FUNCTION__, #cond);
 	
+#define macro_err_return(cond) 						\
+	if (cond) {							\
+		errorhandling_CrashWithLineAndFunctionAndMessage 	\
+		(__LINE__, __FUNCTION__, #cond);			\
+		return;							\
+	}
+	
+#define macro_err_return_null(cond) 					\
+	if (cond) {							\
+		errorhandling_CrashWithLineAndFunctionAndMessage 	\
+		(__LINE__, __FUNCTION__, #cond);			\
+		return NULL;						\
+	}
+	
+#define macro_err_return_zero(cond) 					\
+	if (cond) {							\
+		errorhandling_CrashWithLineAndFunctionAndMessage 	\
+		(__LINE__, __FUNCTION__, #cond);			\
+		return 0;						\
+	}
+	
 	//
 	//	UNIT TESTING
 	//

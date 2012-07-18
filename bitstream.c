@@ -48,7 +48,7 @@
 
 void bitstream_Delete(void* const p)
 {
-	macro_err(p == NULL);
+	macro_err_return(p == NULL);
 	
 	bitstream* const a = (bitstream* const)p;
 	
@@ -69,7 +69,8 @@ bitstream* bitstream_GcAlloc(gcstack* const gc)
 
 bitstream* bitstream_InitWithSize(bitstream* const a, const int size) 
 {
-	macro_err(a == NULL); macro_err(size < 0);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(size < 0);
 	
 	a->pointer = NULL;
 	
@@ -100,7 +101,9 @@ bitstream* bitstream_InitWithSize(bitstream* const a, const int size)
 bitstream* bitstream_InitWithValues
 (bitstream* const a, const int size, const int* const vals)
 {
-	macro_err(a == NULL); macro_err(size < 0); macro_err(vals == NULL);
+	macro_err_return_null(a == NULL); 
+	macro_err_return_null(size < 0);
+	macro_err_return_null(vals == NULL);
 	
 	a->pointer = NULL;
 	a->length = size;
@@ -181,7 +184,9 @@ int* createArrayFromIndices
 bitstream* bitstream_InitWithIndices
 (bitstream* const a, const int size, const int* const vals)
 {
-	macro_err(a == NULL); macro_err(size < 0); macro_err(vals == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(size < 0);
+	macro_err_return_null(vals == NULL);
 	
 	a->pointer = NULL;
 	
@@ -285,8 +290,10 @@ bitstream* bitstream_InitWithDeltaDouble
 (bitstream* const a, const int n, const double* const oldValues, 
  const double* const newValues)
 {
-	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); 
-	macro_err(newValues == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(n < 0);
+	macro_err_return_null(oldValues == NULL); 
+	macro_err_return_null(newValues == NULL);
 	
 	a->pointer = NULL;
 	
@@ -318,8 +325,10 @@ bitstream* bitstream_InitWithDeltaInt
 (bitstream* const a, const int n, const int* const oldValues, 
  const int* const newValues)
 {
-	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); 
-	macro_err(newValues == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(n < 0);
+	macro_err_return_null(oldValues == NULL); 
+	macro_err_return_null(newValues == NULL);
 	
 	a->pointer = NULL;
 	
@@ -351,8 +360,10 @@ bitstream* bitstream_InitWithDeltaBool
 (bitstream* const a, const int n, const bool* const oldValues, 
  const bool* const newValues)
 {
-	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); 
-	macro_err(newValues == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(n < 0);
+	macro_err_return_null(oldValues == NULL); 
+	macro_err_return_null(newValues == NULL);
 	
 	a->pointer = NULL;
 	
@@ -384,8 +395,10 @@ bitstream* bitstream_InitWithDeltaString
 (bitstream* const a, const int n, const string* const oldValues, 
  const string* const newValues)
 {
-	macro_err(a == NULL); macro_err(n < 0); macro_err(oldValues == NULL); 
-	macro_err(newValues == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(n < 0);
+	macro_err_return_null(oldValues == NULL); 
+	macro_err_return_null(newValues == NULL);
 	
 	a->pointer = NULL;
 	
@@ -417,9 +430,10 @@ bitstream* bitstream_InitWithWordsInString
 (bitstream* const a, const char* const text, const char* const spaceCharacters, 
  const char* const splitCharacters)
 {
-	macro_err(a == NULL); macro_err(text == NULL); 
-	macro_err(spaceCharacters == NULL); 
-	macro_err(splitCharacters == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(text == NULL); 
+	macro_err_return_null(spaceCharacters == NULL); 
+	macro_err_return_null(splitCharacters == NULL);
 	
 	// Loop through and find all sections that does not contain splitting characters.
 	gcstack* const words = gcstack_Init(gcstack_Alloc());
@@ -459,7 +473,7 @@ bitstream* bitstream_InitWithWordsInString
 
 void bitstream_Print(const bitstream* const a)
 {
-	macro_err(a == NULL);
+	macro_err_return(a == NULL);
 	
 	const int length = a->length-1;
 	int p1, p2;
@@ -474,7 +488,8 @@ void bitstream_Print(const bitstream* const a)
 
 bitstream* bitstream_GcDirectJoin
 (gcstack* const gc, const bitstream* const a, const bitstream* const b) {
-	macro_err(a == NULL); macro_err(b == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(b == NULL);
 	
 	bitstream* const arr = (bitstream*)gcstack_malloc
 	(gc, sizeof(bitstream), bitstream_Delete);
@@ -490,7 +505,7 @@ bitstream* bitstream_GcDirectJoin
 }
 
 bitstream* bitstream_GcClone(gcstack* const gc, const bitstream* const a) {
-	macro_err(a == NULL);
+	macro_err_return_null(a == NULL);
 	
 	bitstream* const b = (bitstream*)gcstack_malloc
 	(gc, sizeof(bitstream), bitstream_Delete);
@@ -558,7 +573,8 @@ int countAnd(const bitstream* const a, const bitstream* const b)
 bitstream* bitstream_GcAnd
 (gcstack* const gc, const bitstream* const a, const bitstream* const b)
 {
-	macro_err(a == NULL); macro_err(b == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(b == NULL);
 	
 	int list = 0;
 	bitstream* const arr = bitstream_InitWithSize
@@ -678,7 +694,8 @@ int countOr(const bitstream* const a, const bitstream* const b)
 
 bitstream* bitstream_GcOr(gcstack* gc, bitstream const* a, bitstream const* b)
 {
-	macro_err(a == NULL); macro_err(b == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(b == NULL);
 	
 	int count = countOr(a,b);
 	
@@ -784,7 +801,7 @@ int countInvert(bitstream* const a, const int inv)
 bitstream* bitstream_GcInvert
 (gcstack* const gc, bitstream* const a, const int inv)
 {
-	macro_err(a == NULL);
+	macro_err_return_null(a == NULL);
 	
 	bitstream* const res = bitstream_InitWithSize
 	(bitstream_GcAlloc(gc), countInvert(a, inv));
@@ -874,7 +891,8 @@ int countExcept(const bitstream* const a, const bitstream* const b)
 void bitstream_ExceptTmp
 (const bitstream* const a, const bitstream* const b, bitstream* const tmp)
 {
-	macro_err(a == NULL); macro_err(b == NULL);
+	macro_err_return(a == NULL);
+	macro_err_return(b == NULL);
 	
 	const int a_length = a->length;
 	const int b_length = b->length;
@@ -938,7 +956,8 @@ void bitstream_ExceptTmp
 bitstream* bitstream_GcExcept
 (gcstack* const gc, const bitstream* const a, const bitstream* const b)
 {
-	macro_err(a == NULL); macro_err(b == NULL);
+	macro_err_return_null(a == NULL);
+	macro_err_return_null(b == NULL);
 	
 	const int a_length = a->length;
 	const int b_length = b->length;
@@ -1001,7 +1020,7 @@ bitstream* bitstream_GcExcept
 
 int bitstream_Size(const bitstream* const list)
 {
-	macro_err(list == NULL);
+	macro_err_return_zero(list == NULL);
 	
 	const int listCount = list->length;
 	int sum = 0;
@@ -1049,7 +1068,7 @@ int bitstream_AbsSub(const bitstream* const list)
 
 int bitstream_Abs(const bitstream* const list, const int maximum)
 {
-	macro_err(list == NULL);
+	macro_err_return_zero(list == NULL);
 	
 	if (list->length == 0)
 		return 0;
@@ -1061,21 +1080,21 @@ int bitstream_Abs(const bitstream* const list, const int maximum)
 
 int* bitstream_ArrayPointer(const bitstream* const a)
 {
-	macro_err(a == NULL);
+	macro_err_return_null(a == NULL);
 	
 	return a->pointer;
 }
 
 int bitstream_NumberOfBlocks(const bitstream* const a)
 {
-	macro_err(a == NULL);
+	macro_err_return_zero(a == NULL);
 	
 	return a->length/2;
 }
 
 int bitstream_PopStart(bitstream* const a)
 {
-	macro_err(a == NULL);
+	macro_err_return_zero(a == NULL);
 	
 	const int length = a->length;
 	if (length < 2) return -1;
@@ -1098,7 +1117,7 @@ int bitstream_PopStart(bitstream* const a)
 
 int bitstream_PopEnd(bitstream* const a)
 {
-	macro_err(a == NULL);
+	macro_err_return_zero(a == NULL);
 	
 	const int length = a->length;
 	if (length < 2) return -1;
@@ -1115,7 +1134,7 @@ int bitstream_PopEnd(bitstream* const a)
 
 char** bitstream_GetWords(bitstream* const a, const char* const text)
 {
-	macro_err(a == NULL);
+	macro_err_return_null(a == NULL);
 	
 	if (text == NULL) return NULL;
 	
