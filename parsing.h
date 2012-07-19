@@ -85,6 +85,13 @@ extern "C" {
 	(const char* text, int* delta);
 	
 	//
+	//	Reads an expected keyword from text.
+	//	Returns 0 if the text does not start with the keyword.
+	//
+	int parsing_ReadKeyword
+	(const char* const text, const char* const keyword);
+	
+	//
 	//	Run unit tests for this file.
 	//
 	void parsing_RunUnitTests
