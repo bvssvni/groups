@@ -200,6 +200,40 @@ bitstream* bitstream_InitWithIndices
 	return a;
 }
 
+bitstream* bitstream_InitWithFunction
+(bitstream* const a, const int arrc, const int stride, 
+const void* const arrv, 
+int (*const f)(const void* const p))
+{
+	// The theoretical maximum is twice the size of array.
+	int buff[arrc*2];
+	int v = 0;
+	int tmp;
+	int i;
+	int j = 0;
+	for (i = 0; i < arrc; i++) {
+		tmp = f(arrv+i*stride);
+		
+		// Log changes in the bitstream.
+		if (tmp != v) {
+			buff[j++] = i;
+		}
+			
+		v = tmp;
+	}
+	
+	// Align the bitstream so it becomes finite.
+	if (j % 2 > 0)
+		buff[j++] = i;
+	
+	// Copy data from buffer.
+	a->length = j;
+	a->pointer = malloc(j*sizeof(int));
+	memcpy(a->pointer, buff, j*sizeof(int));
+	
+	return a;
+}
+
 int countDeltaDouble
 (const int n, const double* const old, const double* const new);
 

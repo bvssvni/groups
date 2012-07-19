@@ -114,12 +114,25 @@ extern "C" {
 	
 	//
 	//	Sometimes you have an array of indices and you want to create
-	//	a bitstream from it. The indices that increment with 1 will
+	//	a bitstream describing which indices are following each other
+	//	and which are not. The indices that increment with 1 will
 	//	be merged into same block in the bitstream.
-	//      The indices have to be sorted (monetonized).
+	//  The indices have to be sorted from lowest index to highest.
 	//
 	bitstream* bitstream_InitWithIndices
 	(bitstream* const a, const int size, const int* const vals);
+	
+	//
+	//	This initializes a bitstream with a function that tells
+	//	whether a given property is true for a member in an array.
+	//	It loops through the array and adds the position to the
+	//	bitstream each time property changes.
+	//	The returned value is aligned to give a finite set.
+	//
+	bitstream* bitstream_InitWithFunction
+	(bitstream* const a, const int arrc, const int stride, 
+	const void* const arrv, 
+	int (* const f)(const void* const p));
 	
 	//
 	//      DELTA CHANGES
