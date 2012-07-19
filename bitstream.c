@@ -211,8 +211,10 @@ int (*const f)(const void* const p))
 	int tmp;
 	int i;
 	int j = 0;
+	const byte* const arrb = (const byte* const)arrv;
+	
 	for (i = 0; i < arrc; i++) {
-		tmp = f(arrv+i*stride);
+		tmp = f(arrb+i*stride);
 		
 		// Log changes in the bitstream.
 		if (tmp != v) {
