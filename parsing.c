@@ -231,6 +231,9 @@ char* parsing_ReadEscapedString
 int parsing_ReadKeyword
 (const char* const text, const char* const keyword)
 {
+	macro_err_return_zero(text == NULL);
+	macro_err_return_zero(keyword == NULL);
+	
 	int i;
 	for (i = 0; text[i] != '\0' && keyword[i] != '\0'; i++) {
 		if (text[i] != keyword[i]) return 0;
