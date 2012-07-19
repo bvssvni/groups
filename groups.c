@@ -2594,9 +2594,9 @@ void groups_RunUnitTests(void)
 		groups_FillStringArray
 		(g, prop, groups_GetProperty(g, "Name"), propSize, name);
 		
-		macro_test_double(age[0], 22);
-		macro_test_double(age[1], 11);
-		macro_test_double(age[2], 33);
+		macro_test_double(age[0], 22.0);
+		macro_test_double(age[1], 11.0);
+		macro_test_double(age[2], 33.0);
 		
 		macro_test_int(parent[0], -1);
 		macro_test_int(parent[1], 0);
