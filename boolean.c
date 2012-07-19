@@ -136,6 +136,8 @@ bitstream* boolean_GcEval
 	macro_err(g == NULL); macro_err(expr == NULL);
 	
 	const char* const flow = " v o v op";
+	const char* const valid_exits = "vp";
+	
 	data data = {.stateIndex = 0,
 		.st = gcstack_Init(gcstack_Alloc()),
 		.errorMessage = NULL,
@@ -193,6 +195,21 @@ NEW_STATE:
 	goto NEW_STATE;
 	
 CLEAN_UP:
+	// Check for incomplete expression. This can be done by checking
+	// which state the flow was in before breaking cycle.
+	if (strchr(valid_exits, flow[data.stateIndex]) == NULL) {
+		data.errorMessage = "Incomplete expression";
+		if (err != NULL)
+			err(pos, data.errorMessage);
+		else
+			macro_errExp(data.errorMessage, pos, expr);
+		
+		gcstack_Delete(data.st);
+		free(data.st);
+		
+		return NULL;
+	}
+	
 	// Evaluate all operators.
 	while (data.st->length > 1) {
 		boolean_eval_BinaryOp(data.st);
@@ -210,10 +227,17 @@ CLEAN_UP:
 	return b;
 }
 
+void boolean_silentError(int pos, const char* message);
+void boolean_silentError(int pos, const char* message)
+{
+	
+}
+
 void boolean_RunUnitTests(void)
 {
 	printf("Boolean unit tests - ");
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -229,6 +253,7 @@ void boolean_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -246,6 +271,7 @@ void boolean_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -260,6 +286,7 @@ void boolean_RunUnitTests(void)
 		free(gc);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		gcstack* gc = gcstack_Init(gcstack_Alloc());
 		groups* g = groups_Init(groups_GcAlloc(gc));
@@ -272,6 +299,32 @@ void boolean_RunUnitTests(void)
 		macro_test_int(b->length, 2);
 		macro_test_int(b->pointer[0], 0);
 		macro_test_int(b->pointer[1], 1);
+		gcstack_Delete(gc);
+		free(gc);
+	}
+	
+	printf("%i\r\n", __LINE__);
+	{
+		// Test for incomplete expression.
+		gcstack* gc = gcstack_Init(gcstack_Alloc());
+		groups* g = groups_Init(groups_GcAlloc(gc));
+		int propName = groups_AddProperty(g, "Name", "string");
+		groups_AddProperty(g, "LastName", "string");
+		hash_table* mem = hashTable_Init(hashTable_GcAlloc(gc));
+		hashTable_SetString(mem, propName, "Andrew");
+		groups_AddMember(g, mem);
+		bitstream* b = boolean_GcEval
+		(gc, g, "Name -", boolean_silentError);
+		macro_test_null(b);
+		b = boolean_GcEval
+		(gc, g, "Name - LastName - ", boolean_silentError);
+		macro_test_null(b);
+		b = boolean_GcEval
+		(gc, g, "Name - LastName*", boolean_silentError);
+		macro_test_null(b);
+		b = boolean_GcEval
+		(gc, g, "", boolean_silentError);
+		macro_test_null(b);
 		gcstack_Delete(gc);
 		free(gc);
 	}

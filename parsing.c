@@ -200,7 +200,8 @@ char* parsing_ReadVariableName
 }
 
 char* parsing_ReadEscapedString
-(const char* const text, int* const delta) {
+(const char* const text, int* const delta) 
+{
 	// If the first letter is not starting with '"', return NULL.
 	if (text[0] != '\"') {
 		*delta = 0; return NULL;
@@ -227,10 +228,21 @@ char* parsing_ReadEscapedString
 	return output;
 }
 
+int parsing_ReadKeyword
+(const char* const text, const char* const keyword)
+{
+	int i;
+	for (i = 0; text[i] != '\0' && keyword[i] != '\0'; i++) {
+		if (text[i] != keyword[i]) return 0;
+	}
+	return i;
+}
+
 void parsing_RunUnitTests(void)
 {
 	printf("Parsing unit tests - "); 
 	
+	printf("%i\r\n", __LINE__);
 	{
 		int delta = 0;
 		char* res = parsing_ReadEscapedString("\"foo\"", &delta);
@@ -238,6 +250,7 @@ void parsing_RunUnitTests(void)
 		free(res);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		int delta = 0;
 		char* res = parsing_ReadVariableName("foo bar", "", &delta);
@@ -245,55 +258,88 @@ void parsing_RunUnitTests(void)
 		free(res);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		int delta = parsing_ReadCharacter("foo bar", 'f');
 		macro_test_int(delta, 1);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		int delta = parsing_SkipWhiteSpace("   foo");
 		macro_test_int(delta, 3);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		int num = 0;
 		int delta = parsing_ScanInt("1248", &num);
 		macro_test_int(delta, 4);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		int num = 0;
 		int delta = parsing_ScanInt("20.8", &num);
 		macro_test_int(delta, 0);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		double num = 0;
 		int delta = parsing_ScanDouble("30.7", &num);
 		macro_test_int(delta, 4);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		double num = 0;
 		int delta = parsing_ScanDouble("30", &num);
 		macro_test_int(delta, 2);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		double num = 0;
 		int delta = parsing_ScanDouble("3e4", &num);
 		macro_test_int(delta, 3);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		double num = 0;
 		int delta = parsing_ScanDouble("-10e20", &num);
 		macro_test_int(delta, 6);
 	}
 	
+	printf("%i\r\n", __LINE__);
 	{
 		macro_decl_string_concat(res, "hello ", "world");
 		macro_test_string(res, "hello world");
+	}
+	
+	printf("%i\r\n", __LINE__);
+	{
+		int delta = parsing_ReadKeyword("hello", "hello");
+		macro_test_int(delta, 5);
+	}
+	
+	printf("%i\r\n", __LINE__);
+	{
+		int delta = parsing_ReadKeyword("hello how are you?", "hello");
+		macro_test_int(delta, 5);
+	}
+	
+	printf("%i\r\n", __LINE__);
+	{
+		int delta = parsing_ReadKeyword("helo how are you?", "hello");
+		macro_test_int(delta, 0);
+	}
+	
+	printf("%i\r\n", __LINE__);
+	{
+		int delta = parsing_ReadKeyword("how are you?", "hello");
+		macro_test_int(delta, 0);
 	}
 	
 	printf("OK\r\n");
