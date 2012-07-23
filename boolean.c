@@ -117,14 +117,14 @@ void boolean_eval_ReadVariable
 		return;
 	}
 	
-	int propId = groups_GetProperty(data->g, variableName);
+	int propId = groups_get_property(data->g, variableName);
 	
 	if (propId == -1) {
 		data->errorMessage = "Unknown property";
 		return;
 	}
 	
-	groups_GcGetBitstream(data->st, data->g, propId);
+	groups_gc_get_bitstream(data->st, data->g, propId);
 	
 	free(variableName);
 }
