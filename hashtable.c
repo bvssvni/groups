@@ -347,7 +347,7 @@ const void* hashTable_Get(const hash_table* const hash, const int id)
 	return NULL;
 }
 
-bool hashTable_ContainsStringHash
+int hashTable_ContainsStringHash
 (hash_table* const hash, const char* const value)
 {
 	macro_err_return_zero(hash == NULL);
@@ -422,7 +422,7 @@ void hashTable_SetInt(hash_table* const obj, const int propId, const int val)
 	hashTable_Set(obj, propId, p);
 }
 
-void hashTable_SetBool(hash_table* const obj, const int propId, const bool val)
+void hashTable_SetBool(hash_table* const obj, const int propId, const int val)
 {
 	macro_err(obj == NULL);
 	macro_err(propId < 0);
@@ -433,7 +433,7 @@ void hashTable_SetBool(hash_table* const obj, const int propId, const bool val)
 		return;
 	}
 	
-	bool* const p = malloc(sizeof(bool));
+	int* const p = malloc(sizeof(int));
 	*p = val;
 	hashTable_Set(obj, propId, p);
 }

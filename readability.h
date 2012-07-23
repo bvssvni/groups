@@ -41,7 +41,6 @@ extern "C" {
 #define MEMGROUPS_READABILITY
 	
 	// This is to make the code easier to read and to import from C#.
-#define bool int
 #define true 1
 #define false 0
 #define string const char*
@@ -149,7 +148,7 @@ extern "C" {
 #define macro_hashTable_value(a) _macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_double(a) *(double*)_macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_int(a) *(int*)_macro_layer##a->data[_macro_i##a]
-#define macro_hashTable_bool(a) *(bool*)_macro_layer##a->data[_macro_i##a]
+#define macro_hashTable_bool(a) *(int*)_macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_string(a) (char*)_macro_layer##a->data[_macro_i##a]
 	
 	//

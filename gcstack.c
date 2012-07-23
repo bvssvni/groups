@@ -190,12 +190,12 @@ double* gcstack_CreateDoubleArray(const gcstack* const gc)
 	return arr;
 }
 
-bool* gcstack_CreateBoolArray(const gcstack* const gc)
+int* gcstack_CreateBoolArray(const gcstack* const gc)
 {
 	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
-	bool* const arr = malloc(gc->length*sizeof(bool));
+	int* const arr = malloc(gc->length*sizeof(int));
 	
 	gcstack_item* cursor = gc->root->next;
 	gcbool* item;
@@ -302,12 +302,12 @@ string* gcstack_CreateStringArrayBackward(const gcstack* const gc)
 	return arr;
 }
 
-bool* gcstack_CreateBoolArrayBackward(const gcstack* const gc)
+int* gcstack_CreateBoolArrayBackward(const gcstack* const gc)
 {
 	macro_err_return_null(gc == NULL);
 	
 	const int length = gc->length;
-	bool* const arr = malloc(gc->length*sizeof(bool));
+	int* const arr = malloc(gc->length*sizeof(int));
 	
 	gcstack_item* cursor = gc->root->next;
 	gcbool* item;
@@ -617,7 +617,7 @@ gcstack_item* gcstack_PushInt(gcstack* const gc, const int val)
 	return (gcstack_item*)d;
 }
 
-gcstack_item* gcstack_PushBool(gcstack* const gc, const bool val)
+gcstack_item* gcstack_PushBool(gcstack* const gc, const int val)
 {
 	macro_err(gc == NULL);
 	
@@ -684,7 +684,7 @@ int gcstack_PopInt(gcstack* const gc)
 	return val;
 }
 
-bool gcstack_PopBool(gcstack* const gc)
+int gcstack_PopBool(gcstack* const gc)
 {
 	macro_err_return_zero(gc == NULL);
 	
@@ -695,7 +695,7 @@ bool gcstack_PopBool(gcstack* const gc)
 	gcstack_Pop(gc, item);
 	
 	gcbool* const d = (gcbool*)item;
-	const bool val = d->val;
+	const int val = d->val;
 	free(d);
 	
 	return val;
@@ -750,7 +750,7 @@ int gcstack_PopIntWithItem(gcstack* const gc, gcstack_item* const item)
 }
 
 
-bool gcstack_PopBoolWithItem(gcstack* const gc, gcstack_item* const item)
+int gcstack_PopBoolWithItem(gcstack* const gc, gcstack_item* const item)
 {
 	macro_err_return_zero(gc == NULL);
 	macro_err_return_zero(item == NULL);
@@ -758,7 +758,7 @@ bool gcstack_PopBoolWithItem(gcstack* const gc, gcstack_item* const item)
 	gcstack_Pop(gc, item);
 	
 	gcbool* const d = (gcbool*)item;
-	const bool val = d->val;
+	const int val = d->val;
 	
 	free(d);
 	

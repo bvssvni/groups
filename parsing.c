@@ -42,14 +42,14 @@
 int parsing_ScanfSizeOf(const char* text, const int type) {
 	macro_err(text == NULL);
 	
-	const bool acceptNumeric = true;
-	const bool acceptDot = type == TYPE_DOUBLE || type == TYPE_STRING;
-	const bool acceptDoubleQuote = false;
-	const bool acceptWhiteSpace = type == TYPE_STRING;
-	const bool acceptComma = false;
-	const bool acceptParanthesis = type == TYPE_STRING;
+	const int acceptNumeric = true;
+	const int acceptDot = type == TYPE_DOUBLE || type == TYPE_STRING;
+	const int acceptDoubleQuote = false;
+	const int acceptWhiteSpace = type == TYPE_STRING;
+	const int acceptComma = false;
+	const int acceptParanthesis = type == TYPE_STRING;
 	
-	bool isNumeric, isDot, isDoubleQuote, isWhiteSpace, isComma, 
+	int isNumeric, isDot, isDoubleQuote, isWhiteSpace, isComma, 
 	isParanthesis;
 	
 	int i = 0;

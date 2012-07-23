@@ -475,7 +475,7 @@ void groups_RemoveProperty(groups* const g, const int propId)
 	g->m_propertiesReady = false;
 }
 
-bool groups_IsDefaultVariable
+int groups_IsDefaultVariable
 (const int propId, void* const data)
 {
 	macro_err_return_zero(propId < 0);
@@ -490,7 +490,7 @@ bool groups_IsDefaultVariable
 	}
 	else if (type == TYPE_BOOL)
 	{
-		bool* val = (bool*)data;
+		int* val = (int*)data;
 		if (*val == 0) return true;
 	}
 	else if (type == TYPE_STRING)
@@ -524,7 +524,7 @@ int groups_AddMember(groups* const g, hash_table* const obj)
 	
 	// When reading from file and id does not match,
 	// add 'deleted' members to match up with the id.
-	bool hasId = false;
+	int hasId = false;
 	const int* const oldIdPtr = (int*)hashTable_Get(obj, TMP_ID_PROPID);
 	const int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
 	int newId = id;
@@ -689,7 +689,7 @@ void groups_SetInt
 	// Create member array so we can access members directly.
 	groups_CreateMemberArray(g);
 	
-	const bool isDefault = -1 == val;
+	const int isDefault = -1 == val;
 	int i;
 	hash_table* obj;
 	macro_bitstream_foreach (a) {
@@ -717,7 +717,7 @@ void groups_SetInt
 }
 
 void groups_SetBool
-(groups* const g, const bitstream* const a, const int propId, const bool val)
+(groups* const g, const bitstream* const a, const int propId, const int val)
 {
 	macro_err_return(g == NULL);
 	macro_err_return(a == NULL);
@@ -726,7 +726,7 @@ void groups_SetBool
 	// Create member array so we can access members directly.
 	groups_CreateMemberArray(g);
 	
-	bool isDefault = 0 == val;
+	int isDefault = 0 == val;
 	int i;
 	hash_table* obj;
 	macro_bitstream_foreach (a) {
@@ -907,7 +907,7 @@ void groups_RemoveMembers(groups* const g, bitstream const* prop)
 	free(gc);
 }
 
-bool groups_IsPropertyType(const int propId, const int type)
+int groups_IsPropertyType(const int propId, const int type)
 {
 	return propId/TYPE_STRIDE == type;
 }

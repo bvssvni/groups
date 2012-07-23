@@ -242,8 +242,8 @@ int countDeltaDouble
 (const int n, const double* const old, const double* const new)
 {
 	int count = 0;
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int i;
 	for (i = 0; i < n; i++) {
 		is = new[i] != old[i];
@@ -262,8 +262,8 @@ int countDeltaInt(const int n, const int* const old, const int* const new);
 int countDeltaInt(const int n, const int* const old, const int* const new)
 {
 	int count = 0;
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int i;
 	for (i = 0; i < n; i++) {
 		is = new[i] != old[i];
@@ -278,14 +278,14 @@ int countDeltaInt(const int n, const int* const old, const int* const new)
 }
 
 int countDeltaBool
-(const int n, const bool* const old, const bool* const new);
+(const int n, const int* const old, const int* const new);
 
 int countDeltaBool
-(const int n, const bool* const old, const bool* const new)
+(const int n, const int* const old, const int* const new)
 {
 	int count = 0;
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int i;
 	for (i = 0; i < n; i++) {
 		is = new[i] != old[i];
@@ -306,8 +306,8 @@ int countDeltaString
 (const int n, const string* const old, const string* const new)
 {
 	int counter = 0;
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int i;
 	for (i = 0; i < n; i++) {
 		is = strcmp(new[i], old[i]) != 0;
@@ -340,8 +340,8 @@ bitstream* bitstream_InitWithDeltaDouble
 	const int count = countDeltaDouble(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int k = 0;
 	int i;
 	for (i = 0; i < n; i++) {
@@ -375,8 +375,8 @@ bitstream* bitstream_InitWithDeltaInt
 	const int count = countDeltaInt(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int k = 0;
 	int i;
 	for (i = 0; i < n; i++) {
@@ -392,8 +392,8 @@ bitstream* bitstream_InitWithDeltaInt
 }
 
 bitstream* bitstream_InitWithDeltaBool
-(bitstream* const a, const int n, const bool* const oldValues, 
- const bool* const newValues)
+(bitstream* const a, const int n, const int* const oldValues, 
+ const int* const newValues)
 {
 	macro_err_return_null(a == NULL);
 	macro_err_return_null(n < 0);
@@ -410,8 +410,8 @@ bitstream* bitstream_InitWithDeltaBool
 	int count = countDeltaBool(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int k = 0;
 	int i;
 	for (i = 0; i < n; i++) {
@@ -445,8 +445,8 @@ bitstream* bitstream_InitWithDeltaString
 	const int count = countDeltaString(n, oldValues, newValues);
 	a->length = count;
 	a->pointer = malloc(sizeof(count));
-	bool was = false;
-	bool is;
+	int was = false;
+	int is;
 	int k = 0;
 	int i;
 	for (i = 0; i < n; i++) {
@@ -473,9 +473,9 @@ bitstream* bitstream_InitWithWordsInString
 	// Loop through and find all sections that does not contain splitting characters.
 	gcstack* const words = gcstack_Init(gcstack_Alloc());
 	int k = 0;
-	bool wasSpace = true;
-	bool isSpace = false;
-	bool isSplit = false;
+	int wasSpace = true;
+	int isSpace = false;
+	int isSplit = false;
 	char* spaceCh = NULL;
 	char* splitCh = NULL;
 	char ch;
@@ -563,9 +563,9 @@ int countAnd(const bitstream* const a, const bitstream* const b)
 		return list;
 	
 	int i = 0, j = 0;
-	bool ba = false;
-	bool bb = false;
-	bool oldB = false;
+	int ba = false;
+	int bb = false;
+	int oldB = false;
 	int pa, pb;
 	while (i < a->length || j < b->length)
 	{
@@ -619,9 +619,9 @@ bitstream* bitstream_GcAnd
 		return arr;
 	
 	int i = 0, j = 0;
-	bool ba = false;
-	bool bb = false;
-	bool oldB = false;
+	int ba = false;
+	int bb = false;
+	int oldB = false;
 	int pa, pb;
 	while (i < a->length || j < b->length)
 	{
@@ -682,9 +682,9 @@ int countOr(const bitstream* const a, const bitstream* const b)
 	}
 	
 	int i = 0, j = 0;
-	bool ba = false;
-	bool bb = false;
-	bool oldB = false;
+	int ba = false;
+	int bb = false;
+	int oldB = false;
 	while (i < a->length || j < b->length)
 	{
 		int pa = a->pointer[i>=a->length?a->length-1:i];
@@ -760,9 +760,9 @@ bitstream* bitstream_GcOr(gcstack* gc, bitstream const* a, bitstream const* b)
 	}
 	
 	int i = 0, j = 0;
-	bool ba = false;
-	bool bb = false;
-	bool oldB = false;
+	int ba = false;
+	int bb = false;
+	int oldB = false;
 	while (i < a_length || j < b_length)
 	{
 		int pa = a->pointer[i>=a_length?a_length-1:i];
@@ -807,7 +807,7 @@ int countInvert(bitstream* const a, const int inv)
 	// var res = [];
 	int resCount = 0;
 	
-	bool added = false;
+	int added = false;
 	int i;
 	for (i = 0; i < a->length; i++)
 	{
@@ -843,7 +843,7 @@ bitstream* bitstream_GcInvert
 	
 	int resCount = 0;
 	
-	bool added = false;
+	int added = false;
 	int i;
 	for (i = 0; i < a->length; i++)
 	{
@@ -880,9 +880,9 @@ int countExcept(const bitstream* const a, const bitstream* const b)
 		return list;
 	
 	int i = 0, j = 0;
-	bool ba = false;
-	bool bb = true;
-	bool oldB = false;
+	int ba = false;
+	int bb = true;
+	int oldB = false;
 	int pa;
 	int pb;
 	
@@ -946,9 +946,9 @@ void bitstream_ExceptTmp
 		return;
 	
 	int i = 0, j = 0;
-	bool ba = false;
-	bool bb = true;
-	bool oldB = false;
+	int ba = false;
+	int bb = true;
+	int oldB = false;
 	int pa;
 	int pb;
 	while (i < a_length || j < b_length)
@@ -1008,9 +1008,9 @@ bitstream* bitstream_GcExcept
 		return arr;
 	
 	int i = 0, j = 0;
-	bool ba = false;
-	bool bb = true;
-	bool oldB = false;
+	int ba = false;
+	int bb = true;
+	int oldB = false;
 	int pa;
 	int pb;
 	while (i < a_length || j < b_length)

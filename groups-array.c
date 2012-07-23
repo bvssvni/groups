@@ -180,7 +180,7 @@ void groups_array_SetIntArray
 
 void groups_array_SetBoolArray
 (groups* const g, const bitstream* const a, const int propId, const int n, 
- const bool* const values)
+ const int* const values)
 {
 	macro_err_return(g == NULL);
 	macro_err_return(a == NULL);
@@ -304,7 +304,7 @@ void groups_array_FillIntArray
 
 void groups_array_FillBoolArray
 (groups* const g, const bitstream* const a, const int propId,
- const int arrc, bool* const arr)
+ const int arrc, int* const arr)
 {
 	macro_err_return(g == NULL);
 	macro_err_return(a == NULL);
@@ -322,11 +322,11 @@ void groups_array_FillBoolArray
 	int i;
 	const hash_table* obj;
 	int k = 0;
-	const bool* ptr;
+	const int* ptr;
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		ptr = (const bool*)hashTable_Get(obj, propId);
+		ptr = (const int*)hashTable_Get(obj, propId);
 		if (ptr == NULL)
 			arr[k++] = false;
 		else
