@@ -53,7 +53,6 @@ extern "C" {
 #include "sorting.h"
 #include "hashtable.h"
 #include "groups.h"
-#include "boolean.h"
 #include "parsing.h"
 #include "errorhandling.h"
 #include "readability.h"

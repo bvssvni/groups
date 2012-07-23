@@ -153,9 +153,6 @@ extern "C" {
 	void hashTable_SetBool
 	(hash_table* const obj, const int propId, const int val);
 	
-	void hashTable_RunUnitTests
-	(void);
-	
 #endif
 	
 #ifdef __cplusplus

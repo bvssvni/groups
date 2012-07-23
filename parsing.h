@@ -91,12 +91,6 @@ extern "C" {
 	int parsing_ReadKeyword
 	(const char* const text, const char* const keyword);
 	
-	//
-	//	Run unit tests for this file.
-	//
-	void parsing_RunUnitTests
-	(void);
-	
 #endif
 	
 #ifdef __cplusplus

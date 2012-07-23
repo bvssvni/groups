@@ -306,12 +306,6 @@ extern "C" {
 	char* gcstack_PopIntsAsString
 	(gcstack* gc);
 	
-	//
-	//	Runs unit tests for gcstack.
-	//
-	void gcstack_RunUnitTests
-	(void);
-	
 #endif
 	
 #ifdef __cplusplus

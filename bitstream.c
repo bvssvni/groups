@@ -1197,16 +1197,3 @@ char** bitstream_GetWords(bitstream* const a, const char* const text)
 	return arr;
 }
 
-void bitstream_RunUnitTests(void)
-{
-	printf("Bitstream unit tests - ");
-	
-	{
-		bitstream* b = bitstream_GcAlloc(NULL);
-		macro_test_int(b->length, 0);
-		bitstream_Delete(b);
-		free(b);
-	}
-	
-	printf("OK\r\n");
-}

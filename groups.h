@@ -312,33 +312,9 @@ extern "C" {
 	int groups_IsBool
 	(const int propId);
 	
-	// Saves data to file in JSON format.
-	int        groups_SaveToFile
-	(groups* const g, const char* const fileName);
-	
-	//
-	//	Reads data from a string.
-	//
-	int groups_ReadFromString
-	(groups* const g, const char* const text, const int verbose, 
-	 void(* const err)(int line, int column, const char* message));
-	
-	//
-	// 	Reads data from a file in JSON format.
-	//
-	int groups_ReadFromFile
-	(
-	 groups* g, 
-	 const char* fileName, 
-	 const int verbose, 
-	 void(* const err)(const int line, const int column, const char* const message)
-	 );
-	
-	//
-	//	Run unit tests for groups.
-	//
-	void groups_RunUnitTests
-	(void);
+	bitstream* groups_GcEval
+	(gcstack* const gc, groups* const g, const char* const expr, 
+	 void (* const err)(int pos, const char* message));
 	
 #endif
 	

@@ -314,12 +314,6 @@ extern "C" {
 	int bitstream_PopEnd
 	(bitstream* const a);
 	
-	//
-	//	Runs unit tests for bitstream.
-	//
-	void bitstream_RunUnitTests
-	(void);
-	
 #endif
 	
 #ifdef __cplusplus

@@ -784,28 +784,6 @@ const char* gcstack_PopStringWithItem
 	return val;
 }
 
-/*
- PERFORMANCE COMPLEXITY LEVEL (CL)
- 2^X per 10 sec
- Jun 21 2012 08:06:39
- 8388608
- Leak 0
- Duration: 13.925738
- cl 22.522246, offset -0.477754
- ________________________________
- 
- gcstack* st = gcstack_Init(gcstack_Alloc());
- gcstack_PushInt(st, 'S');
- gcstack_PushInt(st, 'v');
- gcstack_PushInt(st, 'e');
- gcstack_PushInt(st, 'n');
- 
- char* text = gcstack_PopIntsAsString(st);
- free(text);
- 
- gcstack_Delete(st);
- free(st);
- */
 char* gcstack_PopIntsAsString(gcstack* const gc) {
 	char* const str = malloc(sizeof(char)*(gc->length+1));
 	gcstack_item* cursor = gc->root->next;
@@ -820,23 +798,6 @@ char* gcstack_PopIntsAsString(gcstack* const gc) {
 	gcstack_End(gc, NULL);
 	
 	return str;
-}
-
-void gcstack_RunUnitTests(void)
-{
-	printf("GCStack unit tests - ");
-	
-	{
-		gcstack* gc = gcstack_Init(gcstack_Alloc());
-		gcstack_PushInt(gc, 20);
-		macro_test_int(gc->length, 1);
-		gcstack_free(gc, (gcstack_item*)gc->root->next);
-		macro_test_int(gc->length, 0);
-		gcstack_Delete(gc);
-		free(gc);
-	}
-	
-	printf("OK\r\n");
 }
 
 
