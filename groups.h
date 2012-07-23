@@ -40,24 +40,16 @@ extern "C" {
 #ifndef memgroups_groups
 #define memgroups_groups
 	
-#ifndef memgroups_groups_internal
-#undef private
-#define private const
-#else
-#undef private
-#define private
-#endif
-	
 	//
 	//      PROPERTY STRUCTURE
 	//
 	//      This is a sub structure of the Groups structure.
 	//
 	typedef struct property {
-		private gcstack_item gc;
-		private char* private name;
-		private int propId;
-	} private property;
+		gcstack_item gc;
+		char* name;
+		int propId;
+	} property;
 	
 	void property_Delete
 	(void* const p);
@@ -73,24 +65,24 @@ extern "C" {
 	//
 	typedef struct groups {
 		// Allow struct to be garbage collected by gcstack.
-		private gcstack_item gc;
+		gcstack_item gc;
 		
 		// Bitstream data.
-		private gcstack* private bitstreams;
-		private int m_bitstreamsReady;
-		private bitstream** private m_bitstreamsArray;
-		private bitstream* private m_deletedBitstreams;
+		gcstack* bitstreams;
+		int m_bitstreamsReady;
+		bitstream** m_bitstreamsArray;
+		bitstream* m_deletedBitstreams;
 		
 		// Property data.
-		private gcstack* private properties;
-		private int m_propertiesReady;
-		private gcstack_item** private m_sortedPropertyItems;
+		gcstack* properties;
+		int m_propertiesReady;
+		gcstack_item** m_sortedPropertyItems;
 		
 		// Member data.
-		private gcstack* private members;
-		private int m_membersReady;
-		private hash_table** private m_memberArray;
-		private bitstream* private m_deletedMembers;
+		gcstack* members;
+		int m_membersReady;
+		hash_table** m_memberArray;
+		bitstream* m_deletedMembers;
 	} groups;
 	
 	//
@@ -215,102 +207,24 @@ extern "C" {
 	(groups* const g, const bitstream* const a, const int propId, 
 	 const int val);
 	
-	//
-	// Sets an array of doubles.
-	// The values need to be in the same order as when extracted.
-	// Double has no default value, so it is faster than int because
-	// it doesn't need to check.
-	//
-	void groups_SetDoubleArray
-	(groups* const g, const bitstream* const a, const int propId, 
-	 const int n, const double* const values);
-	
-	//
-	// The values need to be in the same order as when extracted.
-	// If the value is default (NULL), then it will delete the property from member.
-	// This is to reduce usage of memory.
-	//
-	void groups_SetStringArray
-	(groups* const g, const bitstream* const a, const int propId, 
-	 const int n, const char** const values);
-	
-	//
-	// The values need to be in the same order as when extracted.
-	// If the value is default (-1), then it will delete the property from member.
-	// This is to reduce usage of memory.
-	//
-	void groups_SetIntArray
-	(groups* const g, const bitstream* const a, const int propId, 
-	 const int n, const int* const values);
-	
-	//
-	// The values need to be in the same order as when extracted.
-	// If the value is default (0), then it will delete the property from member.
-	// This is to reduce usage of memory.
-	//
-	void groups_SetBoolArray
-	(groups* const g, const bitstream* const a, const int propId, 
-	 const int n, const int* const values);
-	
-	double* groups_GetDoubleArray
-	(groups* const g, const bitstream* const a, const int propId);
-	
-	void groups_FillDoubleArray
-	(groups* const g, const bitstream* const a, const int propId, 
-	 const int arrc, double* const arr);
-	
-	int* groups_GetIntArray
-	(groups* const g, const bitstream* const a, const int propId);
-	
-	void groups_FillIntArray
-	(groups* const g, const bitstream* const a, const int propId,
-	 const int arrc, int* const arr);
-	
-	int* groups_GetBoolArray
-	(groups* const g, const bitstream* const a, const int propId);
-	
-	void groups_FillBoolArray
-	(groups* const g, const bitstream* const a, const int propId,
-	 const int arrc, int* const arr);
-	
-	const char** groups_GetStringArray
-	(groups* const g, const bitstream* const a, const int propId);
-	
-	void groups_FillStringArray
-	(groups* const g, const bitstream* const a, const int propId,
-	 const int arrc, const char** const arr);
-	
-	//
-	// Prints a member to the console window with property names and values.
-	// A member has no clue what the property names are, therefore it
-	// has to be a Groups present to print it.
-	//
 	void groups_PrintMember
 	(const groups* const g, const hash_table* const obj);
 	
-	//
-	// Returns true if the variable got default value.
-	//
 	int groups_IsDefaultVariable
 	(const int propId, void* const data);
 	
-	//
-	// Returns true if the property is of an unknown data type.
-	//
-	int groups_IsUnknown
-	(const int propId);
+	int groups_IsPropertyType(const int propId, const int type);
 	
-	int groups_IsDouble
-	(const int propId);
+	void groups_CreateBitstreamArray(groups* const g);
+	void groups_CreateMemberArray(groups* g);
 	
-	int groups_IsInt
-	(const int propId);
+	void groups_SetArray
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int n, const void* const values);
 	
-	int groups_IsString
-	(const int propId);
-	
-	int groups_IsBool
-	(const int propId);
+	void groups_FillArray
+	(groups* const g, const bitstream* const a, const int propId, 
+	 const int arrc, void* const arr);
 	
 	bitstream* groups_GcEval
 	(gcstack* const gc, groups* const g, const char* const expr, 

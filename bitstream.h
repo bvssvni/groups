@@ -40,14 +40,6 @@ extern "C" {
 #ifndef memgroups_bitstream
 #define memgroups_bitstream
 	
-#ifndef memgroups_bitstream_internal
-#undef private
-#define private const
-#else
-#undef private
-#define private
-#endif
-	
 	//
 	//	Bitstream is a mathematical object that contains one
 	//	block for each section in a collection that satisfy a condition.
@@ -83,9 +75,9 @@ extern "C" {
 	//
 	
 	typedef struct bitstream {
-		private gcstack_item gc;
-		private int length;
-		private int* pointer;
+		gcstack_item gc;
+		int length;
+		int* pointer;
 	} bitstream;
 	
 	//

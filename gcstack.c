@@ -41,7 +41,6 @@
 #include "errorhandling.h"
 #include "readability.h"
 
-#define memgroups_gcstack_internal
 #include "gcstack.h"
 
 // This structure is used when pushing pointers to the stack that does
