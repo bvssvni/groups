@@ -614,6 +614,7 @@ void groups_SetDouble
 	macro_err_return(g == NULL);
 	macro_err_return(a == NULL);
 	macro_err_return(propId < 0);
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_DOUBLE));
 	
 	// Create member array so we can access members directly.
 	groups_CreateMemberArray(g);
@@ -667,6 +668,7 @@ void groups_SetString
 	macro_err_return(g == NULL);
 	macro_err_return(a == NULL);
 	macro_err_return(propId < 0);
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_STRING));
 	
 	// Create member array so we can access members directly.
 	groups_CreateMemberArray(g);
@@ -718,6 +720,7 @@ void groups_SetInt
 	macro_err_return(g == NULL);
 	macro_err_return(a == NULL);
 	macro_err_return(propId < 0);
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_INT));
 	
 	// Create member array so we can access members directly.
 	groups_CreateMemberArray(g);
@@ -773,6 +776,7 @@ void groups_SetBool
 	macro_err_return(g == NULL);
 	macro_err_return(a == NULL);
 	macro_err_return(propId < 0);
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_BOOL));
 	
 	// Create member array so we can access members directly.
 	groups_CreateMemberArray(g);

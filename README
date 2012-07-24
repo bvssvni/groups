@@ -6,46 +6,4 @@
 
 by Sven Nilsen 2012.
 
-Groups is a library written in C for group-oriented programming.
-
-Wiki: https://github.com/bvssvni/groups/wiki
-
-Group-oriented programming (GOP) is an plug-in programming paradigm that
-replaces classes with Boolean algebra.
-
-In GOP you write expressions to tell what kind of object you are interested in.
-Only 3 operators are required to emulate any class:
-
-	+	"or"		bitstream_Or (manual)
-	-	"except"	bitstream_Except (manual)
-	*	"and"		bitstream_And (manual)
-
-With these operators you query the data you want to use:
-
-	const char* expr = " Name * Age + IsWorking - CanFly ";
-
-The expression can then be evaluated and then you can do various tasks:
-
-	gcstack* gc = ...;
-	groups* g = ...;
-	bitstream* res = boolean_Eval(gc, g, expr, NULL);
-
-Delete all objects belonging to the group:
-
-	groups_RemoveMembers(g, res);
-
-Create an array of the names:
-
-	char** names = groups_GetStringArray(
-		g, res, groups_GetProperty("Name"));
-
-Set all elements to an array:
-
-	groups_SetDouble(
-		g, res, groups_GetProperty("Age"), 42);
-
-... and much more.
-
-Wiki: https://github.com/bvssvni/groups/wiki
-
-
+"Groups" is a library written in C for group-oriented programming.
