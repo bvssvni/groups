@@ -51,7 +51,7 @@ extern "C" {
 #include "gcstack.h"
 #include "group.h"
 #include "sorting.h"
-#include "hashtable.h"
+#include "member.h"
 #include "gop.h"
 #include "parsing.h"
 #include "errorhandling.h"

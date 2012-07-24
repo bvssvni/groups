@@ -41,7 +41,7 @@
 
 #include "gcstack.h"
 #include "group.h"
-#include "hashtable.h"
+#include "member.h"
 #include "sorting.h"
 
 #include "errorhandling.h"
@@ -527,13 +527,13 @@ int gop_AddMember(gop* const g, hash_table* const obj)
 	// When reading from file and id does not match,
 	// add 'deleted' members to match up with the id.
 	int hasId = false;
-	const int* const oldIdPtr = (int*)hashTable_Get(obj, TMP_ID_PROPID);
+	const int* const oldIdPtr = (int*)member_Get(obj, TMP_ID_PROPID);
 	const int oldId = oldIdPtr == NULL ? id : *oldIdPtr;
 	int newId = id;
 	while (oldId > newId) {
 		// The gcstack malloc sets everything to 0 so we do not need
 		// to set the members here.
-		hashTable_GcAlloc(g->members);
+		member_GcAlloc(g->members);
 		newId++;
 	}
 	if (newId - id > 0)
@@ -553,7 +553,7 @@ int gop_AddMember(gop* const g, hash_table* const obj)
 	id = newId;
 	
 	// Make sure it contains no id.
-	hashTable_Set(obj, TMP_ID_PROPID, NULL);
+	member_Set(obj, TMP_ID_PROPID, NULL);
 	
 	// If the member came with fixed id, then don't reuse an old one.
 	if (!hasId && g->m_deletedMembers->length > 0)
@@ -561,16 +561,16 @@ int gop_AddMember(gop* const g, hash_table* const obj)
 		// Reuse an existing position.
 		gop_CreateMemberArray(g);
 		id = group_PopEnd(g->m_deletedMembers);
-		new = hashTable_InitWithMember(g->m_memberArray[id], obj);
+		new = member_InitWithMember(g->m_memberArray[id], obj);
 	}
 	else
 	{
 		// There is no free positions, so we allocate new.
-		new = hashTable_InitWithMember(hashTable_GcAlloc(g->members), obj);
+		new = member_InitWithMember(member_GcAlloc(g->members), obj);
 	}
 	
 	// Reinitialize the input so one can continue using same object to insert data.
-	hashTable_Init(obj);
+	member_Init(obj);
 	
 	// Prepare bitstreams to be searched.
 	gop_CreateBitstreamArray(g);
@@ -626,7 +626,7 @@ void gop_SetDouble
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetDouble(obj, propId, val);
+		member_SetDouble(obj, propId, val);
 	} macro_bitstream_end_foreach(a)
 	
 	// Double does not have a default value, so we need no condition here.
@@ -654,7 +654,7 @@ double gop_GetDouble(gop* const g, const int propId, const int id)
 	gop_CreateMemberArray(g);
 	
 	hash_table* hs = g->m_memberArray[id];
-	const double* const ptr = hashTable_Get(hs, propId);
+	const double* const ptr = member_Get(hs, propId);
 	if (ptr == NULL) return 0.0;
 	
 	return *ptr;
@@ -680,7 +680,7 @@ void gop_SetString
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetString(obj, propId, val);
+		member_SetString(obj, propId, val);
 	} macro_bitstream_end_foreach(a)
 	
 	gop_CreateBitstreamArray(g);
@@ -713,7 +713,7 @@ const char* gop_GetString(gop* const g, const int propId, const int id)
 	gop_CreateMemberArray(g);
 	
 	hash_table* hs = g->m_memberArray[id];
-	return hashTable_Get(hs, propId);
+	return member_Get(hs, propId);
 }
 
 void gop_SetInt
@@ -733,7 +733,7 @@ void gop_SetInt
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetInt(obj, propId, val);
+		member_SetInt(obj, propId, val);
 	} macro_bitstream_end_foreach(a)
 	
 	gop_CreateBitstreamArray(g);
@@ -766,7 +766,7 @@ int gop_GetInt(gop* const g, const int propId, const int id)
 	gop_CreateMemberArray(g);
 	
 	hash_table* hs = g->m_memberArray[id];
-	const int* const ptr = hashTable_Get(hs, propId);
+	const int* const ptr = member_Get(hs, propId);
 	if (ptr == NULL) return -1;
 	
 	return *ptr;
@@ -789,7 +789,7 @@ void gop_SetBool
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetBool(obj, propId, val);
+		member_SetBool(obj, propId, val);
 	} macro_bitstream_end_foreach(a)
 	
 	gop_CreateBitstreamArray(g);
@@ -822,7 +822,7 @@ int gop_GetBool(gop* const g, const int propId, const int id)
 	gop_CreateMemberArray(g);
 	
 	hash_table* hs = g->m_memberArray[id];
-	const int* const ptr = hashTable_Get(hs, propId);
+	const int* const ptr = member_Get(hs, propId);
 	if (ptr == NULL) return false;
 	
 	return *ptr;
@@ -927,7 +927,7 @@ void gop_RemoveMember(gop* const g, const int index)
 	g->m_membersReady = false;
 	
 	// Free the member but don't delete it, in order to maintain index.
-	hashTable_Delete(obj);
+	member_Delete(obj);
 	
 	// Add the member to bitstream of deleted members for reuse of index.
 	group* d = g->m_deletedMembers;
@@ -965,7 +965,7 @@ void gop_RemoveMembers(gop* const g, const group* const prop)
 		// Free the member but don't delete it, in order to maintain index.
 		index = macro_bitstream_pos(prop);
 		obj = g->m_memberArray[index];
-		hashTable_Delete(obj);
+		member_Delete(obj);
 	} macro_bitstream_end_foreach (prop)
 	
 	g->m_bitstreamsReady = false;

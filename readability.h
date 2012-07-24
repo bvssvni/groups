@@ -131,12 +131,12 @@ extern "C" {
 	
 #define macro_hashTable_foreach(a) 					\
 	const gcstack_item* _macro_cursor##a = a->layers->root->next; 	\
-	const hash_layer* _macro_layer##a; 				\
+	const member_hash_layer* _macro_layer##a; 			\
 	const int* _macro_indices##a; 					\
 	int _macro_n##a, _macro_i##a; 					\
 	for (; _macro_cursor##a != NULL; 				\
 	_macro_cursor##a = _macro_cursor##a->next) { 			\
-		_macro_layer##a = (hash_layer*)_macro_cursor##a; 	\
+		_macro_layer##a = (member_hash_layer*)_macro_cursor##a; \
 		_macro_indices##a = _macro_layer##a->indices; 		\
 		_macro_n##a = _macro_layer##a->n; 			\
 		for (_macro_i##a = 0; 					\

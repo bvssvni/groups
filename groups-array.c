@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #include "gcstack.h"
-#include "hashtable.h"
+#include "member.h"
 #include "group.h"
 #include "gop.h"
 #include "errorhandling.h"
@@ -43,7 +43,7 @@ void groups_array_SetDoubleArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetDouble(obj, propId, values[k++]);
+		member_SetDouble(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
 	gop_CreateBitstreamArray(g);
@@ -86,7 +86,7 @@ void groups_array_SetStringArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetString(obj, propId, values[k++]);
+		member_SetString(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
 	gop_CreateBitstreamArray(g);
@@ -147,7 +147,7 @@ void groups_array_SetIntArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetInt(obj, propId, values[k++]);
+		member_SetInt(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
 	gop_CreateBitstreamArray(g);
@@ -206,7 +206,7 @@ void groups_array_SetBoolArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		hashTable_SetBool(obj, propId, values[k++]);
+		member_SetBool(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
 	gop_CreateBitstreamArray(g);
@@ -262,7 +262,7 @@ void groups_array_FillDoubleArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		ptr = (const double*)hashTable_Get(obj, propId);
+		ptr = (const double*)member_Get(obj, propId);
 		if (ptr == NULL)
 			arr[k++] = 0.0;
 		else
@@ -294,7 +294,7 @@ void groups_array_FillIntArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		ptr = (const int*)hashTable_Get(obj, propId);
+		ptr = (const int*)member_Get(obj, propId);
 		if (ptr == NULL)
 			arr[k++] = -1;
 		else
@@ -326,7 +326,7 @@ void groups_array_FillBoolArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		ptr = (const int*)hashTable_Get(obj, propId);
+		ptr = (const int*)member_Get(obj, propId);
 		if (ptr == NULL)
 			arr[k++] = false;
 		else
@@ -358,7 +358,7 @@ void groups_array_FillStringArray
 	macro_bitstream_foreach (a) {
 		i = macro_bitstream_pos(a);
 		obj = g->m_memberArray[i];
-		arr[k++] = (const char*)hashTable_Get(obj, propId);
+		arr[k++] = (const char*)member_Get(obj, propId);
 	} macro_bitstream_end_foreach(a)
 }
 

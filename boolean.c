@@ -12,7 +12,7 @@
 
 
 #include "gcstack.h"
-#include "hashtable.h"
+#include "member.h"
 #include "group.h"
 #include "gop.h"
 
