@@ -11,8 +11,8 @@
 
 #include "gcstack.h"
 #include "hashtable.h"
-#include "bitstream.h"
-#include "groups.h"
+#include "group.h"
+#include "gop.h"
 #include "errorhandling.h"
 #include "readability.h"
 
@@ -23,7 +23,7 @@
 // It is assumed that members are in the order you got them through the bitstream.
 //
 void groups_array_SetDoubleArray
-(groups* const g, const bitstream* const a, const int propId, const int n, 
+(gop* const g, const group* const a, const int propId, const int n, 
  const double* const values)
 {
 	macro_err_return(g == NULL);
@@ -51,15 +51,15 @@ void groups_array_SetDoubleArray
 	// Update the bitstream, cleaning up manually for saving one malloc call.
 	// It takes only one operation to update all.
 	int propIndex = propId%TYPE_STRIDE;
-	bitstream* b = g->m_bitstreamsArray[propIndex];
-	bitstream* c = bitstream_GcOr(NULL, b, a);
+	group* b = g->m_bitstreamsArray[propIndex];
+	group* c = bitstream_GcOr(NULL, b, a);
 	gcstack_Swap(c, b);
 	bitstream_Delete(b);
 	free(b);
 }
 
 void groups_array_SetStringArray
-(groups* const g, const bitstream* const a, const int propId, const int n, 
+(gop* const g, const group* const a, const int propId, const int n, 
  const char** const values)
 {
 	macro_err_return(g == NULL);
@@ -97,16 +97,16 @@ void groups_array_SetStringArray
 	// so we use the gcstack for safety.
 	// It takes only one operation to update all.
 	int propIndex = propId%TYPE_STRIDE;
-	bitstream* b = g->m_bitstreamsArray[propIndex];
+	group* b = g->m_bitstreamsArray[propIndex];
 	
-	bitstream* notDef = bitstream_InitWithIndices
+	group* notDef = bitstream_InitWithIndices
 	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	bitstream* isDef = bitstream_GcExcept(gc, a, notDef);
+	group* isDef = bitstream_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	bitstream* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
+	group* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -120,7 +120,7 @@ void groups_array_SetStringArray
 
 
 void groups_array_SetIntArray
-(groups* const g, const bitstream* const a, const int propId, const int n, 
+(gop* const g, const group* const a, const int propId, const int n, 
  const int* values)
 {
 	macro_err_return(g == NULL);
@@ -158,16 +158,16 @@ void groups_array_SetIntArray
 	// so we use the gcstack for safety.
 	// It takes only one operation to update all.
 	int propIndex = propId%TYPE_STRIDE;
-	bitstream* b = g->m_bitstreamsArray[propIndex];
+	group* b = g->m_bitstreamsArray[propIndex];
 	
-	bitstream* notDef = bitstream_InitWithIndices
+	group* notDef = bitstream_InitWithIndices
 	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	bitstream* isDef = bitstream_GcExcept(gc, a, notDef);
+	group* isDef = bitstream_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	bitstream* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
+	group* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -179,7 +179,7 @@ void groups_array_SetIntArray
 }
 
 void groups_array_SetBoolArray
-(groups* const g, const bitstream* const a, const int propId, const int n, 
+(gop* const g, const group* const a, const int propId, const int n, 
  const int* const values)
 {
 	macro_err_return(g == NULL);
@@ -217,16 +217,16 @@ void groups_array_SetBoolArray
 	// so we use the gcstack for safety.
 	// It takes only one operation to update all.
 	const int propIndex = propId%TYPE_STRIDE;
-	bitstream* b = g->m_bitstreamsArray[propIndex];
+	group* b = g->m_bitstreamsArray[propIndex];
 	
-	bitstream* notDef = bitstream_InitWithIndices
+	group* notDef = bitstream_InitWithIndices
 	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	bitstream* isDef = bitstream_GcExcept(gc, a, notDef);
+	group* isDef = bitstream_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	bitstream* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
+	group* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -238,7 +238,7 @@ void groups_array_SetBoolArray
 }
 
 void groups_array_FillDoubleArray
-(groups* const g, const bitstream* const a, const int propId, 
+(gop* const g, const group* const a, const int propId, 
  const int arrc, double* const arr)
 {
 	macro_err_return(g == NULL);
@@ -271,7 +271,7 @@ void groups_array_FillDoubleArray
 }
 
 void groups_array_FillIntArray
-(groups* const g, const bitstream* const a, const int propId,
+(gop* const g, const group* const a, const int propId,
  const int arrc, int* const arr)
 {
 	macro_err_return(g == NULL);
@@ -303,7 +303,7 @@ void groups_array_FillIntArray
 }
 
 void groups_array_FillBoolArray
-(groups* const g, const bitstream* const a, const int propId,
+(gop* const g, const group* const a, const int propId,
  const int arrc, int* const arr)
 {
 	macro_err_return(g == NULL);
@@ -335,7 +335,7 @@ void groups_array_FillBoolArray
 }
 
 void groups_array_FillStringArray
-(groups* const g, const bitstream* const a, const int propId,
+(gop* const g, const group* const a, const int propId,
  const int arrc, const char** const arr)
 {
 	macro_err_return(g == NULL);

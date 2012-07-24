@@ -28,8 +28,8 @@ extern "C" {
 	//	The idea is to provide easy prototyping and power-user features
 	//	without need for explicit implementing of these functions.
 	//
-	bitstream* boolean_GcEval
-	(gcstack* const gc, groups* const g, const char* const expr, 
+	group* boolean_GcEval
+	(gcstack* const gc, gop* const g, const char* const expr, 
 	 void (* const err)(int pos, const char* message));
 	
 #endif

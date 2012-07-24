@@ -49,10 +49,10 @@ extern "C" {
 #include <string.h>
 	
 #include "gcstack.h"
-#include "bitstream.h"
+#include "group.h"
 #include "sorting.h"
 #include "hashtable.h"
-#include "groups.h"
+#include "gop.h"
 #include "parsing.h"
 #include "errorhandling.h"
 #include "readability.h"

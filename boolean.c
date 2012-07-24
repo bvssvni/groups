@@ -13,8 +13,8 @@
 
 #include "gcstack.h"
 #include "hashtable.h"
-#include "bitstream.h"
-#include "groups.h"
+#include "group.h"
+#include "gop.h"
 
 #include "parsing.h"
 
@@ -31,8 +31,8 @@ void boolean_eval_BinaryOp(gcstack* const st)
 	const char op = (char)opItem->val;
 	
 	// Pop arguments and operator from stack.
-	bitstream* const arg2 = (bitstream*)st->root->next;
-	bitstream* const arg1 = (bitstream*)st->root->next->next->next;
+	group* const arg2 = (group*)st->root->next;
+	group* const arg1 = (group*)st->root->next->next->next;
 	
 	switch (op) {
 		case '*':
@@ -58,17 +58,17 @@ void boolean_eval_BinaryOp(gcstack* const st)
 }
 
 
-typedef struct data
+typedef struct expr_data
 {
 	gcstack* const st;
 	const char* errorMessage;
 	int delta;
 	int stateIndex;
-	groups* const g;
-} data;
+	gop* const g;
+} expr_data;
 
-void boolean_eval_CheckPrecedence(data* data, const int repeatIndex);
-void boolean_eval_CheckPrecedence(data* data, const int repeatIndex)
+void boolean_eval_CheckPrecedence(expr_data* data, const int repeatIndex);
+void boolean_eval_CheckPrecedence(expr_data* data, const int repeatIndex)
 {
 	// We can access the operators directly on the stack.
 	char op2 = (char)((gcint*)(data->st->root->next))->val;
@@ -86,10 +86,10 @@ void boolean_eval_CheckPrecedence(data* data, const int repeatIndex)
 }
 
 void boolean_eval_ReadOperator
-(data *data, const int pos, const char* const expr, const char* const ops);
+(expr_data *data, const int pos, const char* const expr, const char* const ops);
 
 void boolean_eval_ReadOperator
-(data *data, const int pos, const char* const expr, const char* const ops)
+(expr_data *data, const int pos, const char* const expr, const char* const ops)
 {
 	char op = parsing_ReadOneCharacterOf
 	(expr+pos, ops, &data->delta);
@@ -103,10 +103,10 @@ void boolean_eval_ReadOperator
 }
 
 void boolean_eval_ReadVariable
-(data *data, const int pos, const char* const expr, const char* const ops);
+(expr_data *data, const int pos, const char* const expr, const char* const ops);
 
 void boolean_eval_ReadVariable
-(data *data, const int pos, const char* const expr, const char* const ops)
+(expr_data *data, const int pos, const char* const expr, const char* const ops)
 {
 	char* const variableName = parsing_ReadVariableName
 	(expr+pos, ops, &data->delta);
@@ -129,8 +129,8 @@ void boolean_eval_ReadVariable
 	free(variableName);
 }
 
-bitstream* boolean_GcEval
-(gcstack* const gc, groups* const g, const char* const expr, 
+group* boolean_GcEval
+(gcstack* const gc, gop* const g, const char* const expr, 
  void (* const err)(int pos, const char* message))
 {
 	macro_err(g == NULL); macro_err(expr == NULL);
@@ -138,7 +138,7 @@ bitstream* boolean_GcEval
 	const char* const flow = " v o v op";
 	const char* const valid_exits = "vp";
 	
-	data data = {.stateIndex = 0,
+	expr_data data = {.stateIndex = 0,
 		.st = gcstack_Init(gcstack_Alloc()),
 		.errorMessage = NULL,
 		.delta = 0,
@@ -215,7 +215,7 @@ CLEAN_UP:
 		boolean_eval_BinaryOp(data.st);
 	}
 	
-	bitstream* b = (bitstream*)data.st->root->next;
+	group* b = (group*)data.st->root->next;
 	if (gc != NULL)
 		gcstack_Push(gc, (gcstack_item*)b);
 	else
