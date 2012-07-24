@@ -33,7 +33,7 @@ void groups_array_SetDoubleArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -46,7 +46,7 @@ void groups_array_SetDoubleArray
 		hashTable_SetDouble(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_create_bitstream_array(g);
+	groups_CreateBitstreamArray(g);
 	
 	// Update the bitstream, cleaning up manually for saving one malloc call.
 	// It takes only one operation to update all.
@@ -69,7 +69,7 @@ void groups_array_SetStringArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -89,7 +89,7 @@ void groups_array_SetStringArray
 		hashTable_SetString(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_create_bitstream_array(g);
+	groups_CreateBitstreamArray(g);
 	
 	gcstack* const gc = gcstack_Init(gcstack_Alloc());
 	
@@ -130,7 +130,7 @@ void groups_array_SetIntArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -150,7 +150,7 @@ void groups_array_SetIntArray
 		hashTable_SetInt(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_create_bitstream_array(g);
+	groups_CreateBitstreamArray(g);
 	
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
@@ -189,7 +189,7 @@ void groups_array_SetBoolArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -209,7 +209,7 @@ void groups_array_SetBoolArray
 		hashTable_SetBool(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_create_bitstream_array(g);
+	groups_CreateBitstreamArray(g);
 	
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
@@ -246,10 +246,10 @@ void groups_array_FillDoubleArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_is_property_type(propId, TYPE_DOUBLE));
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_DOUBLE));
 	
 	// Make sure we have a table with pointers to members.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	const int size = bitstream_Size(a);
 	macro_err(size > arrc);
@@ -279,10 +279,10 @@ void groups_array_FillIntArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_is_property_type(propId, TYPE_INT));
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_INT));
 	
 	// Make sure we have a table with pointers to members.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	const int size = bitstream_Size(a);
 	macro_err(size > arrc);
@@ -311,10 +311,10 @@ void groups_array_FillBoolArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_is_property_type(propId, TYPE_BOOL));
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_BOOL));
 	
 	// Make sure we have a table with pointers to members.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	const int size = bitstream_Size(a);
 	macro_err(size > arrc);
@@ -343,10 +343,10 @@ void groups_array_FillStringArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_is_property_type(propId, TYPE_STRING));
+	macro_err_return(!groups_IsPropertyType(propId, TYPE_STRING));
 	
 	// Make sure we have a table with pointers to members.
-	groups_create_member_array(g);
+	groups_CreateMemberArray(g);
 	
 	const int size = bitstream_Size(a);
 	macro_err(size > arrc);
