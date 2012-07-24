@@ -201,13 +201,23 @@ extern "C" {
 	(groups* const g, const bitstream* const a, const int propId, 
 	 const char* const val);
 	
+	const char* groups_GetString
+	(groups* const g, const int propId, const int id);
+	
 	void groups_SetInt
 	(groups* const g, const bitstream* const a, const int propId, 
 	 const int val);
 	
+	int groups_GetInt(groups* const g, const int propId, const int id);
+	
 	void groups_SetBool
 	(groups* const g, const bitstream* const a, const int propId, 
 	 const int val);
+	
+	int groups_GetBool(groups* const g, const int propId, const int id);
+	
+	double groups_GetDouble
+	(groups* const g, const int propId, const int id);
 	
 	void groups_PrintMember
 	(const groups* const g, const hash_table* const obj);

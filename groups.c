@@ -639,6 +639,24 @@ void groups_SetDouble
 	free(b);
 }
 
+double groups_GetDouble(groups* const g, const int propId, const int id)
+{
+	macro_err_return_zero(g == NULL);
+	macro_err_return_zero(propId < 0);
+	macro_err_return_zero(id >= g->members->length);
+	macro_err_return_zero(id < 0);
+	macro_err_return_zero(!groups_IsPropertyType(propId, TYPE_DOUBLE));
+	
+	// Create member array so we can access members directly.
+	groups_CreateMemberArray(g);
+	
+	hash_table* hs = g->m_memberArray[id];
+	const double* const ptr = hashTable_Get(hs, propId);
+	if (ptr == NULL) return 0.0;
+	
+	return *ptr;
+}
+
 //
 // This method sets all variables within a bitstream to a value.
 //
@@ -679,6 +697,21 @@ void groups_SetString
 	free(b);
 }
 
+const char* groups_GetString(groups* const g, const int propId, const int id)
+{
+	macro_err_return_zero(g == NULL);
+	macro_err_return_zero(propId < 0);
+	macro_err_return_zero(id >= g->members->length);
+	macro_err_return_zero(id < 0);
+	macro_err_return_zero(!groups_IsPropertyType(propId, TYPE_STRING));
+	
+	// Create member array so we can access members directly.
+	groups_CreateMemberArray(g);
+	
+	hash_table* hs = g->m_memberArray[id];
+	return hashTable_Get(hs, propId);
+}
+
 void groups_SetInt
 (groups* const g, const bitstream* const a, const int propId, const int val)
 {
@@ -716,6 +749,24 @@ void groups_SetInt
 	free(b);
 }
 
+int groups_GetInt(groups* const g, const int propId, const int id)
+{
+	macro_err_return_zero(g == NULL);
+	macro_err_return_zero(propId < 0);
+	macro_err_return_zero(id >= g->members->length);
+	macro_err_return_zero(id < 0);
+	macro_err_return_zero(!groups_IsPropertyType(propId, TYPE_INT));
+	
+	// Create member array so we can access members directly.
+	groups_CreateMemberArray(g);
+	
+	hash_table* hs = g->m_memberArray[id];
+	const int* const ptr = hashTable_Get(hs, propId);
+	if (ptr == NULL) return -1;
+	
+	return *ptr;
+}
+
 void groups_SetBool
 (groups* const g, const bitstream* const a, const int propId, const int val)
 {
@@ -751,6 +802,24 @@ void groups_SetBool
 	gcstack_Swap(c, b);
 	bitstream_Delete(b);
 	free(b);
+}
+
+int groups_GetBool(groups* const g, const int propId, const int id)
+{
+	macro_err_return_zero(g == NULL);
+	macro_err_return_zero(propId < 0);
+	macro_err_return_zero(id >= g->members->length);
+	macro_err_return_zero(id < 0);
+	macro_err_return_zero(!groups_IsPropertyType(propId, TYPE_BOOL));
+	
+	// Create member array so we can access members directly.
+	groups_CreateMemberArray(g);
+	
+	hash_table* hs = g->m_memberArray[id];
+	const int* const ptr = hashTable_Get(hs, propId);
+	if (ptr == NULL) return false;
+	
+	return *ptr;
 }
 
 void groups_SetArray
