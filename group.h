@@ -84,7 +84,7 @@ extern "C" {
 	//	Allocates on a garbage collector stack.
 	//	This technique makes it easier to write safe code.
 	//
-	group* bitstream_GcAlloc
+	group* group_GcAlloc
 	(gcstack* const gc);
 	
 	//
@@ -95,13 +95,13 @@ extern "C" {
 	//	Each odd term (%2=1) marks the shift from false to true,
 	//	while even term (%2=0) marks the shift from true to false.
 	//
-	group* bitstream_InitWithSize
+	group* group_InitWithSize
 	(group* const a, const int size);
 	
 	//
 	//	Initializes with values.
 	//
-	group* bitstream_InitWithValues
+	group* group_InitWithValues
 	(group* const a, const int size, const int* const vals);
 	
 	//
@@ -111,7 +111,7 @@ extern "C" {
 	//	be merged into same block in the bitstream.
 	//  The indices have to be sorted from lowest index to highest.
 	//
-	group* bitstream_InitWithIndices
+	group* group_InitWithIndices
 	(group* const a, const int size, const int* const vals);
 	
 	//
@@ -121,7 +121,7 @@ extern "C" {
 	//	bitstream each time property changes.
 	//	The returned value is aligned to give a finite set.
 	//
-	group* bitstream_InitWithFunction
+	group* group_InitWithFunction
 	(group* const a, const int arrc, const int stride, 
 	const void* const arrv, 
 	int (* const f)(const void* const p));
@@ -134,19 +134,19 @@ extern "C" {
 	//      It is assumed that the arrays got the same size.
 	//
 	
-	group* bitstream_InitWithDeltaDouble
+	group* group_InitWithDeltaDouble
 	(group* const a, const int n, const double* const oldValues, 
 	 const double* const newValues);
 	
-	group* bitstream_InitWithDeltaInt
+	group* group_InitWithDeltaInt
 	(group* const a, const int n, const int* const oldValues, 
 	 const int* const newValues);
 	
-	group* bitstream_InitWithDeltaBool
+	group* group_InitWithDeltaBool
 	(group* const a, const int n, const int* const oldValues, 
 	 const int* const newValues);
 	
-	group* bitstream_InitWithDeltaString
+	group* group_InitWithDeltaString
 	(group* const a, const int n, const char** const oldValues, 
 	 const char** const newValues);
 	
@@ -157,14 +157,14 @@ extern "C" {
 	//      Space characters are ignored if they are neighbors to a previous one, for example '  '.
 	//      Split characters are not ignores when neighbor to a previous one, for example 'a,,b,c'.
 	//
-	group* bitstream_InitWithWordsInString
+	group* group_InitWithWordsInString
 	(group* const a, const char* const text, 
 	 const char* const spaceCharacters, const char* const splitCharacters);
 	
 	//
 	//      Returns an array of strings by extracting word locations within a text.
 	//
-	char** bitstream_GetWords
+	char** group_GetWords
 	(group* const a, const char* const text);
 	
 	//
@@ -176,7 +176,7 @@ extern "C" {
 	//	You can reuse a bitstream for another if you do not
 	//	release the pointer after calling bitstream_Delete.
 	//
-	void bitstream_Delete
+	void group_Delete
 	(void* const p);
 	
 	//
@@ -184,20 +184,20 @@ extern "C" {
 	//	A bitstream is logically divided into blocks
 	//	a=>b means the block starts at a and ends right before b.
 	//
-	void bitstream_Print
+	void group_Print
 	(const group* const a);
 	
 	//
 	//	If you know all indices in a is less than b,
 	//	then using DirectJoin is a faster operation than Or.
 	//
-	group* bitstream_GcDirectJoin
+	group* group_GcDirectJoin
 	(gcstack* const gc, const group* const a, const group* const b);
 	
 	//
 	//	Creates a copy of the bitstream.
 	//
-	group* bitstream_GcClone
+	group* group_GcClone
 	(gcstack* const gc, const group* const a);
 	
 	//
@@ -207,7 +207,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countAnd'.
 	//
-	group* bitstream_GcAnd
+	group* group_GcAnd
 	(gcstack* const gc, const group* const a, const group* const b);
 	
 	//
@@ -217,7 +217,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countOr'.
 	//
-	group* bitstream_GcOr
+	group* group_GcOr
 	(gcstack* const gc, const group* const a, const group* const b);
 	
 	//
@@ -230,7 +230,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countExcept'.
 	//
-	group* bitstream_GcExcept
+	group* group_GcExcept
 	(gcstack* const gc, const group* const a, const group* const b);
 	
 	//
@@ -238,7 +238,7 @@ extern "C" {
 	//	It differs from 'bitstream_Except' by the way that the struct
 	//	used to contain the values must be passed to the function.
 	//
-	void bitstream_ExceptTmp
+	void group_ExceptTmp
 	(const group* const a, 
 	 const group* const b, group* const tmp);
 	
@@ -254,7 +254,7 @@ extern "C" {
 	//	to figure out the needed size, then it does the actual job.
 	//	The simulation algorithm is hidden in the .c file as 'countInvert'.
 	//
-	group* bitstream_GcInvert
+	group* group_GcInvert
 	(gcstack* const gc, group* const a, const int inv);
 	
 	//
@@ -263,7 +263,7 @@ extern "C" {
 	//	of the bitstream, use 'bitstream_Abs' instead if you need
 	//	to support bitstreams ending in infinity.
 	//
-	int bitstream_Size
+	int group_Size
 	(const group* const list);
 	
 	//
@@ -274,19 +274,19 @@ extern "C" {
 	//	then you can use 'bitstream_AbsSub' in the .c file.
 	//	For usual applications it is enough with this method.
 	//
-	int bitstream_Abs
+	int group_Abs
 	(const group* const list, const int maximum);
 	
 	//
 	//	Returns the pointer at beginning of bitstream.
 	//
-	int* bitstream_ArrayPointer
+	int* group_ArrayPointer
 	(const group* const a);
 	
 	//
 	//	Returns the amoutn of blocks in the bitstream.
 	//
-	int bitstream_NumberOfBlocks
+	int group_NumberOfBlocks
 	(const group* const a);
 	
 	//
@@ -295,7 +295,7 @@ extern "C" {
 	//	operations at the end of each block.
 	//	Don't use it on inverted bitstreams.
 	//
-	int bitstream_PopStart
+	int group_PopStart
 	(group* const a);
 	
 	//
@@ -303,7 +303,7 @@ extern "C" {
 	//	This is faster than PopStart, because no need to move data.
 	//	Don't use it on inverted bitstreams.
 	//
-	int bitstream_PopEnd
+	int group_PopEnd
 	(group* const a);
 	
 #endif

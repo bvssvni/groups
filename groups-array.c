@@ -33,7 +33,7 @@ void groups_array_SetDoubleArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -46,15 +46,15 @@ void groups_array_SetDoubleArray
 		hashTable_SetDouble(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_CreateBitstreamArray(g);
+	gop_CreateBitstreamArray(g);
 	
 	// Update the bitstream, cleaning up manually for saving one malloc call.
 	// It takes only one operation to update all.
 	int propIndex = propId%TYPE_STRIDE;
 	group* b = g->m_bitstreamsArray[propIndex];
-	group* c = bitstream_GcOr(NULL, b, a);
+	group* c = group_GcOr(NULL, b, a);
 	gcstack_Swap(c, b);
-	bitstream_Delete(b);
+	group_Delete(b);
 	free(b);
 }
 
@@ -69,7 +69,7 @@ void groups_array_SetStringArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -89,7 +89,7 @@ void groups_array_SetStringArray
 		hashTable_SetString(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_CreateBitstreamArray(g);
+	gop_CreateBitstreamArray(g);
 	
 	gcstack* const gc = gcstack_Init(gcstack_Alloc());
 	
@@ -99,14 +99,14 @@ void groups_array_SetStringArray
 	int propIndex = propId%TYPE_STRIDE;
 	group* b = g->m_bitstreamsArray[propIndex];
 	
-	group* notDef = bitstream_InitWithIndices
-	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
+	group* notDef = group_InitWithIndices
+	(group_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	group* isDef = bitstream_GcExcept(gc, a, notDef);
+	group* isDef = group_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	group* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
+	group* c = group_GcExcept(gc, group_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -130,7 +130,7 @@ void groups_array_SetIntArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -150,7 +150,7 @@ void groups_array_SetIntArray
 		hashTable_SetInt(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_CreateBitstreamArray(g);
+	gop_CreateBitstreamArray(g);
 	
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
@@ -160,14 +160,14 @@ void groups_array_SetIntArray
 	int propIndex = propId%TYPE_STRIDE;
 	group* b = g->m_bitstreamsArray[propIndex];
 	
-	group* notDef = bitstream_InitWithIndices
-	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
+	group* notDef = group_InitWithIndices
+	(group_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	group* isDef = bitstream_GcExcept(gc, a, notDef);
+	group* isDef = group_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	group* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
+	group* c = group_GcExcept(gc, group_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -189,7 +189,7 @@ void groups_array_SetBoolArray
 	macro_err_return(values == NULL);
 	
 	// Create member array so we can access members directly.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
 	int i;
 	hash_table* obj;
@@ -209,7 +209,7 @@ void groups_array_SetBoolArray
 		hashTable_SetBool(obj, propId, values[k++]);
 	} macro_bitstream_end_foreach(a)
 	
-	groups_CreateBitstreamArray(g);
+	gop_CreateBitstreamArray(g);
 	
 	gcstack* gc = gcstack_Init(gcstack_Alloc());
 	
@@ -219,14 +219,14 @@ void groups_array_SetBoolArray
 	const int propIndex = propId%TYPE_STRIDE;
 	group* b = g->m_bitstreamsArray[propIndex];
 	
-	group* notDef = bitstream_InitWithIndices
-	(bitstream_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
+	group* notDef = group_InitWithIndices
+	(group_GcAlloc(gc), notDefaultIndicesSize, notDefaultIndices);
 	
 	// These are those who are default.
-	group* isDef = bitstream_GcExcept(gc, a, notDef);
+	group* isDef = group_GcExcept(gc, a, notDef);
 	
 	// existing + notDef - (input - notDef)
-	group* c = bitstream_GcExcept(gc, bitstream_GcOr(gc, b, notDef), isDef);
+	group* c = group_GcExcept(gc, group_GcOr(gc, b, notDef), isDef);
 	
 	gcstack_Swap(c, b);
 	
@@ -246,12 +246,12 @@ void groups_array_FillDoubleArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_IsPropertyType(propId, TYPE_DOUBLE));
+	macro_err_return(!gop_IsPropertyType(propId, TYPE_DOUBLE));
 	
 	// Make sure we have a table with pointers to members.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
-	const int size = bitstream_Size(a);
+	const int size = group_Size(a);
 	macro_err(size > arrc);
 	
 	int i;
@@ -279,12 +279,12 @@ void groups_array_FillIntArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_IsPropertyType(propId, TYPE_INT));
+	macro_err_return(!gop_IsPropertyType(propId, TYPE_INT));
 	
 	// Make sure we have a table with pointers to members.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
-	const int size = bitstream_Size(a);
+	const int size = group_Size(a);
 	macro_err(size > arrc);
 	
 	int i;
@@ -311,12 +311,12 @@ void groups_array_FillBoolArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_IsPropertyType(propId, TYPE_BOOL));
+	macro_err_return(!gop_IsPropertyType(propId, TYPE_BOOL));
 	
 	// Make sure we have a table with pointers to members.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
-	const int size = bitstream_Size(a);
+	const int size = group_Size(a);
 	macro_err(size > arrc);
 	
 	int i;
@@ -343,12 +343,12 @@ void groups_array_FillStringArray
 	macro_err_return(propId < 0);
 	macro_err_return(arr == NULL);
 	macro_err_return(arrc < 0);
-	macro_err_return(!groups_IsPropertyType(propId, TYPE_STRING));
+	macro_err_return(!gop_IsPropertyType(propId, TYPE_STRING));
 	
 	// Make sure we have a table with pointers to members.
-	groups_CreateMemberArray(g);
+	gop_CreateMemberArray(g);
 	
-	const int size = bitstream_Size(a);
+	const int size = group_Size(a);
 	macro_err(size > arrc);
 	
 	int i;

@@ -36,20 +36,20 @@ void boolean_eval_BinaryOp(gcstack* const st)
 	
 	switch (op) {
 		case '*':
-			bitstream_GcAnd(st, arg1, arg2);
+			group_GcAnd(st, arg1, arg2);
 			break;
 		case '+':
-			bitstream_GcOr(st, arg1, arg2);
+			group_GcOr(st, arg1, arg2);
 			break;
 		case '-':
-			bitstream_GcExcept(st, arg1, arg2);
+			group_GcExcept(st, arg1, arg2);
 			break;
 	}
 	
 	gcstack_Pop(st, (gcstack_item*)arg1);
 	gcstack_Pop(st, (gcstack_item*)arg2);
-	bitstream_Delete(arg1);
-	bitstream_Delete(arg2);
+	group_Delete(arg1);
+	group_Delete(arg2);
 	free(arg1);
 	free(arg2);
 	
@@ -117,14 +117,14 @@ void boolean_eval_ReadVariable
 		return;
 	}
 	
-	int propId = groups_GetProperty(data->g, variableName);
+	int propId = gop_GetProperty(data->g, variableName);
 	
 	if (propId == -1) {
 		data->errorMessage = "Unknown property";
 		return;
 	}
 	
-	groups_GcGetBitstream(data->st, data->g, propId);
+	gop_GcGetBitstream(data->st, data->g, propId);
 	
 	free(variableName);
 }

@@ -88,19 +88,19 @@ extern "C" {
 	//
 	//		Deletes the data in Groups, but not the pointer to it.
 	//
-	void groups_Delete
+	void gop_Delete
 	(void* const p);
 	
 	//
 	//		Groups supports stack-based garbage collection.
 	//
-	gop* groups_GcAlloc
+	gop* gop_GcAlloc
 	(gcstack* const gc);
 	
 	//
 	//		Initialized Groups with empty dataset.
 	//
-	gop* groups_Init
+	gop* gop_Init
 	(gop* const g);
 	
 	//
@@ -119,20 +119,20 @@ extern "C" {
 	//	double		has no default		Used for numbers
 	//	string		NULL			const char*
 	//
-	int groups_AddProperty
+	int gop_AddProperty
 	(gop* const g, const void* const name, const void* const propType);
 	
 	//
 	//		Returns a property id by name.
 	//		This algorithm has O(log N) worst case.
 	//
-	int groups_GetProperty
+	int gop_GetProperty
 	(gop* const g, const char* const name);
 	
 	//
 	//      Returns an array of property names.
 	//
-	const char** groups_GetPropertyNames
+	const char** gop_GetPropertyNames
 	(gop* const g);
 	
 	//
@@ -140,7 +140,7 @@ extern "C" {
 	//	has a property. This is like taking a snapshot of the group
 	//	in that moment.
 	//
-	group* groups_GcGetBitstream
+	group* gop_GcGetBitstream
 	(gcstack* const gc, gop* const g, const int propId);
 	
 	//
@@ -148,7 +148,7 @@ extern "C" {
 	//      It takes the whole range from 0 to the length of member stack,
 	//      and subtracts the deleted members with exclude.
 	//
-	group* groups_GcGetAll
+	group* gop_GcGetAll
 	(gcstack* const gc, gop* const g);
 	
 	//
@@ -156,7 +156,7 @@ extern "C" {
 	// After removing a property, changes to the data will no longer be
 	// monitored and kept as bitstream.
 	//
-	void groups_RemoveProperty
+	void gop_RemoveProperty
 	(gop* const g, const int propId);
 	
 	//
@@ -164,7 +164,7 @@ extern "C" {
 	// This has O(N) worst case, if you need all names, then read from
 	// the struct instead.
 	//
-	const char* groups_PropertyNameById
+	const char* gop_PropertyNameById
 	(const gop* const g, const int propId);
 	
 	//
@@ -175,68 +175,68 @@ extern "C" {
 	// You need only to allocate one member to read from a file or table,
 	// because when Groups resets the data, you need no worries about memory leaks.
 	//
-	int groups_AddMember
+	int gop_AddMember
 	(gop* const g, hash_table* const obj);
 	
 	//
 	// Removes a member from Groups and recycles it for reuse.
 	//
-	void groups_RemoveMember
+	void gop_RemoveMember
 	(gop* const g, const int index);
 	
 	//
 	// Removes members by a bitstream. This is way faster than removing each one.
 	// Try using bitstreams whenever you can, it makes your code easier to reuse.
 	//
-	void groups_RemoveMembers
+	void gop_RemoveMembers
 	(gop* const g, const group* const a);
 	
-	void groups_SetDouble
+	void gop_SetDouble
 	(gop* const g, const group* const a, const int propId, 
 	 const double val);
 	
-	void groups_SetString
+	void gop_SetString
 	(gop* const g, const group* const a, const int propId, 
 	 const char* const val);
 	
-	const char* groups_GetString
+	const char* gop_GetString
 	(gop* const g, const int propId, const int id);
 	
-	void groups_SetInt
+	void gop_SetInt
 	(gop* const g, const group* const a, const int propId, 
 	 const int val);
 	
-	int groups_GetInt(gop* const g, const int propId, const int id);
+	int gop_GetInt(gop* const g, const int propId, const int id);
 	
-	void groups_SetBool
+	void gop_SetBool
 	(gop* const g, const group* const a, const int propId, 
 	 const int val);
 	
-	int groups_GetBool(gop* const g, const int propId, const int id);
+	int gop_GetBool(gop* const g, const int propId, const int id);
 	
-	double groups_GetDouble
+	double gop_GetDouble
 	(gop* const g, const int propId, const int id);
 	
-	void groups_PrintMember
+	void gop_PrintMember
 	(const gop* const g, const hash_table* const obj);
 	
-	int groups_IsDefaultVariable
+	int gop_IsDefaultVariable
 	(const int propId, void* const data);
 	
-	int groups_IsPropertyType(const int propId, const int type);
+	int gop_IsPropertyType(const int propId, const int type);
 	
-	void groups_CreateBitstreamArray(gop* const g);
-	void groups_CreateMemberArray(gop* g);
+	void gop_CreateBitstreamArray(gop* const g);
+	void gop_CreateMemberArray(gop* g);
 	
-	void groups_SetArray
+	void gop_SetArray
 	(gop* const g, const group* const a, const int propId, 
 	 const int n, const void* const values);
 	
-	void groups_FillArray
+	void gop_FillArray
 	(gop* const g, const group* const a, const int propId, 
 	 const int arrc, void* const arr);
 	
-	group* groups_GcEval
+	group* gop_GcEval
 	(gcstack* const gc, gop* const g, const char* const expr, 
 	 void (* const err)(int pos, const char* message));
 #endif

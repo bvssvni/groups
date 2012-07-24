@@ -45,7 +45,7 @@
 
 #include "group.h"
 
-void bitstream_Delete(void* const p)
+void group_Delete(void* const p)
 {
 	macro_err_return(p == NULL);
 	
@@ -60,13 +60,13 @@ void bitstream_Delete(void* const p)
 	a->length = 0;
 }
 
-group* bitstream_GcAlloc(gcstack* const gc) 
+group* group_GcAlloc(gcstack* const gc) 
 {
 	return (group*)gcstack_malloc
-	(gc, sizeof(group), bitstream_Delete);
+	(gc, sizeof(group), group_Delete);
 }
 
-group* bitstream_InitWithSize(group* const a, const int size) 
+group* group_InitWithSize(group* const a, const int size) 
 {
 	macro_err_return_null(a == NULL);
 	macro_err_return_null(size < 0);
@@ -97,7 +97,7 @@ group* bitstream_InitWithSize(group* const a, const int size)
 	return a;
 }
 
-group* bitstream_InitWithValues
+group* group_InitWithValues
 (group* const a, const int size, const int* const vals)
 {
 	macro_err_return_null(a == NULL); 
@@ -180,7 +180,7 @@ int* createArrayFromIndices
 	return list;
 }
 
-group* bitstream_InitWithIndices
+group* group_InitWithIndices
 (group* const a, const int size, const int* const vals)
 {
 	macro_err_return_null(a == NULL);
@@ -199,7 +199,7 @@ group* bitstream_InitWithIndices
 	return a;
 }
 
-group* bitstream_InitWithFunction
+group* group_InitWithFunction
 (group* const a, const int arrc, const int stride, 
 const void* const arrv, 
 int (*const f)(const void* const p))
@@ -321,7 +321,7 @@ int countDeltaString
 	return counter;
 }
 
-group* bitstream_InitWithDeltaDouble
+group* group_InitWithDeltaDouble
 (group* const a, const int n, const double* const oldValues, 
  const double* const newValues)
 {
@@ -356,7 +356,7 @@ group* bitstream_InitWithDeltaDouble
 	return a;
 }
 
-group* bitstream_InitWithDeltaInt
+group* group_InitWithDeltaInt
 (group* const a, const int n, const int* const oldValues, 
  const int* const newValues)
 {
@@ -391,7 +391,7 @@ group* bitstream_InitWithDeltaInt
 	return a;
 }
 
-group* bitstream_InitWithDeltaBool
+group* group_InitWithDeltaBool
 (group* const a, const int n, const int* const oldValues, 
  const int* const newValues)
 {
@@ -426,7 +426,7 @@ group* bitstream_InitWithDeltaBool
 	return a;
 }
 
-group* bitstream_InitWithDeltaString
+group* group_InitWithDeltaString
 (group* const a, const int n, const string* const oldValues, 
  const string* const newValues)
 {
@@ -461,7 +461,7 @@ group* bitstream_InitWithDeltaString
 	return a;
 }
 
-group* bitstream_InitWithWordsInString
+group* group_InitWithWordsInString
 (group* const a, const char* const text, const char* const spaceCharacters, 
  const char* const splitCharacters)
 {
@@ -498,7 +498,7 @@ group* bitstream_InitWithWordsInString
 		gcstack_PushInt(words, k);
 	
 	int* const arr = gcstack_CreateIntArrayBackward(words);
-	bitstream_InitWithValues(a, words->length, arr);
+	group_InitWithValues(a, words->length, arr);
 	free(arr);
 	gcstack_Delete(words);
 	free(words);
@@ -506,7 +506,7 @@ group* bitstream_InitWithWordsInString
 	return a;
 }
 
-void bitstream_Print(const group* const a)
+void group_Print(const group* const a)
 {
 	macro_err_return(a == NULL);
 	
@@ -521,13 +521,13 @@ void bitstream_Print(const group* const a)
 	printf("\r\n");
 }
 
-group* bitstream_GcDirectJoin
+group* group_GcDirectJoin
 (gcstack* const gc, const group* const a, const group* const b) {
 	macro_err_return_null(a == NULL);
 	macro_err_return_null(b == NULL);
 	
 	group* const arr = (group*)gcstack_malloc
-	(gc, sizeof(group), bitstream_Delete);
+	(gc, sizeof(group), group_Delete);
 	
 	arr->length = a->length + b->length;
 	arr->pointer = malloc(sizeof(int)*arr->length);
@@ -539,11 +539,11 @@ group* bitstream_GcDirectJoin
 	return arr;
 }
 
-group* bitstream_GcClone(gcstack* const gc, const group* const a) {
+group* group_GcClone(gcstack* const gc, const group* const a) {
 	macro_err_return_null(a == NULL);
 	
 	group* const b = (group*)gcstack_malloc
-	(gc, sizeof(group), bitstream_Delete);
+	(gc, sizeof(group), group_Delete);
 	
 	b->length = a->length;
 	b->pointer = malloc(sizeof(int)*b->length);
@@ -605,15 +605,15 @@ int countAnd(const group* const a, const group* const b)
 }
 
 
-group* bitstream_GcAnd
+group* group_GcAnd
 (gcstack* const gc, const group* const a, const group* const b)
 {
 	macro_err_return_null(a == NULL);
 	macro_err_return_null(b == NULL);
 	
 	int list = 0;
-	group* const arr = bitstream_InitWithSize
-	(bitstream_GcAlloc(gc), countAnd(a, b));
+	group* const arr = group_InitWithSize
+	(group_GcAlloc(gc), countAnd(a, b));
 	
 	if (a->length == 0 || b->length == 0)
 		return arr;
@@ -727,15 +727,15 @@ int countOr(const group* const a, const group* const b)
 }
 
 
-group* bitstream_GcOr(gcstack* gc, group const* a, group const* b)
+group* group_GcOr(gcstack* gc, group const* a, group const* b)
 {
 	macro_err_return_null(a == NULL);
 	macro_err_return_null(b == NULL);
 	
 	int count = countOr(a,b);
 	
-	group* const list = bitstream_InitWithSize
-	(bitstream_GcAlloc(gc), count);
+	group* const list = group_InitWithSize
+	(group_GcAlloc(gc), count);
 	
 	int counter = 0;
 	const int a_length = a->length;
@@ -833,13 +833,13 @@ int countInvert(group* const a, const int inv)
 	return resCount;
 }
 
-group* bitstream_GcInvert
+group* group_GcInvert
 (gcstack* const gc, group* const a, const int inv)
 {
 	macro_err_return_null(a == NULL);
 	
-	group* const res = bitstream_InitWithSize
-	(bitstream_GcAlloc(gc), countInvert(a, inv));
+	group* const res = group_InitWithSize
+	(group_GcAlloc(gc), countInvert(a, inv));
 	
 	int resCount = 0;
 	
@@ -923,7 +923,7 @@ int countExcept(const group* const a, const group* const b)
 	return list;
 }
 
-void bitstream_ExceptTmp
+void group_ExceptTmp
 (const group* const a, const group* const b, group* const tmp)
 {
 	macro_err_return(a == NULL);
@@ -940,7 +940,7 @@ void bitstream_ExceptTmp
 	
 	int list = 0;
 	
-	bitstream_InitWithSize(tmp, countExcept(a, b));
+	group_InitWithSize(tmp, countExcept(a, b));
 	
 	if (a_length == 0 || b_length == 0)
 		return;
@@ -988,7 +988,7 @@ void bitstream_ExceptTmp
 	}
 }
 
-group* bitstream_GcExcept
+group* group_GcExcept
 (gcstack* const gc, const group* const a, const group* const b)
 {
 	macro_err_return_null(a == NULL);
@@ -997,12 +997,12 @@ group* bitstream_GcExcept
 	const int a_length = a->length;
 	const int b_length = b->length;
 	if (b_length == 0)
-		return bitstream_GcClone(gc, a);
+		return group_GcClone(gc, a);
 	
 	int list = 0;
 	
-	group* arr = bitstream_InitWithSize
-	(bitstream_GcAlloc(gc), countExcept(a, b));
+	group* arr = group_InitWithSize
+	(group_GcAlloc(gc), countExcept(a, b));
 	
 	if (a_length == 0 || b_length == 0)
 		return arr;
@@ -1053,7 +1053,7 @@ group* bitstream_GcExcept
 }
 
 
-int bitstream_Size(const group* const list)
+int group_Size(const group* const list)
 {
 	macro_err_return_zero(list == NULL);
 	
@@ -1067,9 +1067,9 @@ int bitstream_Size(const group* const list)
 	return sum;
 }
 
-int bitstream_AbsSub(const group* const list);
+int absSub(const group* const list);
 
-int bitstream_AbsSub(const group* const list)
+int absSub(const group* const list)
 {
 	int i;
 	
@@ -1101,33 +1101,33 @@ int bitstream_AbsSub(const group* const list)
 	return sum;
 }
 
-int bitstream_Abs(const group* const list, const int maximum)
+int group_Abs(const group* const list, const int maximum)
 {
 	macro_err_return_zero(list == NULL);
 	
 	if (list->length == 0)
 		return 0;
-	const int abs = bitstream_AbsSub(list);
+	const int abs = absSub(list);
 	if (abs <= 0)
 		return maximum+abs;
 	return abs;
 }
 
-int* bitstream_ArrayPointer(const group* const a)
+int* group_ArrayPointer(const group* const a)
 {
 	macro_err_return_null(a == NULL);
 	
 	return a->pointer;
 }
 
-int bitstream_NumberOfBlocks(const group* const a)
+int group_NumberOfBlocks(const group* const a)
 {
 	macro_err_return_zero(a == NULL);
 	
 	return a->length/2;
 }
 
-int bitstream_PopStart(group* const a)
+int group_PopStart(group* const a)
 {
 	macro_err_return_zero(a == NULL);
 	
@@ -1150,7 +1150,7 @@ int bitstream_PopStart(group* const a)
 	return id;
 }
 
-int bitstream_PopEnd(group* const a)
+int group_PopEnd(group* const a)
 {
 	macro_err_return_zero(a == NULL);
 	
@@ -1167,7 +1167,7 @@ int bitstream_PopEnd(group* const a)
 	return id;
 }
 
-char** bitstream_GetWords(group* const a, const char* const text)
+char** group_GetWords(group* const a, const char* const text)
 {
 	macro_err_return_null(a == NULL);
 	
