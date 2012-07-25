@@ -6,4 +6,51 @@
 
 by Sven Nilsen 2012.
 
-"Groups" is a library written in C for group-oriented programming.
+"Groups" is a library written in C for group-oriented programming (GOP).
+
+GOP has an incredible simple, but powerful syntax.
+
+Object-orientation derives properties from type.
+	
+	Person => FirstName, LastName
+	
+This causes lot of trouble:
+
+	1. Languages must explicitly implement generics.
+	2. Users are constrained to the predefined types.
+	3. It sucks with higher logic such as graphs search/split.
+	4. It can model real world, but fails to adapt over time.
+
+These 4 problems are solved in GOP.
+
+	1. All algorithms are generic by default.
+	2. You can easily give users more power.
+	3. Graphs: More cool stuff.
+	4. Mathematical perfection, guarantees flexibility.
+
+Group-orientation derives types from properties.
+
+	Person <= FirstName * LastName
+	Penguin <= Bird - CanFly
+	Gender <= Male + Female
+	Wormhole <= SpaceTime * Warp + TimeParadox - Deterministic
+
+It looks like variable assignment because it IS variable assignment:
+
+	char* expr = "FirstName * LastName";
+	group* Person = gop_GcEval(gc, gop, expr, NULL);
+	
+	gc	- This is a stack that handles allocated memory.
+	gop	- This is the object that contains all members of all groups.
+	expr	- This is the expression of our group.
+	NULL	- Instead of NULL, we can pass callback function in case of
+		errors, such as when a user write the expression manually.
+		
+A "group" is, just like in the real world, a mathematical object. You can do
+operations on it! It is like a smart pointer to the data, and changes to the
+group does not affect the data of the members. It has many methods that makes
+it VERY powerful for all sorts of tasks.
+
+"Groups" is only about 4500 lines of code, but gives you the most powerful
+way of writing generic algorithms in low-level C.
+

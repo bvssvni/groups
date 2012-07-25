@@ -90,9 +90,9 @@ group* group_InitWithSize(group* const a, const int size)
 	memset(a->pointer, 0, bytes);
 	
 	/*/
-	for (int i = 0; i < size; i++)
-		a->pointer[i] = 0;
-	//*/
+	 for (int i = 0; i < size; i++)
+	 a->pointer[i] = 0;
+	 //*/
 	
 	return a;
 }
@@ -201,8 +201,8 @@ group* group_InitWithIndices
 
 group* group_InitWithFunction
 (group* const a, const int arrc, const int stride, 
-const void* const arrv, 
-int (*const f)(const void* const p))
+ const void* const arrv, 
+ int (*const f)(const void* const p))
 {
 	// The theoretical maximum is twice the size of array.
 	int buff[arrc*2];
@@ -219,7 +219,7 @@ int (*const f)(const void* const p))
 		if (tmp != v) {
 			buff[j++] = i;
 		}
-			
+		
 		v = tmp;
 	}
 	
@@ -1195,4 +1195,3 @@ char** group_GetWords(group* const a, const char* const text)
 	
 	return arr;
 }
-
