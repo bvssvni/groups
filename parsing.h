@@ -1,10 +1,10 @@
-//
-//  parsing.h
-//  MemGroups
-//
-//  Created by Sven Nilsen on 15.06.12.
-//  Copyright (c) 2012 Cutout Pro. All rights reserved.
-//
+/*
+parsing.h
+MemGroups
+
+Created by Sven Nilsen on 15.06.12.
+Copyright (c) 2012 Cutout Pro. All rights reserved.
+*/
 
 /*
  Redistribution and use in source and binary forms, with or without
@@ -39,55 +39,55 @@ extern "C" {
 #ifndef MemGroups_parsing_h
 #define MemGroups_parsing_h
 	
-	//
-	//	The sscanf function does allow tracking of how many characters 
-	//	are read. This function computes the number of characters.
-	//
+	/*
+		The sscanf function does allow tracking of how many characters 
+		are read. This function computes the number of characters.
+	*/
 	int parsing_ScanfSizeOf
 	(const char* text, int type);
 	
-	//
-	//      Reads a double from text and returns the number of characters 
-	//	read.
-	//
+	/*
+		Reads a double from text and returns the number of characters 
+		read.
+	*/
 	int parsing_ScanDouble
 	(const char* text, double* output);
 	
-	//
-	//      Reads an int from text and returns the number of characters 
-	//	read.
-	//
+	/*
+		Reads an int from text and returns the number of characters 
+		read.
+	*/
 	int parsing_ScanInt
 	(const char* text, int* output);
 	
-	//
-	//      Skipts empty space.
-	//
+	/*
+		Skipts empty space.
+	*/
 	int parsing_SkipWhiteSpace
 	(const char* text);
 	
 	int parsing_ReadCharacter
 	(const char* text, char ch);
 	
-	//
-	//	Read one character of many options.
-	//
+	/*
+		Read one character of many options.
+	*/
 	char parsing_ReadOneCharacterOf
 	(const char* const text, const char* const chs, int* const delta);
 	
-	//
-	//      Remember to release the pointer when done.
-	//
+	/*
+		Remember to release the pointer when done.
+	*/
 	char* parsing_ReadVariableName
 	(const char* text, const char* breakAtCharacters, int* delta);
 	
 	char* parsing_ReadEscapedString
 	(const char* text, int* delta);
 	
-	//
-	//	Reads an expected keyword from text.
-	//	Returns 0 if the text does not start with the keyword.
-	//
+	/*
+		Reads an expected keyword from text.
+		Returns 0 if the text does not start with the keyword.
+	*/
 	int parsing_ReadKeyword
 	(const char* const text, const char* const keyword);
 	

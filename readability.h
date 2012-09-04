@@ -40,19 +40,19 @@ extern "C" {
 #ifndef MEMGROUPS_READABILITY
 #define MEMGROUPS_READABILITY
 	
-	// This is to make the code easier to read and to import from C#.
+/* This is to make the code easier to read and to import from C#. */
 #define true 1
 #define false 0
 #define string const char*
 #define byte unsigned char
 	
-	//
-	//	GROUP PROPERTY TYPES
-	//
-	//	A property is composed of index and type.
-	//	TYPE_STRIDE defines the maximum number of properties.
-	//	Notice this does not put a limit upon number of members.
-	//
+	/*
+		GROUP PROPERTY TYPES
+	
+		A property is composed of index and type.
+		TYPE_STRIDE defines the maximum number of properties.
+		Notice this does not put a limit upon number of members.
+	*/
 	enum
 	{
 		TYPE_STRIDE = 1000000,
@@ -65,38 +65,38 @@ extern "C" {
 		TYPE_ARRAY = 200
 	};
 	
-	//
-	//	FOREACH MACROES
-	//
-	//	These need to be copied to your source file in order to work.
-	//	They simplify the task of dealing with nested bitstreams.
-	//
-	//	macro_bitstream_foreach (bitstream) {
-	//		if (macro_bitstream_pos(bitstream) > 200)
-	//			macro_bitstream_break(bitstream);
-	//      } macro_bitstream_end_foreach(bitstream)
-	//
-	//	// Iterating reverse:
-	//	macro_bitstream_foreach_reverse (bitstream) {
-	//		...
-	//	} macro_bitstream_end_foreach(bitstream)
-	//
-	//	// Nested loops:
-	//	macro_bitstream_foreach (a) {
-	//		macro_bitstream_foreach (b) {
-	//			 // Jumps outside the loop.
-	//			macro_bitstream_break(a);
-	//		} macro_bitstream_end_foreach(b)
-	//	} macro_bitstream_end_foreach(a)
-	//
-	//	To access the index of the array which the bitstream
-	//	is referring to, use
-	//
-	//	int i = macro_bitstream_pos(prop);
-	//
-	//	Tip: Declaring variables before the loop will increase 
-	//	performance.
-	//
+	/*
+		FOREACH MACROES
+	
+		These need to be copied to your source file in order to work.
+		They simplify the task of dealing with nested bitstreams.
+	
+		macro_bitstream_foreach (bitstream) {
+			if (macro_bitstream_pos(bitstream) > 200)
+				macro_bitstream_break(bitstream);
+		} macro_bitstream_end_foreach(bitstream)
+	
+		// Iterating reverse:
+		macro_bitstream_foreach_reverse (bitstream) {
+			...
+		} macro_bitstream_end_foreach(bitstream)
+	
+		// Nested loops:
+		macro_bitstream_foreach (a) {
+			macro_bitstream_foreach (b) {
+				 // Jumps outside the loop.
+				macro_bitstream_break(a);
+			} macro_bitstream_end_foreach(b)
+		} macro_bitstream_end_foreach(a)
+	
+		To access the index of the array which the bitstream
+		is referring to, use
+	
+		int i = macro_bitstream_pos(prop);
+	
+		Tip: Declaring variables before the loop will increase 
+		performance.
+	*/
 	
 #define macro_bitstream_foreach_reverse(a) 				\
 	int _macro_start##a, _macro_end##a, _macro_i##a, _macro_j##a; 	\
@@ -117,7 +117,7 @@ extern "C" {
 		for (_macro_j##a = _macro_start##a;			\
 		_macro_j##a < _macro_end##a; _macro_j##a++) {
 
-// Add a dummy goto in order to remove compiler warning.
+/* Add a dummy goto in order to remove compiler warning. */
 #define macro_bitstream_end_foreach(a) 					\
 	}} macro_bitstream_break(a); _macro_BREAK_BITSTREAM_##a:;
 	
@@ -125,9 +125,9 @@ extern "C" {
 	
 #define macro_bitstream_pos(a)   	 _macro_j##a
 	
-	//
-	//      FOR EACH - DESIGNED FOR HASH TABLE
-	//
+	/*
+		FOR EACH - DESIGNED FOR HASH TABLE
+	*/
 	
 #define macro_hashTable_foreach(a) 					\
 	const gcstack_item* _macro_cursor##a = a->layers->root->next; 	\
@@ -151,13 +151,13 @@ extern "C" {
 #define macro_hashTable_bool(a) *(int*)_macro_layer##a->data[_macro_i##a]
 #define macro_hashTable_string(a) (char*)_macro_layer##a->data[_macro_i##a]
 	
-	//
-	//      SIMPLIFIED ERROR HANDLING
-	//
-	//      Crashes thread or application and prints a detailed error 
-	//	message. It also prints the condition under which the thread or 
-	//	application should crash.
-	//
+	/*
+		SIMPLIFIED ERROR HANDLING
+	
+		Crashes thread or application and prints a detailed error 
+		message. It also prints the condition under which the thread or 
+		application should crash.
+	*/
 #define macro_err(cond) 						\
 	if (cond) 							\
 		errorhandling_CrashWithLineAndFunctionAndMessage 	\
@@ -184,25 +184,25 @@ extern "C" {
 		return 0;						\
 	}
 	
-	//
-	//	UNIT TESTING
-	//
-	//
-	//	This macro prints out a proper message if the arguments
-	//	are not the same and kills the thread/application if that is the
-	//	case.
-	//
+	/*
+		UNIT TESTING
+	
+	
+		This macro prints out a proper message if the arguments
+		are not the same and kills the thread/application if that is the
+		case.
+	*/
 #define macro_test_string(a, b) 					\
 	if (strcmp(a, b) != 0) { 					\
 		printf("|%s| expected |%s|\r\n", a, b); 		\
 		macro_err(strcmp(a, b) != 0); 				\
 	}
 	
-	//
-	//	This macro prints out a proper message if the int arguments
-	//	are not equal and kills the thread/application if that is the
-	//	case.
-	//
+	/*
+		This macro prints out a proper message if the int arguments
+		are not equal and kills the thread/application if that is the
+		case.
+	*/
 #define macro_test_int(a, b) 						\
 	if (a != b) { 							\
 		printf("|%i| expected |%i|\r\n", a, b); 		\
@@ -227,22 +227,22 @@ extern "C" {
 		macro_err(a != NULL); 					\
 	}
 	
-	//
-	//      This macro is specially suited for expression errors.
-	//      It displays where in an expression an error happened.
-	//      At the moment, it supports only single-line expression.
-	//
+	/*
+	      This macro is specially suited for expression errors.
+	      It displays where in an expression an error happened.
+	      At the moment, it supports only single-line expression.
+	*/
 #define macro_errExp(message,pos,expr) 					\
 	errorhandling_CrashExpression(message, pos, expr)
 	
-	//
-	//	FAST STRING CONCATENATION
-	//
-	// 	macro_string_concat(myName, "Alpha ", "Centuri");
-	//
-	//      This string concat declares <myName> on the stack.
-	//	Using dynamic arrays, no malloc call is necessary.
-	//
+	/*
+		FAST STRING CONCATENATION
+	
+	 	macro_string_concat(myName, "Alpha ", "Centuri");
+	
+		This string concat declares <myName> on the stack.
+		Using dynamic arrays, no malloc call is necessary.
+	*/
 #define macro_decl_string_concat(dest,string1,string2) 			\
 	const char* _macro_string1 ## dest = string1; 			\
 	const char* _macro_string2 ## dest = string2; 			\

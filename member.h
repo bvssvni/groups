@@ -53,11 +53,11 @@ extern "C" {
 		int m_lastPrime;
 	} hash_table;
 	
-	//
-	//      HASH LAYERS
-	//
-	//      The sub structures of a hash table.
-	//
+	/*
+		HASH LAYERS
+	
+		The sub structures of a hash table.
+	*/
 	void memberHashLayer_Delete(void* const p);
 	
 	member_hash_layer* memberHashLayer_GcAlloc(gcstack* const gc);
@@ -67,11 +67,11 @@ extern "C" {
 	
 	int memberHashLayer_NextPrime(const int prime);
 	
-	//
-	//      HASH TABLE
-	//
-	//      The structure used for storing by property id or hash key.
-	//
+	/*
+		HASH TABLE
+	
+		The structure used for storing by property id or hash key.
+	*/
 	void member_Delete
 	(void* const p);
 	
@@ -85,50 +85,50 @@ extern "C" {
 	(hash_table* const obj, hash_table* const b);
 	
 	
-	//
-	//      HASHING
-	//
-	//      Using hashing of strings, you can check for the existence of a 
-	//	string very fast.
-	//      This is a different way to use hash table than storing pointers 
-	//	by id.
-	//      It should not be mixed with other usages.
-	//
+	/*
+		HASHING
+	
+		Using hashing of strings, you can check for the existence of a 
+		string very fast.
+		This is a different way to use hash table than storing pointers 
+		by id.
+		It should not be mixed with other usages.
+	*/
 	unsigned long member_GenerateHashId
 	(const char * const str);
 	
-	//
-	//      Sets a string, the id is a hash value of the string.
-	//      The string is used to check for per match.
-	//      Don't mix with      hashTable_Set
-	//
+	/*
+		Sets a string, the id is a hash value of the string.
+		The string is used to check for per match.
+		Don't mix with      hashTable_Set
+	*/
 	void                member_SetStringHash
 	(hash_table* const hash, char* const value);
 	
-	//
-	//      Returns true if the hash table contains a string.
-	//      The values in the table are stored as string and it uses this 
-	//	for perfect matching.
-	//      Don't mix with       hashTable_Get
-	//
+	/*
+		Returns true if the hash table contains a string.
+		The values in the table are stored as string and it uses this 
+		for perfect matching.
+		Don't mix with       hashTable_Get
+	*/
 	int                member_ContainsStringHash
 	(hash_table* const hash, const char* const value);
 	
-	//
-	//      POINTER BY ID
-	//
-	//      Sets a pointer in the hash table by an id.
-	//      If you use a double data type, use hashTable_SetDouble.
-	//
+	/*
+		POINTER BY ID
+	
+		Sets a pointer in the hash table by an id.
+		If you use a double data type, use hashTable_SetDouble.
+	*/
 	void member_Set
 	(hash_table* const hash, const int id, void* const value);
 	
-	//
-	//      Returns a pointer that can not be changed because it can only be
-	//	freed
-	//      by the hash table and if you need to change it you have to copy 
-	//	it.
-	//
+	/*
+		Returns a pointer that can not be changed because it can only be
+		freed
+		by the hash table and if you need to change it you have to copy 
+		it.
+	*/
 	const void* member_Get       
 	(const hash_table* const hash, const int id);
 	

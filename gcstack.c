@@ -43,8 +43,10 @@
 
 #include "gcstack.h"
 
-// This structure is used when pushing pointers to the stack that does
-// not have "gcstack_item gc;" declared at beginning of struct.
+/*
+This structure is used when pushing pointers to the stack that does
+not have "gcstack_item gc;" declared at beginning of struct.
+*/
 typedef struct gcpointer {
 	gcstack_item gc;
 	void* pointer;

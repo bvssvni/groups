@@ -1,10 +1,3 @@
-//
-//  errorhandling.h
-//  MemGroups
-//
-//  Created by Sven Nilsen on 11.06.12.
-//  Copyright (c) 2012 Cutout Pro. All rights reserved.
-//
 
 /*
  Redistribution and use in source and binary forms, with or without
@@ -39,9 +32,9 @@ extern "C" {
 #ifndef MemGroups_errorhandling_h
 #define MemGroups_errorhandling_h
 	
-	//
-	//      CRASH HANDLING
-	//
+	/*
+		CRASH HANDLING
+	*/
 	
 	void errorhandling_CrashWithMessage
 	(const char* message);
@@ -59,18 +52,18 @@ extern "C" {
 	void errorhandling_CrashExpression
 	(const char* message, int pos, const char* expr);
 	
-	//
-	//      CRASH CONFIGURATION
-	//
+	/*
+		CRASH CONFIGURATION
+	*/
 	
 	void errorhandling_OnCrashExitApp(void);
 	void errorhandling_OnCrashExitThread(void);
 	
-	//
-	//	MEASUREMENTS
-	//
-	//	Checks error margin in percentage.
-	//
+	/*
+		MEASUREMENTS
+	
+		Checks error margin in percentage.
+	*/
 	int errorhandling_CheckMargin
 	(const double a, const double b, const double errorMargin);
 	

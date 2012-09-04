@@ -72,8 +72,10 @@
 void swapData
 (byte* const t, byte* const a, byte* const b, const int stride);
 
-//	The reasons this function takes bytes as arguments is because
-//	it copies the bytes when swapping.
+/*
+	The reasons this function takes bytes as arguments is because
+	it copies the bytes when swapping.
+ */
 void swapData
 (byte* const t, byte* const a, byte* const b, const int stride)
 {
@@ -81,9 +83,11 @@ void swapData
 	memcpy(a, b, stride);
 	memcpy(b, t, stride);
 	
-	// Swap the items at the gc stack to avoid damage.
-	// This results that the order which a and b will be
-	// released will change, or they might change gc stack.
+	/*
+	Swap the items at the gc stack to avoid damage.
+	This results that the order which a and b will be
+	released will change, or they might change gc stack.
+	 */
 	gcstack_Swap(a, b);
 }
 
